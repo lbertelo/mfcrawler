@@ -30,7 +30,7 @@ public interface IPageQueryList extends ITablesVocabulary {
 
 	String CREATE_TABLES = " CREATE TABLE " + TABLE_PAGE + " ( " + DOMAIN + " VARCHAR(255) NOT NULL, " + PATH
 			+ " VARCHAR(2048) NOT NULL, " + PROTOCOL + " VARCHAR(10) NOT NULL, " + CONTENT + " CLOB, " + SCORE
-			+ " INTEGER, " + INNER_DEEP + " INTEGER NOT NULL, " + OUTER_DEEP + " INTEGER NOT NULL, " + CRAWL_TIME
+			+ " DOUBLE, " + INNER_DEEP + " INTEGER NOT NULL, " + OUTER_DEEP + " INTEGER NOT NULL, " + CRAWL_TIME
 			+ " TIMESTAMP, " + ALLOW_CRAWL + " BOOLEAN, " + REDIRECT_PAGE + " BOOLEAN, " + CRAWL_NOW + " BOOLEAN, "
 			+ CRAWL_ERROR + " VARCHAR(20000), " + INCOMING_INTERN_LINKS_NUMBER + " INTEGER DEFAULT 0, "
 			+ INCOMING_EXTERN_LINKS_NUMBER + " INTEGER DEFAULT 0, " + OUTGOING_INTERN_LINKS_NUMBER
@@ -90,11 +90,12 @@ public interface IPageQueryList extends ITablesVocabulary {
 	String SELECT_LINKS = " SELECT " + TABLE_LINK_P + "*, " + TABLE_PAGE_P + CRAWL_TIME + " FROM " + TABLE_LINK
 			+ " LEFT JOIN " + TABLE_PAGE + " ON (" + TABLE_PAGE_P + DOMAIN + " = " + TABLE_LINK_P + LINK_DOMAIN
 			+ " AND " + TABLE_PAGE_P + PATH + " = " + TABLE_LINK_P + LINK_PATH + " ) WHERE ( " + TABLE_LINK_P + DOMAIN
-			+ " = ? " + " AND " + TABLE_LINK_P + PATH + " = ? AND " + TABLE_LINK_P + PROTOCOL + " = ? ) OR ( "
-			+ TABLE_LINK_P + LINK_DOMAIN + " = ? " + " AND " + TABLE_LINK_P + LINK_PATH + " = ? AND " + TABLE_LINK_P
-			+ LINK_PROTOCOL + " = ? ) ";
+			+ " = ? " + " AND " + TABLE_LINK_P + PATH + " = ? AND " + TABLE_LINK_P + PROTOCOL + " = ? ) ";
 
-	String SELECT_INTERESTING_FOUND_PAGE_START = " SELECT * FROM " + TABLE_PAGE + " WHERE " + " ( ( " + CRAWL_TIME
+	String SELECT_LINKS_INCOMING = " OR ( " + TABLE_LINK_P + LINK_DOMAIN + " = ? " + " AND " + TABLE_LINK_P + LINK_PATH
+			+ " = ? AND " + TABLE_LINK_P + LINK_PROTOCOL + " = ? ) ";
+
+	String SELECT_INTERESTING_FOUND_PAGE_START = " SELECT * FROM " + TABLE_PAGE + " WHERE ( ( " + CRAWL_TIME
 			+ " IS NULL  AND " + SCORE + " >= ? ) OR " + CRAWL_NOW + " = true ) " + " AND " + DOMAIN + " NOT IN "
 			+ " ( SELECT " + DOMAIN + " FROM " + TABLE_SITE + " WHERE " + BLACKLISTED + " = true ) ";
 
@@ -137,6 +138,9 @@ public interface IPageQueryList extends ITablesVocabulary {
 	String SELECT_PATH_NUMBER_TO_DISPLAY_START = " SELECT COUNT(" + PATH + ") as countPath FROM " + TABLE_PAGE
 			+ " WHERE " + DOMAIN + " NOT IN ( SELECT " + DOMAIN + " FROM " + TABLE_SITE + " WHERE " + BLACKLISTED
 			+ " = true ) ";
+
+	String SELECT_CRAWLED_PAGES_FOR_RECALCULATING = " SELECT * FROM " + TABLE_PAGE + " WHERE " + CRAWL_TIME
+			+ " IS NOT NULL AND " + CONTENT + " IS NOT NULL ";
 
 	String COUNT_CRAWLED_PAGES_NUMBER = " SELECT COUNT(*) as crawledPagesNumber FROM " + TABLE_PAGE + " WHERE "
 			+ CRAWL_TIME + " IS NOT NULL " + " AND " + DOMAIN + " NOT IN " + " ( SELECT " + DOMAIN + " FROM "
@@ -192,8 +196,5 @@ public interface IPageQueryList extends ITablesVocabulary {
 
 	String UPDATE_SCORE_PAGE = " UPDATE " + TABLE_PAGE + " SET " + SCORE + " = ?  WHERE " + DOMAIN + " = ? AND " + PATH
 			+ " = ? AND " + PROTOCOL + " = ? ";
-
-	String UPDATE_SCORE_PAGE_NOT_CRAWLED = " AND " + CONTENT + " IS NULL " + " AND ( " + SCORE + " IS NULL OR " + SCORE
-			+ " < ? ) ";
 
 }

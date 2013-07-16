@@ -232,7 +232,7 @@ public class StartingPagesDialog extends DefaultDialog {
 					page.setInnerDeep(0);
 					page.setOuterDeep(0);
 					page.setCrawlNow(true);
-					page.setScore(0);
+					page.setScore(0.0);
 					pageDao.updateFoundPage(page);
 				}
 			}

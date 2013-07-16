@@ -177,7 +177,7 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 				JdbcTools.setString(preStatement, 1, domain.getName());
 				result = preStatement.executeQuery();
 				if (result.next()) {
-					Integer totalScore = JdbcTools.getInteger(result, "totalScore");
+					Double totalScore = JdbcTools.getDouble(result, "totalScore");
 					site.setTotalScore(totalScore);
 					Integer crawledPagesNumber = JdbcTools.getInteger(result, "crawledPagesNumber");
 					site.setCrawledPagesNumber(crawledPagesNumber);

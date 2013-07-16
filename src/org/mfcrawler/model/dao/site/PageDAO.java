@@ -80,7 +80,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	// BASE
 
 	/**
-	 * Extract a page without content from a resultSet
+	 * Extract a page without the content from a resultSet
 	 * @param result the resultSet
 	 * @return the page
 	 */
@@ -92,7 +92,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 					JdbcTools.getString(result, PATH));
 			page = new Page(linkPage);
 
-			page.setScore(JdbcTools.getInteger(result, SCORE));
+			page.setScore(JdbcTools.getDouble(result, SCORE));
 			page.setInnerDeep(JdbcTools.getInteger(result, INNER_DEEP));
 			page.setOuterDeep(JdbcTools.getInteger(result, OUTER_DEEP));
 			page.setCrawlTime(JdbcTools.getDate(result, CRAWL_TIME));
@@ -102,6 +102,25 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			page.setCrawlError(JdbcTools.getString(result, CRAWL_ERROR));
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to read page in DB", e);
+		}
+
+		return page;
+	}
+
+	/**
+	 * Extract a page with the content from a resultSet
+	 * @param result the resultSet
+	 * @return the page
+	 */
+	public static Page toPageWithContent(ResultSet result) {
+		Page page = toPageWithoutContent(result);
+
+		if (page != null) {
+			try {
+				page.setContent(JdbcTools.getClob(result, CONTENT));
+			} catch (SQLException e) {
+				Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to read content in DB", e);
+			}
 		}
 
 		return page;
@@ -142,21 +161,31 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	// SELECT
 
 	/**
-	 * Select all links for the page and add them to the page
+	 * Select links for the page and add them to the page, load outgoing links
+	 * or all links (outgoing links and incoming links)
 	 * @param page the page
+	 * @param loadAllLinks indicates if all links are loaded
 	 */
-	public void loadAllLinks(Page page) {
+	public void loadLinks(Page page, boolean loadAllLinks) {
 		PreparedStatement preStatement = null;
 		ResultSet result = null;
 
 		try {
-			preStatement = connection.prepareStatement(SELECT_LINKS);
+			StringBuilder sql = new StringBuilder(SELECT_LINKS);
+			if (loadAllLinks) {
+				sql.append(SELECT_LINKS_INCOMING);
+			}
+
+			preStatement = connection.prepareStatement(sql.toString());
+
 			JdbcTools.setString(preStatement, 1, page.getLink().getDomain().getName());
 			JdbcTools.setString(preStatement, 2, page.getLink().getLinkPath().getPath());
 			JdbcTools.setString(preStatement, 3, page.getLink().getLinkPath().getProtocol());
-			JdbcTools.setString(preStatement, 4, page.getLink().getDomain().getName());
-			JdbcTools.setString(preStatement, 5, page.getLink().getLinkPath().getPath());
-			JdbcTools.setString(preStatement, 6, page.getLink().getLinkPath().getProtocol());
+			if (loadAllLinks) {
+				JdbcTools.setString(preStatement, 4, page.getLink().getDomain().getName());
+				JdbcTools.setString(preStatement, 5, page.getLink().getLinkPath().getPath());
+				JdbcTools.setString(preStatement, 6, page.getLink().getLinkPath().getProtocol());
+			}
 
 			result = preStatement.executeQuery();
 			while (result.next()) {
@@ -194,7 +223,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 		}
 
 		if (!crawlConfig.getForceCrawl()) {
-			sql.append(SELECT_INTERESTING_FOUND_PAGE_ALLOW_CRAWL);			
+			sql.append(SELECT_INTERESTING_FOUND_PAGE_ALLOW_CRAWL);
 		}
 
 		if (!forbiddenDomainList.isEmpty()) {
@@ -256,9 +285,8 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			JdbcTools.setString(preStatement, 3, link.getLinkPath().getProtocol());
 			result = preStatement.executeQuery();
 			if (result.next()) {
-				page = toPageWithoutContent(result);
-				page.setContent(JdbcTools.getClob(result, CONTENT));
-				loadAllLinks(page);
+				page = toPageWithContent(result);
+				loadLinks(page, true);
 			}
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to get page with all information", e);
@@ -302,7 +330,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	private StringBuilder getSqlFilterToDisplay(OverviewParams params) {
 		StringBuilder filter = new StringBuilder();
 
-		if (params.isSelectCrawled()) {			
+		if (params.isSelectCrawled()) {
 			filter.append(FILTER_TO_DISPLAY_CRAWLED);
 		}
 
@@ -353,7 +381,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			orderby.append(ORDER_TO_DISPLAY_DEFAULT);
 			break;
 		}
-		
+
 		return orderby;
 	}
 
@@ -430,16 +458,27 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	 * Return a iterator of all pages
 	 * @return the iterator
 	 */
-	public PageDbIterator getCompletePageList() {
+	public List<Page> getCrawledPagesForRecalculating() {
+		List<Page> crawledPages = new ArrayList<Page>();
+		PreparedStatement preStatement = null;
+		ResultSet result = null;
+
 		try {
-			PreparedStatement preStatement = connection.prepareStatement(SELECT_ALL_PAGE);
-			ResultSet result = preStatement.executeQuery();
-			PageDbIterator pageIterator = new PageDbIterator(result);
-			return pageIterator;
+			preStatement = connection.prepareStatement(SELECT_CRAWLED_PAGES_FOR_RECALCULATING);
+			result = preStatement.executeQuery();
+
+			while (result.next()) {
+				Page page = toPageWithContent(result);
+				loadLinks(page, false);
+				crawledPages.add(page);
+			}
 		} catch (SQLException e) {
-			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to get complete page list", e);
+			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to get pages for recalculating", e);
+		} finally {
+			close(result, preStatement);
 		}
-		return null;
+
+		return crawledPages;
 	}
 
 	/**
@@ -490,7 +529,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			preStatement = connection.prepareStatement(sql.toString());
 			int i = 1;
 
-			JdbcTools.setInteger(preStatement, i++, crawledPage.getScore());
+			JdbcTools.setDouble(preStatement, i++, crawledPage.getScore());
 			if (crawledPage.getCrawlError() != null) {
 				JdbcTools.setString(preStatement, i++, crawledPage.getCrawlError());
 			}
@@ -588,7 +627,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 				JdbcTools.setString(preStatement, 3, foundPage.getLink().getLinkPath().getProtocol());
 				JdbcTools.setInteger(preStatement, 4, foundPage.getInnerDeep());
 				JdbcTools.setInteger(preStatement, 5, foundPage.getOuterDeep());
-				JdbcTools.setInteger(preStatement, 6, foundPage.getScore());
+				JdbcTools.setDouble(preStatement, 6, foundPage.getScore());
 				JdbcTools.setBoolean(preStatement, 7, foundPage.getCrawlNow());
 				preStatement.executeUpdate();
 			} catch (SQLException e) {
@@ -639,11 +678,11 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 				} else if (foundPageInDatabase.getCrawlTime() == null
 						&& foundPageInDatabase.getScore() < foundPage.getScore()) {
 					preStatement = connection.prepareStatement(UPDATE_FOUND_PAGE_SCORE);
-					JdbcTools.setInteger(preStatement, 1, foundPage.getScore());
+					JdbcTools.setDouble(preStatement, 1, foundPage.getScore());
 					JdbcTools.setString(preStatement, 2, foundPage.getLink().getDomain().getName());
 					JdbcTools.setString(preStatement, 3, foundPage.getLink().getLinkPath().getPath());
 					JdbcTools.setString(preStatement, 4, foundPage.getLink().getLinkPath().getProtocol());
-					JdbcTools.setInteger(preStatement, 5, foundPage.getScore());
+					JdbcTools.setDouble(preStatement, 5, foundPage.getScore());
 					preStatement.executeUpdate();
 				}
 			} catch (SQLException e) {
@@ -740,22 +779,16 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	 * @param score the score
 	 * @param crawledPage indicates if the page is already crawled
 	 */
-	public void updateScorePage(Link pageLink, Integer score, boolean crawledPage) {
+	public void updateScorePage(Link pageLink, Double score) {
 		StringBuilder sql = new StringBuilder(UPDATE_SCORE_PAGE);
-		if (!crawledPage) {
-			sql.append(UPDATE_SCORE_PAGE_NOT_CRAWLED);
-		}
 
 		PreparedStatement preStatement = null;
 		try {
 			preStatement = connection.prepareStatement(sql.toString());
-			JdbcTools.setInteger(preStatement, 1, score);
+			JdbcTools.setDouble(preStatement, 1, score);
 			JdbcTools.setString(preStatement, 2, pageLink.getDomain().getName());
 			JdbcTools.setString(preStatement, 3, pageLink.getLinkPath().getPath());
 			JdbcTools.setString(preStatement, 4, pageLink.getLinkPath().getProtocol());
-			if (!crawledPage) {
-				JdbcTools.setInteger(preStatement, 5, score);
-			}
 			preStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to update score page", e);

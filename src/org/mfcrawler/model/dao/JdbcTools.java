@@ -31,8 +31,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Tools for Jdbc which get form resultSet and set to preparedStatement 
- * Test if the values are null
+ * Tools for Jdbc which get form resultSet and set to preparedStatement Test if
+ * the values are null
  * 
  * @author lbertelo
  */
@@ -70,6 +70,22 @@ public class JdbcTools {
 	 */
 	public static Integer getInteger(ResultSet result, String columnLabel) throws SQLException {
 		int value = result.getInt(columnLabel);
+		if (result.wasNull()) {
+			return null;
+		} else {
+			return value;
+		}
+	}
+
+	/**
+	 * Get Double from resultSet
+	 * @param result the resultSet
+	 * @param columnLabel the column label
+	 * @return a Double or null
+	 * @throws SQLException
+	 */
+	public static Double getDouble(ResultSet result, String columnLabel) throws SQLException {
+		double value = result.getDouble(columnLabel);
 		if (result.wasNull()) {
 			return null;
 		} else {
@@ -175,6 +191,21 @@ public class JdbcTools {
 			preStatement.setNull(parameterIndex, Types.INTEGER);
 		} else {
 			preStatement.setInt(parameterIndex, value);
+		}
+	}
+
+	/**
+	 * Set a Double in the prepared statement
+	 * @param preStatement the prepared statement
+	 * @param parameterIndex the parameter index
+	 * @param value a Double or null
+	 * @throws SQLException
+	 */
+	public static void setDouble(PreparedStatement preStatement, int parameterIndex, Double value) throws SQLException {
+		if (value == null) {
+			preStatement.setNull(parameterIndex, Types.INTEGER);
+		} else {
+			preStatement.setDouble(parameterIndex, value);
 		}
 	}
 

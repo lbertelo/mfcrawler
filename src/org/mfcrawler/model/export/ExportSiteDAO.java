@@ -66,7 +66,7 @@ public class ExportSiteDAO extends BaseDAO implements ISiteQueryList {
 
 			while (result.next()) {
 				String domain = JdbcTools.getString(result, DOMAIN);
-				Integer totalScore = JdbcTools.getInteger(result, "totalScore");
+				Double totalScore = JdbcTools.getDouble(result, "totalScore");
 				Integer crawledPagesNumber = JdbcTools.getInteger(result, "crawledPagesNumber");
 
 				PreparedStatement preStatement2 = connection.prepareStatement(SELECT_SITE);

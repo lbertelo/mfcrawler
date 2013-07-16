@@ -43,7 +43,7 @@ public class Page {
 	/**
 	 * Score of the page (calculated or estimated)
 	 */
-	private Integer score;
+	private Double score;
 
 	/**
 	 * Inner deep is the distance between pages in a same site
@@ -148,7 +148,7 @@ public class Page {
 	 * Getter of score
 	 * @return the score
 	 */
-	public Integer getScore() {
+	public Double getScore() {
 		return score;
 	}
 
@@ -156,7 +156,7 @@ public class Page {
 	 * Setter of score
 	 * @param score the score
 	 */
-	public void setScore(Integer score) {
+	public void setScore(Double score) {
 		this.score = score;
 	}
 

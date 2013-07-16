@@ -19,13 +19,14 @@ package org.mfcrawler.model.process;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.mfcrawler.model.dao.site.PageDAO;
-import org.mfcrawler.model.dao.site.PageDbIterator;
 import org.mfcrawler.model.pojo.site.Page;
 import org.mfcrawler.model.pojo.site.link.Link;
 
@@ -118,11 +119,11 @@ public final class KeywordManager {
 	 * @param content the content of a page
 	 * @return the score calculated
 	 */
-	public synchronized Integer calculate(String content) {
-		// FIXME améliorer la fonction calculate
-		List<Integer> tmpScores = new ArrayList<Integer>();
+	public synchronized double calculate(String content) {
+		double score = 0.0;
 
 		for (String word : keywordMap.keySet()) {
+
 			Pattern pattern = Pattern.compile(makeRegex(word), Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(content);
 			int occurrence = 0;
@@ -131,46 +132,58 @@ public final class KeywordManager {
 			}
 
 			int weight = keywordMap.get(word);
-			tmpScores.add(occurrence * weight * 10);
+
+			if (occurrence <= 0) {
+				// Score minimum
+				score += 0.0;
+			} else if (occurrence <= 100) {
+				// Score Calculation = weight * ( 25 * log(x) + 50 )
+				score += weight * (25.0 * Math.log10(occurrence) + 50.0);
+			} else {
+				// Score maximum
+				score += weight * 100.0;
+			}
 		}
 
-		if (!tmpScores.isEmpty()) {
-			int addScores = 0;
-			for (Integer score : tmpScores) {
-				addScores += score;
-			}
-			return Math.round((addScores / tmpScores.size()));
-		} else {
-			return 0;
-		}
+		return score;
 	}
 
 	/**
 	 * Recalculate the scores of all the pages
 	 */
 	public void recalculateAll() {
+		Set<Link> crawledLinks = new HashSet<Link>();
+		Map<Link, Double> estimatedScoreLinks = new HashMap<Link, Double>();
+
 		PageDAO pageDao = new PageDAO();
 		pageDao.initAllScores();
 
 		pageDao.setAutoCommit(false);
-		PageDbIterator pageDbIterator = pageDao.getCompletePageList();
-		while (pageDbIterator.hasNext()) {
-			Page page = pageDbIterator.next();
-			pageDao.loadAllLinks(page);
-
-			Integer score = 0;
+		List<Page> crawledPageList = pageDao.getCrawledPagesForRecalculating();
+		for (Page page : crawledPageList) {
+			double currentScore = 0;
 			if (page.getContent() != null) {
-				score = calculate(page.getContent());
+				currentScore = calculate(page.getContent());
 			}
 
-			pageDao.updateScorePage(page.getLink(), score, true);
+			pageDao.updateScorePage(page.getLink(), currentScore);
+			crawledLinks.add(page.getLink());
+			estimatedScoreLinks.remove(page.getLink());
 
 			List<Link> outgoingLinkList = new ArrayList<Link>();
 			outgoingLinkList.addAll(page.getOutgoingInternLinks());
 			outgoingLinkList.addAll(page.getOutgoingExternLinks());
 			for (Link outgoingLink : outgoingLinkList) {
-				pageDao.updateScorePage(outgoingLink, score, false);
+				Double estimatedScore = estimatedScoreLinks.get(outgoingLink);
+				if (!crawledLinks.contains(outgoingLink)
+						&& (estimatedScore == null || estimatedScore.doubleValue() < currentScore)) {
+					estimatedScoreLinks.put(outgoingLink, currentScore);
+				}
 			}
+		}
+
+		for (Link link : estimatedScoreLinks.keySet()) {
+			pageDao.updateScorePage(link, estimatedScoreLinks.get(link));
 		}
 
 		pageDao.commit();

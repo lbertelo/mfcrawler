@@ -34,52 +34,52 @@ public class Site {
 	 * Domain of the site
 	 */
 	private Domain domain; // key
-	
+
 	/**
 	 * Indicates if the site is blacklisted
 	 */
 	private Boolean blacklisted;
-	
+
 	/**
 	 * Indicates if the robots.txt exists
 	 */
 	private Boolean robotFileExist;
-	
+
 	/**
 	 * List of robotPath from robots.txt
 	 */
 	private List<RobotPath> robotPathList;
-	
+
 	/**
 	 * Crawl delay from robots.txt
 	 */
 	private Integer robotCrawlDelay;
-	
+
 	/**
 	 * List of incoming domains
 	 */
 	private List<Domain> incomingDomains;
-	
+
 	/**
 	 * List of outgoing domains
 	 */
 	private List<Domain> outgoingDomains;
-	
+
 	/**
 	 * Minimum outer deep of the site
 	 */
 	private Integer minOuterDeep;
-	
+
 	/**
 	 * Number of crawled pages
 	 */
 	private Integer crawledPagesNumber;
-	
+
 	/**
 	 * Sum of the pages' score
 	 */
-	private Integer totalScore;
-	
+	private Double totalScore;
+
 	/**
 	 * Time of the crawl (crawl of robots.txt)
 	 */
@@ -89,7 +89,7 @@ public class Site {
 	 * Default constructor
 	 * @param domain the domain of the site
 	 */
-	public Site (Domain domain) {
+	public Site(Domain domain) {
 		this.domain = domain;
 		robotPathList = new ArrayList<RobotPath>();
 		incomingDomains = new ArrayList<Domain>();
@@ -223,7 +223,7 @@ public class Site {
 	public void setMinOuterDeep(Integer minOuterDeep) {
 		this.minOuterDeep = minOuterDeep;
 	}
-	
+
 	/**
 	 * Getter of crawled pages number
 	 * @return the number of crawled pages
@@ -244,7 +244,7 @@ public class Site {
 	 * Getter of total score
 	 * @return the total score
 	 */
-	public Integer getTotalScore() {
+	public Double getTotalScore() {
 		return totalScore;
 	}
 
@@ -252,7 +252,7 @@ public class Site {
 	 * Setter of total score
 	 * @param totalScore the total score
 	 */
-	public void setTotalScore(Integer totalScore) {
+	public void setTotalScore(Double totalScore) {
 		this.totalScore = totalScore;
 	}
 

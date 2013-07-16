@@ -31,33 +31,31 @@ public class CrawlOrder {
 	 * Link of the page to crawl
 	 */
 	private Link link;
-	
+
 	/**
 	 * Indicates if the crawler must be stopped
 	 */
 	private Boolean stop;
-	
+
 	/**
-	 * Indicates if the crawler must be waited
-	 * Waiting time in milliseconds
+	 * Indicates if the crawler must be waited Waiting time in milliseconds
 	 */
-	private Integer wait;	
-	
+	private Integer wait;
+
 	/**
 	 * Inner deep of the page to crawl
 	 */
-	private Integer innerDeep;	
-	
+	private Integer innerDeep;
+
 	/**
 	 * Outer deep of the page to crawl
 	 */
-	private Integer outerDeep;	
-	
+	private Integer outerDeep;
+
 	/**
-	 * The expectedScore of the page
-	 * (best score of the parent pages)
+	 * The expectedScore of the page (best score of the parent pages)
 	 */
-	private Integer expectedScore;
+	private Double expectedScore;
 
 	/**
 	 * Default constructor
@@ -66,9 +64,9 @@ public class CrawlOrder {
 		stop = Boolean.FALSE;
 		wait = 0;
 	}
-	
+
 	/**
-	 * Constructor with page as a parameter 
+	 * Constructor with page as a parameter
 	 * @param page the page
 	 */
 	public CrawlOrder(Page page) {
@@ -111,7 +109,7 @@ public class CrawlOrder {
 	public void setStop(Boolean stop) {
 		this.stop = stop;
 	}
-	
+
 	/**
 	 * Getter of the waiting time
 	 * @return the waiting time
@@ -164,7 +162,7 @@ public class CrawlOrder {
 	 * Getter of expected score
 	 * @return the expected score
 	 */
-	public Integer getExpectedScore() {
+	public Double getExpectedScore() {
 		return expectedScore;
 	}
 
@@ -172,7 +170,7 @@ public class CrawlOrder {
 	 * Setter of expected score
 	 * @param expectedScore the expected score
 	 */
-	public void setExpectedScore(Integer expectedScore) {
+	public void setExpectedScore(Double expectedScore) {
 		this.expectedScore = expectedScore;
 	}
 

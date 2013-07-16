@@ -297,14 +297,14 @@ public class CrawlThread extends Thread {
 			if (page.getCrawlError() == null && !page.getRedirectPage()) {
 				// Calculates score
 				crawlInfo.notice(CrawlThreadInfo.CI_CALC + order.getLink());
-				Integer score = keywordManager.calculate(page.getContent());
+				Double score = keywordManager.calculate(page.getContent());
 				page.setScore(score);
 			}
 
 		}
 
 		if (page.getCrawlError() != null) {
-			page.setScore(0);
+			page.setScore(0.0);
 		}
 
 		// Sends information to Database
