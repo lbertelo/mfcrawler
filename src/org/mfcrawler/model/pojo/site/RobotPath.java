@@ -17,6 +17,8 @@
 
 package org.mfcrawler.model.pojo.site;
 
+import java.util.regex.Pattern;
+
 /**
  * Describes a robotPath from robots.txt
  * 
@@ -28,12 +30,12 @@ public class RobotPath {
 	 * Indicates if the robotPath is allow
 	 */
 	private boolean allow;
-	
+
 	/**
 	 * Path of the robotPath
 	 */
 	private String path;
-	
+
 	/**
 	 * Default constructor
 	 * @param allow the boolean allow
@@ -75,7 +77,7 @@ public class RobotPath {
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
+
 	/**
 	 * Indicates if the path checks an url
 	 * @param urlPath the url to check
@@ -83,9 +85,9 @@ public class RobotPath {
 	 */
 	public boolean checkPath(String urlPath) {
 		StringBuilder pathPattern = new StringBuilder();
-		pathPattern.append("^").append(path.replaceAll("\\*", "\\S+"));
-		
+		pathPattern.append("^").append(Pattern.quote(path.replaceAll("\\*", "\\S+")));
+
 		return urlPath.matches(pathPattern.toString());
 	}
-	
+
 }
