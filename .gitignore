@@ -6,6 +6,6 @@
 *.ear
 
 # Eclipse Files #
-/.settings
+/.settings/*
 /.classpath
 /.project
