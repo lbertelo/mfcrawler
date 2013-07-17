@@ -239,11 +239,10 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 				// Recalculate score
 				if (!keywordMap.equals(currentCrawlProject.getKeywordMap())) {
 					ApplicationModel.this.notify(IPropertyName.LOADING,
-							I18nUtil.getMessage("loading.recalculateScores"));
+							I18nUtil.getMessage("loading.recalculateScores.step1"));
 
 					KeywordManager.get().setKeywordMap(keywordMap);
-					//TODO Afficher l'évolution du recalcul
-					KeywordManager.get().recalculateAll();
+					KeywordManager.get().recalculateAll(ApplicationModel.this);
 
 					currentCrawlProject.setKeywordMap(keywordMap);
 				}

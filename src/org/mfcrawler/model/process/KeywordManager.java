@@ -26,9 +26,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.mfcrawler.model.IPropertyName;
+import org.mfcrawler.model.SwingPropertyChangeModel;
 import org.mfcrawler.model.dao.site.PageDAO;
 import org.mfcrawler.model.pojo.site.Page;
 import org.mfcrawler.model.pojo.site.link.Link;
+import org.mfcrawler.model.util.I18nUtil;
 
 /**
  * Manages the keywords
@@ -115,7 +118,7 @@ public final class KeywordManager {
 	}
 
 	/**
-	 * Calculate the score of a content
+	 * Calculates the score of a content
 	 * @param content the content of a page
 	 * @return the score calculated
 	 */
@@ -149,9 +152,10 @@ public final class KeywordManager {
 	}
 
 	/**
-	 * Recalculate the scores of all the pages
+	 * Recalculates the scores of all the pages
+	 * @param propertyChangeModel to notify the progression
 	 */
-	public void recalculateAll() {
+	public void recalculateAll(SwingPropertyChangeModel propertyChangeModel) {
 		Set<Link> crawledLinks = new HashSet<Link>();
 		Map<Link, Double> estimatedScoreLinks = new HashMap<Link, Double>();
 
@@ -160,6 +164,8 @@ public final class KeywordManager {
 
 		pageDao.setAutoCommit(false);
 		List<Page> crawledPageList = pageDao.getCrawledPagesForRecalculating();
+		
+		propertyChangeModel.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.recalculateScores.step2"));
 		for (Page page : crawledPageList) {
 			double currentScore = 0;
 			if (page.getContent() != null) {
@@ -182,6 +188,7 @@ public final class KeywordManager {
 			}
 		}
 
+		propertyChangeModel.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.recalculateScores.step3"));
 		for (Link link : estimatedScoreLinks.keySet()) {
 			pageDao.updateScorePage(link, estimatedScoreLinks.get(link));
 		}
