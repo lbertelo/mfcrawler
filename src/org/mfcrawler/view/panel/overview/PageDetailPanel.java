@@ -219,7 +219,7 @@ public class PageDetailPanel {
 		path.setText("<a href=\"" + page.getLink().getUrl() + "\">" + page.getLink().toString() + "</a>");
 		allowCrawl.setSelected(ConversionUtils.toBoolean(page.getAllowCrawl()));
 
-		score.setText(ConversionUtils.toString(page.getScore()));
+		score.setText(ConversionUtils.toString(Math.round(page.getScore())));
 		innerDeep.setText(ConversionUtils.toString(page.getInnerDeep()));
 		outerDeep.setText(ConversionUtils.toString(page.getOuterDeep()));
 		crawlTime.setText(ConversionUtils.toString(page.getCrawlTime()));

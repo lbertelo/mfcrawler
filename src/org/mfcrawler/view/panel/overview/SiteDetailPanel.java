@@ -214,7 +214,7 @@ public class SiteDetailPanel {
 			totalScore.setVisible(true);
 			averageScore.setVisible(true);
 			if (site.getTotalScore() != null) {
-				totalScore.setText(String.valueOf(site.getTotalScore()));
+				totalScore.setText(String.valueOf(Math.round(site.getTotalScore())));
 				averageScore.setText(String.valueOf(Math.round(site.getTotalScore() / site.getCrawledPagesNumber())));
 			} else {
 				totalScore.setText(I18nUtil.getMessage("general.undefined"));
