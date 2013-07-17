@@ -17,14 +17,32 @@
 
 package org.mfcrawler.model.pojo.site;
 
-import java.util.regex.Pattern;
-
 /**
  * Describes a robotPath from robots.txt
  * 
  * @author lbertelo
  */
 public class RobotPath {
+
+	/**
+	 * Start of pattern for "checkPath"
+	 */
+	private static final String PATTERN_START = "^\\Q";
+
+	/**
+	 * Pattern for replacing "*"
+	 */
+	private static final String PATTERN_REPLACE = "\\*";
+
+	/**
+	 * Pattern for replacing by "\E\S+\Q"
+	 */
+	private static final String PATTERN_REPLACE_BY = "\\\\E\\\\S+\\\\Q";
+
+	/**
+	 * End of pattern for "checkPath"
+	 */
+	private static final String PATTERN_END = "\\E";
 
 	/**
 	 * Indicates if the robotPath is allow
@@ -85,7 +103,9 @@ public class RobotPath {
 	 */
 	public boolean checkPath(String urlPath) {
 		StringBuilder pathPattern = new StringBuilder();
-		pathPattern.append("^").append(Pattern.quote(path.replaceAll("\\*", "\\S+")));
+		pathPattern.append(PATTERN_START);
+		pathPattern.append(path.replaceAll(PATTERN_REPLACE, PATTERN_REPLACE_BY));
+		pathPattern.append(PATTERN_END);
 
 		return urlPath.matches(pathPattern.toString());
 	}
