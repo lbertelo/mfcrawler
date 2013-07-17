@@ -388,8 +388,7 @@ public class CrawlThread extends Thread {
 	 * @param page the page
 	 */
 	private void savePageInDataBase(Page page) {
-		// TODO ajouter des commits et des rollbacks pour l'enregistrement en
-		// base ?
+		// TODO ajouter des commits et des rollbacks ?
 		pageDao.updateCrawledPage(page);
 
 		List<Link> outgoingLink = new ArrayList<Link>();

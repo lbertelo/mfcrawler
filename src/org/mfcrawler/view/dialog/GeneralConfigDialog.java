@@ -82,8 +82,7 @@ public class GeneralConfigDialog extends DefaultDialog implements IAppConfigPara
 		dialog.setMinimumSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
 		dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.PAGE_AXIS));
 
-		// TODO rendre le user agent modifiable, faire attention aux effets de
-		// bord
+		// TODO rendre le user agent modifiable, attention aux effets de bord
 		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel userAgentLabel = new JLabel(I18nUtil.getMessage("dialog.applicationConfig.userAgent"));
 		tempPanel.add(userAgentLabel);
