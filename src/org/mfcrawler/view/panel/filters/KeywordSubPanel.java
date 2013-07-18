@@ -163,7 +163,7 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (!wordTextField.getText().isEmpty()) {
-				String newWord = wordTextField.getText();
+				String newWord = wordTextField.getText().toLowerCase();
 				Integer newWeight = (Integer) weightSpinner.getValue();
 
 				keywordMap.put(newWord, newWeight);

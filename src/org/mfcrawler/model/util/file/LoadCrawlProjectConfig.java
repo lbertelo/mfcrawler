@@ -223,7 +223,7 @@ public class LoadCrawlProjectConfig {
 					String line = bufferedReader.readLine();
 
 					int separatorIndex = line.indexOf(":");
-					String word = line.substring(separatorIndex + 1).trim();
+					String word = line.substring(separatorIndex + 1).trim().toLowerCase();
 					Integer weight = ConversionUtils.toInteger(line.substring(0, separatorIndex));
 
 					keywordMap.put(word, weight);
