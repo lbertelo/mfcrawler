@@ -70,6 +70,7 @@ public class FiltersPanel extends DefaultPanel {
 		buttonPanel.setLayout(new FlowLayout());
 		buttonApply = new JButton(I18nUtil.getMessage("filters.apply"));
 		buttonApply.addActionListener(new ApplyFiltersAction());
+		buttonApply.setEnabled(false);
 		buttonPanel.add(buttonApply);
 
 		panel.add(filtersPanel, BorderLayout.CENTER);
@@ -78,17 +79,10 @@ public class FiltersPanel extends DefaultPanel {
 		return panel;
 	}
 
-	private class ApplyFiltersAction implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (getModel().getSupervisor().isStopped()) {
-				getModel().applyFilters(blackListSubPanel.getBlacklistDomains(), keywordSubPanel.getKeywordMap());
-			} else {
-				getView().notifyDialog(IPropertyName.WARNING, I18nUtil.getMessage("warning.stopCrawl"));
-			}
-		}
+	public void enabledButtonApply(boolean enabled) {
+		buttonApply.setEnabled(enabled);
 	}
-
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		String propertyName = evt.getPropertyName();
@@ -99,6 +93,18 @@ public class FiltersPanel extends DefaultPanel {
 		} else if (propertyName.equals(IPropertyName.ADD_BLACKLIST_DOMAIN)) {
 			String domainStr = (String) evt.getNewValue();
 			blackListSubPanel.addBlacklistDomain(domainStr);
+		}
+	}
+	
+	private class ApplyFiltersAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (getModel().getSupervisor().isStopped()) {
+				getModel().applyFilters(blackListSubPanel.getBlacklistDomains(), keywordSubPanel.getKeywordMap());
+				buttonApply.setEnabled(false);
+			} else {
+				getView().notifyDialog(IPropertyName.WARNING, I18nUtil.getMessage("warning.stopCrawl"));
+			}
 		}
 	}
 

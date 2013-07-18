@@ -39,6 +39,7 @@ import org.mfcrawler.model.util.I18nUtil;
 import org.mfcrawler.view.SortedListModel;
 import org.mfcrawler.view.panel.DefaultPanel;
 import org.mfcrawler.view.panel.DefaultSubPanel;
+import org.mfcrawler.view.panel.FiltersPanel;
 
 
 
@@ -175,6 +176,7 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 						indexKeywordElement = keywordListModel.getElements().indexOf(keyword);
 					}
 				}
+				
 				if (indexKeywordElement != -1) {
 					keywordListModel.getElementAt(indexKeywordElement).weight = newWeight;
 				} else {
@@ -183,7 +185,9 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 					newKeywordElement.weight = newWeight;
 					keywordListModel.addElement(newKeywordElement);
 				}
+				
 				keywordJList.updateUI();
+				((FiltersPanel) getParentPanel()).enabledButtonApply(true);
 			}
 		}
 	}
@@ -195,6 +199,7 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 				KeywordElement keywordSelected = keywordJList.getSelectedValue();
 				keywordMap.remove(keywordSelected.word);
 				keywordListModel.removeElement(keywordSelected);
+				((FiltersPanel) getParentPanel()).enabledButtonApply(true);
 			}
 		}
 	}

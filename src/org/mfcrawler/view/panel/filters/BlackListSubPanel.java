@@ -39,6 +39,7 @@ import org.mfcrawler.model.util.I18nUtil;
 import org.mfcrawler.view.SortedListModel;
 import org.mfcrawler.view.panel.DefaultPanel;
 import org.mfcrawler.view.panel.DefaultSubPanel;
+import org.mfcrawler.view.panel.FiltersPanel;
 
 
 /**
@@ -63,8 +64,8 @@ public class BlackListSubPanel extends DefaultSubPanel implements IFiltersParams
 
 	public void setBlacklistDomains(Set<Domain> blacklistDomains) {
 		this.blacklistDomains = new HashSet<Domain>(blacklistDomains);
-
 		domainListModel = new SortedListModel<Domain>();
+		
 		for (Domain domain : blacklistDomains) {
 			domainListModel.addElement(domain);
 		}
@@ -77,6 +78,7 @@ public class BlackListSubPanel extends DefaultSubPanel implements IFiltersParams
 			blacklistDomains.add(link.getDomain());
 			domainListModel.addElement(link.getDomain());
 		}
+		((FiltersPanel) getParentPanel()).enabledButtonApply(true);
 	}
 
 	public Set<Domain> getBlacklistDomains() {
@@ -145,6 +147,7 @@ public class BlackListSubPanel extends DefaultSubPanel implements IFiltersParams
 			if (link != null && !blacklistDomains.contains(link.getDomain())) {
 				blacklistDomains.add(link.getDomain());
 				domainListModel.addElement(link.getDomain());
+				((FiltersPanel) getParentPanel()).enabledButtonApply(true);
 			}
 		}
 	}
@@ -156,6 +159,7 @@ public class BlackListSubPanel extends DefaultSubPanel implements IFiltersParams
 				blacklistDomains.remove(domainJList.getSelectedValue());
 				domainListModel.removeElement(domainJList.getSelectedValue());
 				domainTextField.setText("");
+				((FiltersPanel) getParentPanel()).enabledButtonApply(true);
 			}
 		}
 	}
