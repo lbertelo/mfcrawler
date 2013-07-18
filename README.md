@@ -2,7 +2,7 @@ MfCrawler - Mini Focused Crawler
 =================================
 MfCrawler is a intuitive [Web crawler](http://en.wikipedia.org/wiki/Web_crawler).
 You can easily configure crawl parameters and set keywords and domain in blacklist.
-Finally, the results can be exported in different formats.
+Finally, the results can be analysed and exported in different formats.
 
 Install and use
 ---------------
