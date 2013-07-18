@@ -13,9 +13,9 @@ Screenshots
 -----------
 ![Screenshot 1](http://imagesia.com/mfcrawler-1_9y0l)
 
-![Screenshot 1](http://imagesia.com/mfcrawler-2_9y0k)
+![Screenshot 2](http://imagesia.com/mfcrawler-2_9y0k)
 
-![Screenshot 1](http://imagesia.com/mfcrawler-3_9y0j)
+![Screenshot 3](http://imagesia.com/mfcrawler-3_9y0j)
 
 License
 -------
