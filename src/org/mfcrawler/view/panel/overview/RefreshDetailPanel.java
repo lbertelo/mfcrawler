@@ -33,7 +33,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
 import org.mfcrawler.model.pojo.OverviewParams;
-import org.mfcrawler.model.pojo.OverviewParams.SiteOrder;
+import org.mfcrawler.model.pojo.OverviewParams.ESiteOrder;
 import org.mfcrawler.model.util.ConversionUtils;
 import org.mfcrawler.model.util.I18nUtil;
 import org.mfcrawler.view.panel.OverviewPanel;
@@ -168,13 +168,13 @@ public class RefreshDetailPanel {
 
 		String orderSelect = (String) orderList.getSelectedItem();
 		if (orderSelect.equals(NAME_ORDER)) {
-			params.setOrder(SiteOrder.NAME);
+			params.setOrder(ESiteOrder.NAME);
 		} else if (orderSelect.equals(SCORE_ORDER)) {
-			params.setOrder(SiteOrder.SCORE);
+			params.setOrder(ESiteOrder.SCORE);
 		} else if (orderSelect.equals(DEEP_ORDER)) {
-			params.setOrder(SiteOrder.DEEP);
+			params.setOrder(ESiteOrder.DEEP);
 		} else if (orderSelect.equals(CRAWLTIME_ORDER)) {
-			params.setOrder(SiteOrder.CRAWLTIME);
+			params.setOrder(ESiteOrder.CRAWLTIME);
 		}
 
 		return params;

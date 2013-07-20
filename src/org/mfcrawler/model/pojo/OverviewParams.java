@@ -27,7 +27,7 @@ public class OverviewParams {
 	/**
 	 * Enum for ordering display
 	 */
-	public enum SiteOrder {
+	public enum ESiteOrder {
 		NAME, SCORE, DEEP, CRAWLTIME
 	}
 
@@ -54,7 +54,7 @@ public class OverviewParams {
 	/**
 	 * Default value of the order
 	 */
-	private static final SiteOrder ORDER_DEFAULT = SiteOrder.NAME;
+	private static final ESiteOrder ORDER_DEFAULT = ESiteOrder.NAME;
 
 	/**
 	 * Indicates if the crawled pages (and ok) should be displayed
@@ -79,7 +79,7 @@ public class OverviewParams {
 	/**
 	 * Indicates the order of the display
 	 */
-	private SiteOrder order;
+	private ESiteOrder order;
 
 	/**
 	 * Default constructor which initialize attributes with their default values
@@ -160,7 +160,7 @@ public class OverviewParams {
 	 * Getter of order
 	 * @return the siteOrder
 	 */
-	public SiteOrder getOrder() {
+	public ESiteOrder getOrder() {
 		return order;
 	}
 
@@ -168,7 +168,7 @@ public class OverviewParams {
 	 * Setter of order
 	 * @param order the siteOrder
 	 */
-	public void setOrder(SiteOrder order) {
+	public void setOrder(ESiteOrder order) {
 		this.order = order;
 	}
 
