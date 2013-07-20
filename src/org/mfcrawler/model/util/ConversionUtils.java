@@ -29,6 +29,12 @@ import java.util.Date;
 public class ConversionUtils {
 
 	/**
+	 * Private constructor
+	 */
+	private ConversionUtils() {
+	}
+	
+	/**
 	 * Converts an object to a String (if the object is null, a default string
 	 * is returned)
 	 * @param object the object
