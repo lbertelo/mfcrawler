@@ -15,71 +15,50 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mfcrawler.model.dao.site;
+package org.mfcrawler.model.dao.iterator;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.mfcrawler.model.pojo.site.Page;
+import org.mfcrawler.model.dao.JdbcTools;
+import org.mfcrawler.model.pojo.site.link.Link;
 
 /**
- * A iterator DAO for page
+ * A iterator DAO for link
  * 
  * @author lbertelo
  */
-public class PageDbIterator {
-
-	/**
-	 * The resultSet of the iterator
-	 */
-	private ResultSet resultSet;
-
-	/**
-	 * Indicates if the iterator has a next value
-	 */
-	private boolean hasNext;
+public class LinkDbIterator extends DbIterator {
 
 	/**
 	 * Constructor
 	 * @param resultSet the resultSet
 	 */
-	public PageDbIterator(ResultSet resultSet) {
-		this.resultSet = resultSet;
-		try {
-			hasNext = resultSet.next();
-		} catch (SQLException e) {
-			hasNext = false;
-		}
+	public LinkDbIterator(ResultSet resultSet) {
+		super(resultSet);
 	}
 
 	/**
-	 * Indicates if iterator has a next page
-	 * @return true if has, false otherwise
+	 * Return the next link and move the cursor
+	 * @return the link
 	 */
-	public boolean hasNext() {
-		return hasNext;
-	}
-
-	/**
-	 * Return the next page and move the cursor
-	 * @return the page
-	 */
-	public Page next() {
-		Page page = null;
+	public Link next() {
+		Link link = null;
 		try {
-			if (hasNext) {
-				page = PageDAO.toPageWithoutContent(resultSet);
-				hasNext = resultSet.next();
-				if (!hasNext) {
-					resultSet.close();
+			if (hasNext()) {
+				link = new Link(JdbcTools.getString(getResultSet(), PROTOCOL), JdbcTools.getString(getResultSet(),
+						DOMAIN), JdbcTools.getString(getResultSet(), PATH));
+				setHasNext(getResultSet().next());
+				if (!hasNext()) {
+					getResultSet().close();
 				}
 			}
 		} catch (SQLException e) {
-			Logger.getLogger(PageDbIterator.class.getName()).log(Level.SEVERE, "Error to get next pageDb iterator", e);
+			Logger.getLogger(PageDbIterator.class.getName()).log(Level.SEVERE, "Error to get next linkDb iterator", e);
 		}
-		return page;
+		return link;
 	}
 
 }

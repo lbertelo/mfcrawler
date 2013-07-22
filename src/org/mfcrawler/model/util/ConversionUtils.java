@@ -33,7 +33,7 @@ public class ConversionUtils {
 	 */
 	private ConversionUtils() {
 	}
-	
+
 	/**
 	 * Converts an object to a String (if the object is null, a default string
 	 * is returned)
@@ -78,6 +78,21 @@ public class ConversionUtils {
 			value = Integer.valueOf(object.toString());
 		} catch (NumberFormatException e) {
 			value = 0;
+		}
+		return value;
+	}
+
+	/**
+	 * Converts and object to a Double (return 0.0 if the conversion fail)
+	 * @param object the object
+	 * @return the double
+	 */
+	public static Double toDouble(Object object) {
+		Double value;
+		try {
+			value = Double.valueOf(object.toString());
+		} catch (NumberFormatException e) {
+			value = 0.0;
 		}
 		return value;
 	}

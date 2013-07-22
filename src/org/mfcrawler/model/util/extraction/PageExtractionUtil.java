@@ -25,11 +25,11 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.mfcrawler.model.pojo.site.Page;
-import org.mfcrawler.model.pojo.site.link.Link;
-
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
+
+import org.mfcrawler.model.pojo.site.Page;
+import org.mfcrawler.model.pojo.site.link.Link;
 
 /**
  * Utility which extracts page information

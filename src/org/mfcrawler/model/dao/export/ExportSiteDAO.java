@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mfcrawler.model.export;
+package org.mfcrawler.model.dao.export;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -54,14 +54,14 @@ public class ExportSiteDAO extends BaseDAO implements ISiteQueryList {
 	 * @param minTotalScore the minimum total score accepted
 	 * @return the list of sites
 	 */
-	public List<Site> getSiteListToExport(Integer minTotalScore) {
+	public List<Site> getSiteListToExport(Double minTotalScore) {
 		PreparedStatement preStatement = null;
 		ResultSet result = null;
 		List<Site> siteListToExport = new ArrayList<Site>();
 
 		try {
 			preStatement = connection.prepareStatement(EXPORT_SITE_LIST);
-			JdbcTools.setInteger(preStatement, 1, minTotalScore);
+			JdbcTools.setDouble(preStatement, 1, minTotalScore);
 			result = preStatement.executeQuery();
 
 			while (result.next()) {

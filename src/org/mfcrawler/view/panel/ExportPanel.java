@@ -25,16 +25,21 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import org.mfcrawler.model.ApplicationModel;
-import org.mfcrawler.model.export.ExportSitesGexfFile;
+import org.mfcrawler.model.export.ExportResults;
+import org.mfcrawler.model.export.ExportResults.EFormatExport;
+import org.mfcrawler.model.export.ExportResults.EScopeExport;
 import org.mfcrawler.model.util.ConversionUtils;
 import org.mfcrawler.model.util.I18nUtil;
 import org.mfcrawler.view.ApplicationView;
@@ -47,6 +52,11 @@ import org.mfcrawler.view.ApplicationView;
 public class ExportPanel extends DefaultPanel {
 
 	private JTextField minScore;
+	private JRadioButton pageScopeButton;
+	private JRadioButton siteScopeButton;
+	private JRadioButton gexfFormatButton;
+	private JRadioButton csvDataFormatButton;
+	private JRadioButton csvLinksFormatButton;
 	private JFileChooser fileChooser;
 
 	public ExportPanel(ApplicationView view, ApplicationModel model) {
@@ -56,63 +66,140 @@ public class ExportPanel extends DefaultPanel {
 	@Override
 	protected JComponent buildContent() {
 		fileChooser = new JFileChooser();
-		fileChooser.setFileFilter(new FileFilter() {
-			@Override
-			public boolean accept(File file) {
-				return file.getName().endsWith(".gexf");
-			}
 
-			@Override
-			public String getDescription() {
-				return "Graph Exchange XML Format (*.gexf)";
-			}
-		});
-
+		JPanel tempPanel;
 		JPanel panel = new JPanel();
-		panel.setLayout(new BorderLayout());
-		panel.setBorder(BorderFactory.createTitledBorder("À changer ici"));
+		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-		JPanel tempPanel = new JPanel(new FlowLayout());
+		JPanel scopePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		scopePanel.setBorder(BorderFactory.createTitledBorder(I18nUtil.getMessage("export.scope")));
+		tempPanel = new JPanel();
+		tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.PAGE_AXIS));
+		ButtonGroup scopeGroup = new ButtonGroup();
+		pageScopeButton = new JRadioButton(I18nUtil.getMessage("export.scope.page"), true);
+		scopeGroup.add(pageScopeButton);
+		tempPanel.add(pageScopeButton);
+		siteScopeButton = new JRadioButton(I18nUtil.getMessage("export.scope.site"));
+		scopeGroup.add(siteScopeButton);
+		tempPanel.add(siteScopeButton);
+		scopePanel.add(tempPanel);
+
+		panel.add(scopePanel);
+		JPanel formatPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		formatPanel.setBorder(BorderFactory.createTitledBorder(I18nUtil.getMessage("export.format")));
+		tempPanel = new JPanel();
+		tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.PAGE_AXIS));
+		ButtonGroup formatGroup = new ButtonGroup();
+		gexfFormatButton = new JRadioButton(I18nUtil.getMessage("export.format.gexf"), true);
+		formatGroup.add(gexfFormatButton);
+		tempPanel.add(gexfFormatButton);
+		csvDataFormatButton = new JRadioButton(I18nUtil.getMessage("export.format.csv.data"));
+		formatGroup.add(csvDataFormatButton);
+		tempPanel.add(csvDataFormatButton);
+		csvLinksFormatButton = new JRadioButton(I18nUtil.getMessage("export.format.csv.links"));
+		formatGroup.add(csvLinksFormatButton);
+		tempPanel.add(csvLinksFormatButton);
+		formatPanel.add(tempPanel);
+
+		panel.add(formatPanel);
+		JPanel paramsPanel = new JPanel();
+		paramsPanel.setLayout(new BoxLayout(paramsPanel, BoxLayout.PAGE_AXIS));
+		paramsPanel.setBorder(BorderFactory.createTitledBorder(I18nUtil.getMessage("export.export")));
+		tempPanel = new JPanel(new FlowLayout());
 		JLabel minScoreLabel = new JLabel(I18nUtil.getMessage("export.minimumScore"));
 		minScore = new JTextField("0", 5);
 		tempPanel.add(minScoreLabel);
 		tempPanel.add(minScore);
-		panel.add(tempPanel, BorderLayout.PAGE_START);
-
+		paramsPanel.add(tempPanel);
+		
 		tempPanel = new JPanel(new FlowLayout());
-		JButton exportButton = new JButton(I18nUtil.getMessage("export.exportGexf"));
-		exportButton.addActionListener(new ExportGEXF());
+		JButton exportButton = new JButton(I18nUtil.getMessage("export.export"));
+		exportButton.addActionListener(new ExportAction());
 		tempPanel.add(exportButton);
-		panel.add(tempPanel, BorderLayout.CENTER);
+		paramsPanel.add(tempPanel, BorderLayout.CENTER);
+
+		panel.add(paramsPanel);
 
 		return panel;
 	}
 
-	// Listener Class
+	private EScopeExport getScopeSelected() {
+		EScopeExport scope;
+		if (siteScopeButton.isSelected()) {
+			scope = EScopeExport.SITE;
+		} else {
+			scope = EScopeExport.PAGE;
+		}
+		return scope;
+	}
+	
+	private EFormatExport getFileFormatSelected() {
+		EFormatExport format;
+		if (gexfFormatButton.isSelected()) {
+			format = EFormatExport.GEXF;
+		} else if (csvDataFormatButton.isSelected()) {
+			format = EFormatExport.CSV_DATA;
+		} else {
+			format = EFormatExport.CSV_LINKS;
+		}
+		return format;
+	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		// Do nothing
+	}
 
-	private class ExportGEXF implements ActionListener {
+	// File Filters
+
+	private class GexfFileFilter extends FileFilter {
+		@Override
+		public boolean accept(File file) {
+			return file.getName().endsWith(I18nUtil.getMessage("export.fileFilters.gexf.extension"));
+		}
 
 		@Override
+		public String getDescription() {
+			return I18nUtil.getMessage("export.fileFilters.gexf.description");
+		}
+	}
+
+	private class CSVFileFilter extends FileFilter {
+		@Override
+		public boolean accept(File file) {
+			return file.getName().endsWith(I18nUtil.getMessage("export.fileFilters.csv.extension"));
+		}
+
+		@Override
+		public String getDescription() {
+			return I18nUtil.getMessage("export.fileFilters.csv.description");
+		}
+	}
+
+	// Listener Class
+
+	private class ExportAction implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			Integer minScoreValue;
 			if (!minScore.getText().isEmpty()) {
-				minScoreValue = ConversionUtils.toInteger(minScore.getText());
+				Double minScoreValue = ConversionUtils.toDouble(minScore.getText());
+				EScopeExport scope = getScopeSelected();
+				EFormatExport format = getFileFormatSelected();
+				
+				if (format == EFormatExport.GEXF) {
+					fileChooser.setFileFilter(new GexfFileFilter());
+				} else {
+					fileChooser.setFileFilter(new CSVFileFilter());
+				}
+				
 				int returnVal = fileChooser.showSaveDialog(getView().getFrame());
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
-					if (!file.getName().endsWith(".gexf")) {
-						file = new File(file.getAbsolutePath() + ".gexf");
-					}
-					ExportSitesGexfFile.exportSitesGexf(file, minScoreValue);
+					ExportResults.export(file, scope, format, minScoreValue);				
 				}
 			}
 		}
 
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		// Do nothing
 	}
 
 }
