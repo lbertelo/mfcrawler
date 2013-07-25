@@ -8,14 +8,15 @@ Install and use
 ---------------
 First, you need the Java Virtual Machine version 7 that you can download on [java.com](http://java.com).
 Then, download the last version of MfCrawler and launch the "Jar", no installation is required.
+**Currently, you can't download packaged version of MfCrawler because the project is not yet ready to use**
 
 Screenshots
 -----------
-![Screenshot 1](http://imagesia.com/mfcrawler-1_9y0l)
+![Screenshot 1](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_1.png)
 
-![Screenshot 2](http://imagesia.com/mfcrawler-2_9y0k)
+![Screenshot 2](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_2.png)
 
-![Screenshot 3](http://imagesia.com/mfcrawler-3_9y0j)
+![Screenshot 3](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_3.png)
 
 License
 -------
