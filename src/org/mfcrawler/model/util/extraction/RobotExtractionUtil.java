@@ -67,7 +67,7 @@ public class RobotExtractionUtil {
 
 	/**
 	 * Extracts robots.txt information from the content of the file
-	 * @param site the site
+	 * @param site the site modified
 	 * @param robotFileContent the content of the robots.txt
 	 */
 	public static void extraction(Site site, String robotFileContent) {
