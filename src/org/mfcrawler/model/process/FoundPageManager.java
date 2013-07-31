@@ -122,9 +122,9 @@ public class FoundPageManager {
 
 				// Try to get a better "wait"
 				if (nextWaitDate != null) {
-					long difWaitDate = nextWaitDate.getTime() - new Date().getTime();
+					int difWaitDate = (int) (nextWaitDate.getTime() - new Date().getTime());
 					if (difWaitDate > 0) {
-						wait = new Integer((int) difWaitDate);
+						wait = Integer.valueOf(difWaitDate);
 					}
 				}
 

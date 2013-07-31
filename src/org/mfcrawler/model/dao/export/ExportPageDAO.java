@@ -22,7 +22,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,39 +58,56 @@ public class ExportPageDAO extends BaseDAO implements IPageQueryList {
 	private static final String EXPORT_PAGE_LIST_MIN_SCORE = " AND " + SCORE + " >= ? ";
 
 	/**
+	 * "Order by" for query which selects pages to export
+	 */
+	private static final String EXPORT_PAGE_LIST_ORDER = " ORDER BY " + DOMAIN + " ASC, " + PATH + " ASC, " + PROTOCOL;
+
+	/**
 	 * Query which selects outgoing links to export
 	 */
-	private static final String EXPORT_EXTERN_LINKS_START = " SELECT * FROM " + TABLE_LINK + " WHERE " + DOMAIN
-			+ " = ? AND " + PATH + " =  ? AND " + PROTOCOL + " = ? AND " + LINK_DOMAIN + " IN ( ";
+	private static final String EXPORT_EXTERN_LINKS_START = " SELECT " + LINK_DOMAIN + ", " + LINK_PATH + ", "
+			+ LINK_PROTOCOL + " FROM " + TABLE_LINK + " WHERE " + DOMAIN + " = ? AND " + PATH + " =  ? AND " + PROTOCOL
+			+ " = ? AND " + LINK_DOMAIN + " IN ( ";
+
+	/**
+	 * "Order by" for query which selects outgoing links to export
+	 */
+	private static final String EXPORT_EXTERN_LINKS_ORDER = " ORDER BY " + LINK_DOMAIN + " ASC, " + LINK_PATH
+			+ " ASC, " + LINK_PROTOCOL;
 
 	/**
 	 * Query which selects source links
 	 */
 	private static final String EXPORT_SOURCE_LINKS = " SELECT " + PROTOCOL + ", " + DOMAIN + ", " + PATH + " FROM "
-			+ TABLE_PAGE + " WHERE " + CONTENT + " IS NOT NULL AND " + SCORE + " >= ? ";
+			+ TABLE_PAGE + " WHERE " + CONTENT + " IS NOT NULL AND " + SCORE + " >= ? ORDER BY " + DOMAIN + " ASC, "
+			+ PATH + " ASC, " + PROTOCOL + " ASC ";
 
+	/**
+	 * Query which selects target links
+	 */
 	private static final String EXPORT_TARGET_LINKS = " SELECT " + TABLE_LINK_P + LINK_PROTOCOL + ", " + TABLE_LINK_P
 			+ LINK_DOMAIN + ", " + TABLE_LINK_P + LINK_PATH + " FROM " + TABLE_LINK + " INNER JOIN " + TABLE_PAGE
 			+ " ON ( " + TABLE_PAGE_P + PROTOCOL + " = " + TABLE_LINK_P + LINK_PROTOCOL + " AND " + TABLE_PAGE_P
 			+ DOMAIN + " = " + TABLE_LINK_P + LINK_DOMAIN + " AND " + TABLE_PAGE_P + PATH + " = " + TABLE_LINK_P
 			+ LINK_PATH + " ) WHERE " + TABLE_PAGE_P + CONTENT + " IS NOT NULL AND " + TABLE_PAGE_P + SCORE
 			+ " >= ? AND " + TABLE_LINK_P + PROTOCOL + " = ? AND " + TABLE_LINK_P + DOMAIN + " = ? AND " + TABLE_LINK_P
-			+ PATH + " = ?";
+			+ PATH + " = ? ORDER BY " + TABLE_LINK_P + LINK_DOMAIN + " ASC, " + TABLE_LINK_P + LINK_PATH + " ASC, "
+			+ TABLE_LINK_P + LINK_PROTOCOL + " ASC ";
 
 	// Pages to export
 
 	/**
 	 * Select pages to export for domains passed in parameter and return an
 	 * iterator
-	 * @param domainNodesSet domains which are selected to export
-	 * @return the page iterator or null
+	 * @param domainNodesList domains which are selected to export
+	 * @return the page iterator
 	 */
-	public PageDbIterator getPageListToExport(Set<Domain> domainNodesSet) {
-		PageDbIterator pageIterator = null;
+	public PageDbIterator getPageListToExport(List<Domain> domainNodesList) {
+		PageDbIterator pageIterator = new PageDbIterator();
 		StringBuilder sql = new StringBuilder(EXPORT_PAGE_LIST_START);
 		sql.append(EXPORT_PAGE_LIST_DOMAINS);
 
-		int nodesSetSize = domainNodesSet.size();
+		int nodesSetSize = domainNodesList.size();
 		if (nodesSetSize > 0) {
 			sql.append("?");
 			for (int i = 1; i < nodesSetSize; i++) {
@@ -99,11 +115,12 @@ public class ExportPageDAO extends BaseDAO implements IPageQueryList {
 			}
 		}
 		sql.append(" ) ");
+		sql.append(EXPORT_PAGE_LIST_ORDER);
 
 		try {
 			PreparedStatement preStatement = connection.prepareStatement(sql.toString());
 			int i = 1;
-			for (Domain domain : domainNodesSet) {
+			for (Domain domain : domainNodesList) {
 				JdbcTools.setString(preStatement, i++, domain.getName());
 			}
 
@@ -119,12 +136,13 @@ public class ExportPageDAO extends BaseDAO implements IPageQueryList {
 	/**
 	 * Select pages to export, with a minimum score and return an iterator
 	 * @param minScore the minimum score
-	 * @return the page iterator or null
+	 * @return the page iterator
 	 */
 	public PageDbIterator getPageListToExport(Double minScore) {
-		PageDbIterator pageIterator = null;
+		PageDbIterator pageIterator = new PageDbIterator();
 		StringBuilder sql = new StringBuilder(EXPORT_PAGE_LIST_START);
 		sql.append(EXPORT_PAGE_LIST_MIN_SCORE);
+		sql.append(EXPORT_PAGE_LIST_ORDER);
 
 		try {
 			PreparedStatement preStatement = connection.prepareStatement(sql.toString());
@@ -141,32 +159,34 @@ public class ExportPageDAO extends BaseDAO implements IPageQueryList {
 	// Links to export
 
 	/**
-	 * Select outgoing extern links from a page and a set of domains
+	 * Select outgoing extern links from a page and a list of domains
 	 * @param page the page
-	 * @param domainNodesSet domains which are selected to export
+	 * @param domainNodesList domains which are selected to export
 	 * @return the list of links
 	 */
-	public List<Link> getOutgoingExternLinks(Page page, Set<Domain> domainNodesSet) {
+	public List<Link> getOutgoingExternLinks(Page page, List<Domain> domainNodesList) {
+		PreparedStatement preStatement = null;
+		ResultSet result = null;
+		List<Link> linkList = new ArrayList<Link>();
+
 		StringBuilder sql = new StringBuilder(EXPORT_EXTERN_LINKS_START);
-		int nodesSetSize = domainNodesSet.size();
-		if (nodesSetSize > 0) {
+		int numberOfDomains = domainNodesList.size();
+		if (numberOfDomains > 0) {
 			sql.append("?");
-			for (int i = 1; i < nodesSetSize; i++) {
+			for (int i = 1; i < numberOfDomains; i++) {
 				sql.append(", ?");
 			}
 		}
 		sql.append(" ) ");
+		sql.append(EXPORT_EXTERN_LINKS_ORDER);
 
-		PreparedStatement preStatement = null;
-		ResultSet result = null;
-		List<Link> linkList = new ArrayList<Link>();
 		try {
 			preStatement = connection.prepareStatement(sql.toString());
 			int i = 1;
 			JdbcTools.setString(preStatement, i++, page.getLink().getDomain().getName());
 			JdbcTools.setString(preStatement, i++, page.getLink().getLinkPath().getPath());
 			JdbcTools.setString(preStatement, i++, page.getLink().getLinkPath().getProtocol());
-			for (Domain domain : domainNodesSet) {
+			for (Domain domain : domainNodesList) {
 				JdbcTools.setString(preStatement, i++, domain.getName());
 			}
 
@@ -188,10 +208,10 @@ public class ExportPageDAO extends BaseDAO implements IPageQueryList {
 	/**
 	 * Select source links from crawled pages with a minimum score
 	 * @param minScore the minimum score
-	 * @return the link iterator or null
+	 * @return the link iterator
 	 */
 	public LinkDbIterator getSourceLinkList(Double minScore) {
-		LinkDbIterator linkIterator = null;
+		LinkDbIterator linkIterator = new LinkDbIterator();
 
 		try {
 			PreparedStatement preStatement = connection.prepareStatement(EXPORT_SOURCE_LINKS);

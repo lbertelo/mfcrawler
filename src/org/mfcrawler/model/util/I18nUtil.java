@@ -34,7 +34,7 @@ public final class I18nUtil {
 	/**
 	 * Resource bundle
 	 */
-	private static final ResourceBundle messages = ResourceBundle.getBundle(MESSAGES_PATH);
+	private static final ResourceBundle MESSAGES = ResourceBundle.getBundle(MESSAGES_PATH);
 	
 	/**
 	 * Private constructor
@@ -48,7 +48,7 @@ public final class I18nUtil {
 	 * @return the string for the given key
 	 */
 	public static String getMessage(String key) {
-		return messages.getString(key);
+		return MESSAGES.getString(key);
 	}
 	
 }

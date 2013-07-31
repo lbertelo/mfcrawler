@@ -19,39 +19,40 @@ package org.mfcrawler.model.export;
 
 import java.io.File;
 
-import org.mfcrawler.model.export.gexf.ExportPagesGexfFile;
-import org.mfcrawler.model.export.gexf.ExportSitesGexfFile;
+import org.mfcrawler.model.export.csv.ExportPagesCsvLinks;
+import org.mfcrawler.model.export.csv.ExportSitesCsvLinks;
+import org.mfcrawler.model.export.gexf.ExportPagesGexf;
+import org.mfcrawler.model.export.gexf.ExportSitesGexf;
 
 /**
  * Main Class to export results in files
  * 
  * @author lbertelo
  */
-public class ExportResults {
-	
+public final class ExportResults {
+
 	/**
 	 * GEXF extension
 	 */
 	private static final String GEXF_EXTENSION = ".gexf";
-	
+
 	/**
 	 * CSV extension
 	 */
 	private static final String CSV_EXTENSION = ".csv";
 
-	
 	/**
 	 * Scope to export
 	 */
 	public enum EScopeExport {
-		SITE, PAGE
+		PAGE, SITE
 	}
-	
+
 	/**
 	 * File's format to export
 	 */
 	public enum EFormatExport {
-		GEXF, CSV_DATA, CSV_LINKS 
+		GEXF, CSV_LINKS, CSV_DATA
 	}
 
 	/**
@@ -68,29 +69,46 @@ public class ExportResults {
 	 * @param minScoreValue the minimum score value to export
 	 */
 	public static void export(File file, EScopeExport scope, EFormatExport format, Double minScoreValue) {
+		File correctFile = getCorrectFile(file, format);
+
+		if (format == EFormatExport.GEXF) {
+			if (scope == EScopeExport.SITE) {
+				ExportSitesGexf.export(correctFile, minScoreValue);
+			} else if (scope == EScopeExport.PAGE) {
+				ExportPagesGexf.export(correctFile, minScoreValue);
+			}
+		} else if (format == EFormatExport.CSV_LINKS) {
+			if (scope == EScopeExport.SITE) {
+				ExportSitesCsvLinks.export(correctFile, minScoreValue);
+			} else if (scope == EScopeExport.PAGE) {
+				ExportPagesCsvLinks.export(correctFile, minScoreValue);
+			}
+		} else if (format == EFormatExport.CSV_DATA) {
+			// FIXME écrire l'export CSV DATA
+		}
+	}
+
+	/**
+	 * Gets the file with the correct extension
+	 * @param file the file
+	 * @param format the format of the file
+	 * @return the file with the correct extension
+	 */
+	private static File getCorrectFile(File file, EFormatExport format) {
+		File correctFile = file;
+
 		String extension;
 		if (format == EFormatExport.GEXF) {
 			extension = GEXF_EXTENSION;
 		} else {
 			extension = CSV_EXTENSION;
 		}
-		
+
 		if (!file.getName().endsWith(extension)) {
-			file = new File(file.getAbsolutePath() + extension);
+			correctFile = new File(file.getAbsolutePath() + extension);
 		}
-		
-		if (format == EFormatExport.GEXF) {
-			if (scope == EScopeExport.PAGE) {
-				ExportPagesGexfFile.export(file, minScoreValue);
-			} else if (scope == EScopeExport.SITE) {
-				ExportSitesGexfFile.export(file, minScoreValue);
-			}
-		} else if (format == EFormatExport.CSV_DATA) {
-			// FIXME écrire l'export CSV DATA
-		} else if (format == EFormatExport.CSV_LINKS){
-			// FIXME écrire l'export CSV LINKS
-		}
+
+		return correctFile;
 	}
-	
 
 }

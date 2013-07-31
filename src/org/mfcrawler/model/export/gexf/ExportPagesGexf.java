@@ -35,11 +35,11 @@ import org.mfcrawler.model.util.ConversionUtils;
 import org.mfcrawler.model.util.I18nUtil;
 
 /**
- * Export pages in a GEXF file pages are nodes and links are edges
+ * Exports pages in a GEXF file pages are nodes and links are edges
  * 
  * @author lbertelo
  */
-public class ExportPagesGexfFile {
+public final class ExportPagesGexf {
 
 	/**
 	 * Date format for the GEXF header
@@ -54,13 +54,13 @@ public class ExportPagesGexfFile {
 	/**
 	 * Private constructor
 	 */
-	private ExportPagesGexfFile() {
+	private ExportPagesGexf() {
 	}
 
 	// Main
 
 	/**
-	 * Export pages with a minimum score in a GEXF file
+	 * Exports pages with a minimum score in a GEXF file
 	 * @param file the file used to export
 	 * @param minScore minimum score for a page
 	 */
@@ -79,21 +79,19 @@ public class ExportPagesGexfFile {
 			gexfFileWriter.flush();
 			gexfFileWriter.close();
 		} catch (IOException ie) {
-			Logger.getLogger(ExportSitesGexfFile.class.getName()).log(Level.SEVERE, "Error to write gexf", ie);
+			Logger.getLogger(ExportSitesGexf.class.getName()).log(Level.SEVERE, "Error to write gexf", ie);
 		}
 	}
 
 	/**
-	 * Write the GEXF header
+	 * Writes the GEXF header
 	 * @param fileWriter the file write
 	 * @exception
 	 */
 	private static void writeGexfHeader(FileWriter fileWriter) throws IOException {
 		fileWriter.write("<gexf xmlns=\"http://www.gexf.net/1.2draft\" version=\"1.2\" ");
-		fileWriter
-				.write("xmlns:viz=\"http://www.gexf.net/1.2draft/viz\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
-		fileWriter
-				.write("xsi:schemaLocation=\"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd\"> \n");
+		fileWriter.write("xmlns:viz=\"http://www.gexf.net/1.2draft/viz\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ");
+		fileWriter.write("xsi:schemaLocation=\"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd\"> \n");
 		fileWriter.write("<meta lastmodifieddate=\"");
 		fileWriter.write(ConversionUtils.toFormattedDate(new Date(), DATE_FORMAT));
 		fileWriter.write("\"> \n");
@@ -102,8 +100,7 @@ public class ExportPagesGexfFile {
 		fileWriter.write(" </creator> \n <description> ");
 		fileWriter.write(I18nUtil.getMessage("export.description"));
 		fileWriter.write(" </description> \n");
-		fileWriter
-				.write("</meta> \n <graph defaultedgetype=\"directed\" idtype=\"string\" mode=\"dynamic\" timeformat=\"dateTime\"> ");
+		fileWriter.write("</meta> \n <graph defaultedgetype=\"directed\" idtype=\"string\" mode=\"dynamic\" timeformat=\"dateTime\"> ");
 		fileWriter.write("<attributes class=\"node\" mode=\"static\"> ");
 		fileWriter.write("<attribute id=\"score\" title=\"score\" type=\"double\" /> ");
 		fileWriter.write("<attribute id=\"innerDeep\" title=\"innerDeep\" type=\"integer\" /> ");
@@ -111,7 +108,7 @@ public class ExportPagesGexfFile {
 	}
 
 	/**
-	 * Write the GEXF footer
+	 * Writes the GEXF footer
 	 * @param fileWriter the file write
 	 * @exception
 	 */
@@ -122,30 +119,25 @@ public class ExportPagesGexfFile {
 	// Nodes
 
 	/**
-	 * Get list of pages (with a minimum score) to export and write nodes
+	 * Gets list of pages (with a minimum score) to export and write nodes
 	 * @param fileWriter the file writer
 	 * @param minScore the minimum score
-	 * @return the set of domains collected
 	 * @exception
 	 */
 	private static void generatePagesNodes(FileWriter fileWriter, Double minScore) throws IOException {
 		ExportPageDAO exportPageDao = new ExportPageDAO();
-		exportPageDao.setAutoCommit(false);
-
 		PageDbIterator pageIterator = exportPageDao.getPageListToExport(minScore);
 
 		fileWriter.write("\n<nodes>\n");
-		if (pageIterator != null) {
-			while (pageIterator.hasNext()) {
-				Page page = pageIterator.next();
-				writeGexfNode(fileWriter, page);
-			}
+		while (pageIterator.hasNext()) {
+			Page page = pageIterator.next();
+			writeGexfNode(fileWriter, page);
 		}
 		fileWriter.write("\n</nodes>\n");
 	}
 
 	/**
-	 * Write a gexf node from a page
+	 * Writes a gexf node from a page
 	 * @param fileWriter the file write
 	 * @param site the page (the node)
 	 * @exception
@@ -171,35 +163,31 @@ public class ExportPagesGexfFile {
 	// Edges
 
 	/**
-	 * Get list of pages and links to export and write edges
+	 * Gets list of pages and links to export and write edges
 	 * @param fileWriter the file writer
 	 * @param minScore the minimum score
 	 * @exception
 	 */
 	private static void generateLinksEdges(FileWriter fileWriter, Double minScore) throws IOException {
-		ExportPageDAO exportPageDao = new ExportPageDAO();
 		fileWriter.write("\n<edges>\n");
-
 		int edgeId = 0;
-		exportPageDao.setAutoCommit(false);
+		
+		ExportPageDAO exportPageDao = new ExportPageDAO();
 		LinkDbIterator linkIterator = exportPageDao.getSourceLinkList(minScore);
 
-		if (linkIterator != null) {
-			while (linkIterator.hasNext()) {
-				Link sourceLink = linkIterator.next();
-				List<Link> targetLinkList = exportPageDao.getTargetLinkList(sourceLink, minScore);
-				for (Link targetLink : targetLinkList) {
-					writeGexfEdge(fileWriter, edgeId++, sourceLink, targetLink);
-				}
+		while (linkIterator.hasNext()) {
+			Link sourceLink = linkIterator.next();
+			List<Link> targetLinkList = exportPageDao.getTargetLinkList(sourceLink, minScore);
+			for (Link targetLink : targetLinkList) {
+				writeGexfEdge(fileWriter, edgeId++, sourceLink, targetLink);
 			}
 		}
 
-		exportPageDao.setAutoCommit(true);
 		fileWriter.write("\n</edges>\n");
 	}
 
 	/**
-	 * Write a gexf edge from a source link (correct page) and a target link
+	 * Writes a gexf edge from a source link (correct page) and a target link
 	 * @param fileWriter the file write
 	 * @param edgeId the edge id
 	 * @param sourceLink the source link, the source of the edge

@@ -26,7 +26,7 @@ import java.util.Date;
  * 
  * @author lbertelo
  */
-public class ConversionUtils {
+public final class ConversionUtils {
 
 	/**
 	 * Private constructor

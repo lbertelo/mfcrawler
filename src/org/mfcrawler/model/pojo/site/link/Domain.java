@@ -49,7 +49,7 @@ public class Domain implements Comparable<Domain> {
 	 * @param domain the domain to copy
 	 */
 	public Domain(Domain domain) {
-		this.name = new String(domain.name);
+		this.name = String.valueOf(domain.name);
 	}
 	
 	/**

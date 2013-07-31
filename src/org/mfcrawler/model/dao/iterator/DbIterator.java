@@ -23,7 +23,15 @@ public abstract class DbIterator implements ITablesVocabulary {
 	private boolean hasNext;
 	
 	/**
-	 * Constructor
+	 * Default constructor
+	 */
+	protected DbIterator() {
+		resultSet = null;
+		hasNext = false;
+	}
+	
+	/**
+	 * Constructor with a resultSet
 	 * @param resultSet the resultSet
 	 */
 	protected DbIterator(ResultSet resultSet) {

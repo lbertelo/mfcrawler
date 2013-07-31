@@ -33,7 +33,14 @@ import org.mfcrawler.model.pojo.site.link.Link;
 public class LinkDbIterator extends DbIterator {
 
 	/**
-	 * Constructor
+	 * Default constructor
+	 */
+	public LinkDbIterator() {
+		super();
+	}
+	
+	/**
+	 * Constructor with a resultSet
 	 * @param resultSet the resultSet
 	 */
 	public LinkDbIterator(ResultSet resultSet) {
@@ -56,7 +63,7 @@ public class LinkDbIterator extends DbIterator {
 				}
 			}
 		} catch (SQLException e) {
-			Logger.getLogger(PageDbIterator.class.getName()).log(Level.SEVERE, "Error to get next linkDb iterator", e);
+			Logger.getLogger(LinkDbIterator.class.getName()).log(Level.SEVERE, "Error to get next linkDb iterator", e);
 		}
 		return link;
 	}

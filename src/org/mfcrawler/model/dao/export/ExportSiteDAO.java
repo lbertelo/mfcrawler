@@ -30,6 +30,7 @@ import org.mfcrawler.model.dao.JdbcTools;
 import org.mfcrawler.model.dao.site.ISiteQueryList;
 import org.mfcrawler.model.dao.site.SiteDAO;
 import org.mfcrawler.model.pojo.site.Site;
+import org.mfcrawler.model.pojo.site.link.Domain;
 
 /**
  * DAO for Sites, specific to export
@@ -48,6 +49,17 @@ public class ExportSiteDAO extends BaseDAO implements ISiteQueryList {
 			+ TABLE_SITE_P + BLACKLISTED + " IS NULL ) AND " + TABLE_PAGE_P + CRAWL_TIME + " IS NOT NULL "
 			+ " GROUP BY " + TABLE_SITE_P + DOMAIN + " HAVING SUM( " + TABLE_PAGE_P + SCORE + " ) >= ? " + " ORDER BY "
 			+ TABLE_SITE_P + DOMAIN + " ASC ";
+
+	/**
+	 * Query which selects target domains to export
+	 */
+	private static final String EXPORT_TARGET_DOMAINS_START = " SELECT " + LINK_DOMAIN + " FROM " + TABLE_LINK
+			+ " WHERE " + DOMAIN + " = ? AND " + DOMAIN + " <> " + LINK_DOMAIN + " AND " + LINK_DOMAIN + " IN ( ";
+
+	/**
+	 * "Order by" for query which selects target domains to export
+	 */
+	private static final String EXPORT_TARGET_DOMAINS_ORDER = " ORDER BY " + LINK_DOMAIN + " ASC ";
 
 	/**
 	 * Select all sites allowed to export with a minimum total score
@@ -72,13 +84,13 @@ public class ExportSiteDAO extends BaseDAO implements ISiteQueryList {
 				PreparedStatement preStatement2 = connection.prepareStatement(SELECT_SITE);
 				JdbcTools.setString(preStatement2, 1, domain);
 				ResultSet result2 = preStatement2.executeQuery();
-				result2.next();
-				Site site = SiteDAO.toSite(result2);
-				site.setTotalScore(totalScore);
-				site.setCrawledPagesNumber(crawledPagesNumber);
-				close(result2, preStatement2);
-
-				siteListToExport.add(site);
+				if (result2.next()) {
+					Site site = SiteDAO.toSite(result2);
+					site.setTotalScore(totalScore);
+					site.setCrawledPagesNumber(crawledPagesNumber);
+					close(result2, preStatement2);
+					siteListToExport.add(site);
+				}
 			}
 		} catch (SQLException e) {
 			Logger.getLogger(ExportSiteDAO.class.getName()).log(Level.SEVERE, "Error to get site list to export", e);
@@ -87,5 +99,77 @@ public class ExportSiteDAO extends BaseDAO implements ISiteQueryList {
 		}
 
 		return siteListToExport;
+	}
+
+	/**
+	 * Select all domains of sites allowed to export with a minimum total score
+	 * @param minTotalScore the minimum total score accepted
+	 * @return the list of domains
+	 */
+	public List<Domain> getDomainListToExport(Double minTotalScore) {
+		PreparedStatement preStatement = null;
+		ResultSet result = null;
+		List<Domain> domainListToExport = new ArrayList<Domain>();
+
+		try {
+			preStatement = connection.prepareStatement(EXPORT_SITE_LIST);
+			JdbcTools.setDouble(preStatement, 1, minTotalScore);
+			result = preStatement.executeQuery();
+
+			while (result.next()) {
+				String domainStr = JdbcTools.getString(result, DOMAIN);
+				domainListToExport.add(new Domain(domainStr));
+			}
+		} catch (SQLException e) {
+			Logger.getLogger(ExportSiteDAO.class.getName()).log(Level.SEVERE, "Error to get domain list to export", e);
+		} finally {
+			close(result, preStatement);
+		}
+
+		return domainListToExport;
+	}
+
+	/**
+	 * Select target links from a source domain and a list of domains
+	 * @param sourceDomain the source domain
+	 * @param domainList domains which are selected to export
+	 * @return the list of target domains
+	 */
+	public List<Domain> getTargetDomainList(Domain sourceDomain, List<Domain> domainList) {
+		PreparedStatement preStatement = null;
+		ResultSet result = null;
+		List<Domain> targetDomainList = new ArrayList<Domain>();
+
+		StringBuilder sql = new StringBuilder(EXPORT_TARGET_DOMAINS_START);
+		int numberOfDomains = domainList.size();
+		if (numberOfDomains > 0) {
+			sql.append("?");
+			for (int i = 1; i < numberOfDomains; i++) {
+				sql.append(", ?");
+			}
+		}
+		sql.append(" ) ");
+		sql.append(EXPORT_TARGET_DOMAINS_ORDER);
+
+		try {
+			preStatement = connection.prepareStatement(sql.toString());
+			int i = 1;
+			JdbcTools.setString(preStatement, i++, sourceDomain.getName());
+			for (Domain domain : domainList) {
+				JdbcTools.setString(preStatement, i++, domain.getName());
+			}
+
+			result = preStatement.executeQuery();
+			while (result.next()) {
+				Domain domain = new Domain(JdbcTools.getString(result, LINK_DOMAIN));
+				targetDomainList.add(domain);
+			}
+		} catch (SQLException e) {
+			Logger.getLogger(ExportSiteDAO.class.getName()).log(Level.SEVERE, "Error to get target domain list", e);
+		} finally {
+			close(result, preStatement);
+		}
+
+		return targetDomainList;
 	}
 }

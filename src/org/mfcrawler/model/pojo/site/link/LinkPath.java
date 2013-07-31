@@ -49,8 +49,8 @@ public class LinkPath {
 	 * @param linkPath linkPath to copy
 	 */
 	public LinkPath(LinkPath linkPath) {
-		this.protocol = new String(linkPath.protocol);
-		this.path = new String(linkPath.path);
+		this.protocol = String.valueOf(linkPath.protocol);
+		this.path = String.valueOf(linkPath.path);
 	}
 
 	/**

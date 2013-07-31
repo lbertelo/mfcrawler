@@ -76,12 +76,12 @@ public class ExportPanel extends DefaultPanel {
 		tempPanel = new JPanel();
 		tempPanel.setLayout(new BoxLayout(tempPanel, BoxLayout.PAGE_AXIS));
 		ButtonGroup scopeGroup = new ButtonGroup();
-		pageScopeButton = new JRadioButton(I18nUtil.getMessage("export.scope.page"), true);
-		scopeGroup.add(pageScopeButton);
-		tempPanel.add(pageScopeButton);
 		siteScopeButton = new JRadioButton(I18nUtil.getMessage("export.scope.site"));
 		scopeGroup.add(siteScopeButton);
 		tempPanel.add(siteScopeButton);
+		pageScopeButton = new JRadioButton(I18nUtil.getMessage("export.scope.page"), true);
+		scopeGroup.add(pageScopeButton);
+		tempPanel.add(pageScopeButton);
 		scopePanel.add(tempPanel);
 
 		panel.add(scopePanel);
@@ -93,12 +93,12 @@ public class ExportPanel extends DefaultPanel {
 		gexfFormatButton = new JRadioButton(I18nUtil.getMessage("export.format.gexf"), true);
 		formatGroup.add(gexfFormatButton);
 		tempPanel.add(gexfFormatButton);
-		csvDataFormatButton = new JRadioButton(I18nUtil.getMessage("export.format.csv.data"));
-		formatGroup.add(csvDataFormatButton);
-		tempPanel.add(csvDataFormatButton);
 		csvLinksFormatButton = new JRadioButton(I18nUtil.getMessage("export.format.csv.links"));
 		formatGroup.add(csvLinksFormatButton);
 		tempPanel.add(csvLinksFormatButton);
+		csvDataFormatButton = new JRadioButton(I18nUtil.getMessage("export.format.csv.data"));
+		formatGroup.add(csvDataFormatButton);
+		tempPanel.add(csvDataFormatButton);
 		formatPanel.add(tempPanel);
 
 		panel.add(formatPanel);
@@ -137,10 +137,10 @@ public class ExportPanel extends DefaultPanel {
 		EFormatExport format;
 		if (gexfFormatButton.isSelected()) {
 			format = EFormatExport.GEXF;
-		} else if (csvDataFormatButton.isSelected()) {
-			format = EFormatExport.CSV_DATA;
-		} else {
+		} else if (csvLinksFormatButton.isSelected()) {
 			format = EFormatExport.CSV_LINKS;
+		} else {
+			format = EFormatExport.CSV_DATA;
 		}
 		return format;
 	}

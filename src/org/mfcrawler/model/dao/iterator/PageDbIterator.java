@@ -33,7 +33,14 @@ import org.mfcrawler.model.pojo.site.Page;
 public class PageDbIterator extends DbIterator {
 
 	/**
-	 * Constructor
+	 * Default constructor
+	 */
+	public PageDbIterator() {
+		super();
+	}
+	
+	/**
+	 * Constructor with a resultSet
 	 * @param resultSet the resultSet
 	 */
 	public PageDbIterator(ResultSet resultSet) {
