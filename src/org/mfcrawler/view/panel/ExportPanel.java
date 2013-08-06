@@ -37,7 +37,6 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import org.mfcrawler.model.ApplicationModel;
-import org.mfcrawler.model.export.ExportResults;
 import org.mfcrawler.model.export.ExportResults.EFormatExport;
 import org.mfcrawler.model.export.ExportResults.EScopeExport;
 import org.mfcrawler.model.util.ConversionUtils;
@@ -195,7 +194,7 @@ public class ExportPanel extends DefaultPanel {
 				int returnVal = fileChooser.showSaveDialog(getView().getFrame());
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
-					ExportResults.export(file, scope, format, minScoreValue);				
+					getModel().exportResult(file, scope, format, minScoreValue);
 				}
 			}
 		}

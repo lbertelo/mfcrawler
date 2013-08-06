@@ -17,11 +17,15 @@
 
 package org.mfcrawler.model;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Set;
 
 import org.mfcrawler.model.dao.DbmsManager;
 import org.mfcrawler.model.dao.site.SiteDAO;
+import org.mfcrawler.model.export.ExportResults;
+import org.mfcrawler.model.export.ExportResults.EFormatExport;
+import org.mfcrawler.model.export.ExportResults.EScopeExport;
 import org.mfcrawler.model.pojo.ApplicationConfig;
 import org.mfcrawler.model.pojo.crawl.CrawlConfig;
 import org.mfcrawler.model.pojo.crawl.CrawlProject;
@@ -58,7 +62,6 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 	 * Default constructor
 	 */
 	public ApplicationModel() {
-
 	}
 
 	// Model
@@ -226,13 +229,11 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 				// Delete blacklist domain
 				if (!blacklistDomains.equals(currentCrawlProject.getBlacklistDomains())) {
 					ApplicationModel.this.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.reblacklistSites"));
-
 					SiteDAO siteDao = new SiteDAO();
 					siteDao.initBlacklist();
 					for (Domain domain : blacklistDomains) {
 						siteDao.updateBlacklist(domain, true);
 					}
-
 					currentCrawlProject.setBlacklistDomains(blacklistDomains);
 				}
 
@@ -240,15 +241,12 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 				if (!keywordMap.equals(currentCrawlProject.getKeywordMap())) {
 					ApplicationModel.this.notify(IPropertyName.LOADING,
 							I18nUtil.getMessage("loading.recalculateScores.step1"));
-
 					KeywordManager.get().setKeywordMap(keywordMap);
 					KeywordManager.get().recalculateAll(ApplicationModel.this);
-
 					currentCrawlProject.setKeywordMap(keywordMap);
 				}
 
 				LoadCrawlProjectConfig.saveCrawlProject(currentCrawlProject);
-
 				ApplicationModel.this.notify(IPropertyName.LOADED, null);
 			}
 		}, "Loading").start();
@@ -265,6 +263,26 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 
 		currentCrawlProject.getBlacklistDomains().add(domain);
 		notify(IPropertyName.ADD_BLACKLIST_DOMAIN, domain.getName());
+	}
+
+	// Export
+
+	/**
+	 * Export the result (crawled page) to different format and scope
+	 * @param file the file containing the export result
+	 * @param scope the scope of the export
+	 * @param format the format of the export
+	 * @param minScoreValue the minimum score value to export
+	 */
+	public void exportResult(final File file, final EScopeExport scope, final EFormatExport format, final Double minScore) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				ApplicationModel.this.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.export"));
+				ExportResults.export(file, scope, format, minScore);
+				ApplicationModel.this.notify(IPropertyName.LOADED, null);
+			}
+		}, "Loading").start();
 	}
 
 }
