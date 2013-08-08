@@ -19,7 +19,9 @@ package org.mfcrawler.model.export;
 
 import java.io.File;
 
+import org.mfcrawler.model.export.csv.ExportPagesCsvData;
 import org.mfcrawler.model.export.csv.ExportPagesCsvLinks;
+import org.mfcrawler.model.export.csv.ExportSitesCsvData;
 import org.mfcrawler.model.export.csv.ExportSitesCsvLinks;
 import org.mfcrawler.model.export.gexf.ExportPagesGexf;
 import org.mfcrawler.model.export.gexf.ExportSitesGexf;
@@ -84,7 +86,11 @@ public final class ExportResults {
 				ExportPagesCsvLinks.export(correctFile, minScoreValue);
 			}
 		} else if (format == EFormatExport.CSV_DATA) {
-			// FIXME écrire l'export CSV DATA
+			if (scope == EScopeExport.SITE) {
+				ExportSitesCsvData.export(correctFile, minScoreValue);
+			} else if (scope == EScopeExport.PAGE) {
+				ExportPagesCsvData.export(correctFile, minScoreValue);
+			}
 		}
 	}
 

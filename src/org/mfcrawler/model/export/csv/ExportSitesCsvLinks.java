@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.mfcrawler.model.export.csv;
 
 import java.io.File;
@@ -33,22 +34,12 @@ import org.mfcrawler.model.pojo.site.link.Domain;
  * 
  * @author lbertelo
  */
-public final class ExportSitesCsvLinks {
+public final class ExportSitesCsvLinks implements ICsvParams {
 
 	/**
 	 * Header of the CSV
 	 */
-	private static final String CSV_HEADER = "a source site, a target site\n";
-
-	/**
-	 * Column's separator
-	 */
-	private static final String CSV_COLUMN_SEPARATOR = ",";
-
-	/**
-	 * Line's separator
-	 */
-	private static final String CSV_LINE_SEPARATOR = "\n";
+	private static final String CSV_HEADER = "source site, target site\n";
 
 	/**
 	 * Private contructor
@@ -59,15 +50,16 @@ public final class ExportSitesCsvLinks {
 	/**
 	 * Exports links of sites with a minimum score in a CSV file
 	 * @param file the file used to export
-	 * @param minScore minimum score for a page
+	 * @param minTotalScore minimum total score for a site
 	 */
 	public static void export(File file, Double minTotalScore) {
 		try {
 			FileWriter csvFileWriter = new FileWriter(file, false);
 			csvFileWriter.write(CSV_HEADER);
-			
+
 			ExportSiteDAO exportSiteDao = new ExportSiteDAO();
 			List<Domain> domainList = exportSiteDao.getDomainListToExport(minTotalScore);
+			
 			for (Domain sourceDomain : domainList) {
 				List<Domain> targetDomainList = exportSiteDao.getTargetDomainList(sourceDomain, domainList);
 				for (Domain targetDomain : targetDomainList) {
@@ -77,7 +69,7 @@ public final class ExportSitesCsvLinks {
 					csvFileWriter.write(CSV_LINE_SEPARATOR);
 				}
 			}
-			
+
 			csvFileWriter.flush();
 			csvFileWriter.close();
 		} catch (IOException ie) {

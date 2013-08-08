@@ -25,59 +25,56 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.mfcrawler.model.dao.export.ExportPageDAO;
-import org.mfcrawler.model.dao.iterator.LinkDbIterator;
+import org.mfcrawler.model.dao.export.ExportSiteDAO;
 import org.mfcrawler.model.export.gexf.ExportSitesGexf;
-import org.mfcrawler.model.pojo.site.link.Link;
+import org.mfcrawler.model.pojo.site.Site;
+import org.mfcrawler.model.util.ConversionUtils;
 
 /**
- * Exports links of pages in a CSV file
  * 
  * @author lbertelo
  */
-public final class ExportPagesCsvLinks implements ICsvParams {
+public final class ExportSitesCsvData implements ICsvParams {
 
 	/**
 	 * Header of the CSV
 	 */
-	private static final String CSV_HEADER = "source page, target link\n";
+	private static final String CSV_HEADER = "domain, crawl time, crawled pages' number, total score\n";
 
 	/**
 	 * Private constructor
 	 */
-	private ExportPagesCsvLinks() {
+	private ExportSitesCsvData() {
 	}
 
 	/**
-	 * Exports links of pages with a minimum score in a CSV file
+	 * Exports data of sites with a minimum score in a CSV file
 	 * @param file the file used to export
-	 * @param minScore minimum score for a page
+	 * @param minTotalScore minimum total score for a site
 	 */
-	public static void export(File file, Double minScore) {
+	public static void export(File file, Double minTotalScore) {
 		try {
 			FileWriter csvFileWriter = new FileWriter(file, false);
 			csvFileWriter.write(CSV_HEADER);
 
-			ExportPageDAO exportPageDao = new ExportPageDAO();
-			LinkDbIterator linkIterator = exportPageDao.getSourceLinkList(minScore);
+			ExportSiteDAO exportSiteDao = new ExportSiteDAO();
+			List<Site> siteList = exportSiteDao.getSiteListToExport(minTotalScore);
 			
-			while (linkIterator.hasNext()) {
-				Link sourceLink = linkIterator.next();
-				List<Link> targetLinkList = exportPageDao.getTargetLinkList(sourceLink, minScore);
-				
-				for (Link targetLink : targetLinkList) {
-					csvFileWriter.write(StringEscapeUtils.escapeCsv(sourceLink.getUrl()));
-					csvFileWriter.write(CSV_COLUMN_SEPARATOR);
-					csvFileWriter.write(StringEscapeUtils.escapeCsv(targetLink.getUrl()));
-					csvFileWriter.write(CSV_LINE_SEPARATOR);
-				}
+			for (Site site : siteList) {
+				csvFileWriter.write(StringEscapeUtils.escapeCsv(site.getDomain().getName()));
+				csvFileWriter.write(CSV_COLUMN_SEPARATOR);
+				csvFileWriter.write(StringEscapeUtils.escapeCsv(ConversionUtils.toString(site.getCrawlTime())));
+				csvFileWriter.write(CSV_COLUMN_SEPARATOR);
+				csvFileWriter.write(ConversionUtils.toString(site.getCrawledPagesNumber()));
+				csvFileWriter.write(CSV_COLUMN_SEPARATOR);
+				csvFileWriter.write(ConversionUtils.toString(site.getTotalScore()));
+				csvFileWriter.write(CSV_LINE_SEPARATOR);
 			}
 
 			csvFileWriter.flush();
 			csvFileWriter.close();
 		} catch (IOException ie) {
-			Logger.getLogger(ExportSitesGexf.class.getName()).log(Level.SEVERE, "Error to write CSV links", ie);
+			Logger.getLogger(ExportSitesGexf.class.getName()).log(Level.SEVERE, "Error to write CSV data", ie);
 		}
 	}
-
 }

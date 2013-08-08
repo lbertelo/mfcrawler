@@ -65,7 +65,7 @@ public final class ExportSitesGexf {
 	/**
 	 * Exports sites with a minimum score in a GEXF file
 	 * @param file the file used to export
-	 * @param minScore minimum total score for a site
+	 * @param minTotalScore minimum total score for a site
 	 */
 	public static void export(File file, Double minTotalScore) {
 		List<Domain> domainNodesList = null;
