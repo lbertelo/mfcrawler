@@ -204,7 +204,7 @@ public class PageDetailPanel {
 		// TODO ajouter un panel d'analyse des mots clefs (occurence)
 		JPanel analysisPanel = new JPanel();
 		analysisPanel.setLayout(new BorderLayout());
-		
+
 		// JTable and JTableModel
 
 		// Panel
@@ -277,7 +277,7 @@ public class PageDetailPanel {
 			if (linkMap.containsKey(link.getDomain())) {
 				domainNode = linkMap.get(link.getDomain());
 			} else {
-				domainNode = new DefaultMutableTreeNode(link.getDomain().getName());
+				domainNode = new DefaultMutableTreeNode(link.getDomain());
 				linkMap.put(link.getDomain(), domainNode);
 				root.add(domainNode);
 			}
@@ -288,14 +288,12 @@ public class PageDetailPanel {
 	}
 
 	private DefaultMutableTreeNode buildPathNode(Link link) {
-		String nodeStr;
 		if (link instanceof OutgoingLink && !((OutgoingLink) link).getPageCrawled()) {
-			nodeStr = link.getLinkPath() + I18nUtil.getMessage("overview.pageDetail.linkNonCrawled");
+			return new DefaultMutableTreeNode(I18nUtil.getMessage("overview.pageDetail.linkNonCrawled")
+					+ link.getLinkPath());
 		} else {
-			nodeStr = link.getLinkPath().toString();
+			return new DefaultMutableTreeNode(link.getLinkPath());
 		}
-
-		return new DefaultMutableTreeNode(nodeStr);
 	}
 
 	private String formatContent(String allContent) {
@@ -350,14 +348,20 @@ public class PageDetailPanel {
 						.getLastPathComponent();
 
 				if (currentNode.getLevel() == 2) {
-					// show page
-					Domain domain = (Domain) ((DefaultMutableTreeNode) currentNode.getParent()).getUserObject();
-					if (domain.equals(localMessage)) {
-						domain = page.getLink().getDomain();
-					}
+					Object userObject = currentNode.getUserObject();
+					if (userObject instanceof LinkPath) {
+						LinkPath path = (LinkPath) userObject;
 
-					LinkPath path = (LinkPath) currentNode.getUserObject();
-					overviewPanel.selectAndShowPage(new Link(domain, path));
+						Object parentUserObject = ((DefaultMutableTreeNode) currentNode.getParent()).getUserObject();
+						Domain domain;
+						if (parentUserObject instanceof Domain) {
+							domain = (Domain) userObject;
+						} else {
+							domain = page.getLink().getDomain();
+						}
+
+						overviewPanel.selectAndShowPage(new Link(domain, path));
+					}
 				}
 			}
 		}
