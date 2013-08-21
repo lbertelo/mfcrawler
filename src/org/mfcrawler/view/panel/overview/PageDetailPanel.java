@@ -160,7 +160,7 @@ public class PageDetailPanel {
 
 		JPanel commandPanel = new JPanel(new BorderLayout());
 		tempPanel = new JPanel(new FlowLayout());
-		JButton recrawlButton = new JButton(I18nUtil.getMessage("overview.pageDetail.recrawl"));
+		JButton recrawlButton = new JButton(I18nUtil.getMessage("overview.detail.recrawl"));
 		recrawlButton.addActionListener(new RecrawlPageAction());
 		tempPanel.add(recrawlButton);
 		commandPanel.add(tempPanel);
@@ -174,7 +174,7 @@ public class PageDetailPanel {
 		incomingLinksModel = new DefaultTreeModel(incomingLinksRoot);
 		incomingLinksTree = new JTree(incomingLinksModel);
 		incomingLinksTree.setBorder(BorderFactory.createTitledBorder(I18nUtil
-				.getMessage("overview.siteDetail.incomingDomains")));
+				.getMessage("overview.detail.incomingDomains")));
 		incomingLinksTree.addMouseListener(new JTreeMouseAction(incomingLinksTree));
 		JScrollPane scrollPaneLinkTemp = new JScrollPane(incomingLinksTree, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -184,7 +184,7 @@ public class PageDetailPanel {
 		outgoingLinksModel = new DefaultTreeModel(outgoingLinksRoot);
 		outgoingLinksTree = new JTree(outgoingLinksModel);
 		outgoingLinksTree.setBorder(BorderFactory.createTitledBorder(I18nUtil
-				.getMessage("overview.siteDetail.outgoingDomains")));
+				.getMessage("overview.detail.outgoingDomains")));
 		outgoingLinksTree.addMouseListener(new JTreeMouseAction(outgoingLinksTree));
 		scrollPaneLinkTemp = new JScrollPane(outgoingLinksTree, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -202,14 +202,19 @@ public class PageDetailPanel {
 
 		// Analysis Panel
 		// TODO ajouter un panel d'analyse des mots clefs (occurence)
+		JPanel analysisPanel = new JPanel();
+		analysisPanel.setLayout(new BorderLayout());
+		
+		// JTable and JTableModel
 
 		// Panel
 		panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Main", mainPanel);
-		tabbedPane.addTab("Link", linkPanel);
-		tabbedPane.addTab("Content", contentPanel);
+		tabbedPane.addTab(I18nUtil.getMessage("overview.detail.tab.main"), mainPanel);
+		tabbedPane.addTab(I18nUtil.getMessage("overview.detail.tab.links"), linkPanel);
+		tabbedPane.addTab(I18nUtil.getMessage("overview.detail.tab.content"), contentPanel);
+		tabbedPane.addTab(I18nUtil.getMessage("overview.detail.tab.analysis"), analysisPanel);
 		panel.add(tabbedPane, BorderLayout.CENTER);
 	}
 

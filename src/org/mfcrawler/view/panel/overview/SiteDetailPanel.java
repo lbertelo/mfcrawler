@@ -150,7 +150,7 @@ public class SiteDetailPanel {
 		JButton blacklistButton = new JButton(I18nUtil.getMessage("overview.siteDetail.blacklist"));
 		blacklistButton.addActionListener(new BlacklistSiteAction());
 		tempPanel.add(blacklistButton);
-		JButton recrawlSiteButton = new JButton(I18nUtil.getMessage("overview.siteDetail.recrawl"));
+		JButton recrawlSiteButton = new JButton(I18nUtil.getMessage("overview.detail.recrawl"));
 		recrawlSiteButton.addActionListener(new RecrawlSiteAction());
 		tempPanel.add(recrawlSiteButton);
 		commandPanel.add(tempPanel, BorderLayout.CENTER);
@@ -161,14 +161,14 @@ public class SiteDetailPanel {
 		linkPanel.setLayout(new GridLayout(0, 2));
 		incomingDomains = new JList<Domain>();
 		incomingDomains.setBorder(BorderFactory.createTitledBorder(I18nUtil
-				.getMessage("overview.siteDetail.incomingDomains")));
+				.getMessage("overview.detail.incomingDomains")));
 		incomingDomains.addMouseListener(new JListMouseAction(incomingDomains));
 		JScrollPane scrollPaneLinkTemp = new JScrollPane(incomingDomains, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		linkPanel.add(scrollPaneLinkTemp);
 		outgoingDomains = new JList<Domain>();
 		outgoingDomains.setBorder(BorderFactory.createTitledBorder(I18nUtil
-				.getMessage("overview.siteDetail.outgoingDomains")));
+				.getMessage("overview.detail.outgoingDomains")));
 		outgoingDomains.addMouseListener(new JListMouseAction(outgoingDomains));
 		scrollPaneLinkTemp = new JScrollPane(outgoingDomains, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -178,8 +178,8 @@ public class SiteDetailPanel {
 		panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Main", mainPanel);
-		tabbedPane.addTab("Link", linkPanel);
+		tabbedPane.addTab(I18nUtil.getMessage("overview.detail.tab.main"), mainPanel);
+		tabbedPane.addTab(I18nUtil.getMessage("overview.detail.tab.links"), linkPanel);
 		panel.add(tabbedPane, BorderLayout.CENTER);
 	}
 
