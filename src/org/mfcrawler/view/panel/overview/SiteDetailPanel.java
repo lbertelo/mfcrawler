@@ -38,6 +38,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 import org.mfcrawler.model.dao.site.SiteDAO;
+import org.mfcrawler.model.pojo.site.RobotPath;
 import org.mfcrawler.model.pojo.site.Site;
 import org.mfcrawler.model.pojo.site.link.Domain;
 import org.mfcrawler.model.util.ConversionUtils;
@@ -65,8 +66,12 @@ public class SiteDetailPanel {
 	private JLabel robotCrawlDelay;
 	private JTextArea robotCrawlDisallowPath;
 	private JScrollPane scrollPane;
+	
 	private JList<Domain> incomingDomains;
 	private JList<Domain> outgoingDomains;
+	
+	private JPanel analysisPanel;
+	private JPanel analysisButtonPanel;
 
 	public SiteDetailPanel(OverviewPanel overviewPanel) {
 		this.overviewPanel = overviewPanel;
@@ -174,12 +179,22 @@ public class SiteDetailPanel {
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		linkPanel.add(scrollPaneLinkTemp);
 
+		// Analysis Panel
+		analysisPanel = new JPanel();
+		analysisPanel.setLayout(new BorderLayout());
+		JButton analysisButton = new JButton(I18nUtil.getMessage("overview.detail.launchAnalysis"));
+		analysisButton.addActionListener(new ContentAnalysisAction());
+		analysisButtonPanel = new JPanel(new FlowLayout());
+		analysisButtonPanel.add(analysisButton);
+		analysisPanel.add(analysisButtonPanel, BorderLayout.CENTER);
+
 		// Panel
 		panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		tabbedPane = new JTabbedPane();
 		tabbedPane.addTab(I18nUtil.getMessage("overview.detail.tab.main"), mainPanel);
 		tabbedPane.addTab(I18nUtil.getMessage("overview.detail.tab.links"), linkPanel);
+		tabbedPane.addTab(I18nUtil.getMessage("overview.detail.tab.analysis"), analysisPanel);
 		panel.add(tabbedPane, BorderLayout.CENTER);
 	}
 
@@ -195,8 +210,15 @@ public class SiteDetailPanel {
 
 			robotFileExist.setSelected(ConversionUtils.toBoolean(site.getRobotFileExist()));
 			robotCrawlDelay.setText(ConversionUtils.toString(site.getRobotCrawlDelay()));
-			// robotCrawlDisallowPath.setText(ConversionUtils.toString(site.getRobotCrawlDisallowPath()));
-
+			
+			StringBuffer robotPathStr = new StringBuffer();
+			if (site.getRobotPathList() != null) {
+				for (RobotPath robotPath : site.getRobotPathList()) {
+					robotPathStr.append(robotPath.toString());
+					robotPathStr.append("\n");
+				}				
+			}
+			robotCrawlDisallowPath.setText(robotPathStr.toString());
 		} else {
 			robotFileExist.getParent().setVisible(false);
 			robotCrawlDelay.setVisible(false);
@@ -225,6 +247,8 @@ public class SiteDetailPanel {
 		incomingDomains.setListData((Domain[]) site.getIncomingDomains().toArray(new Domain[0]));
 		outgoingDomains.setListData((Domain[]) site.getOutgoingDomains().toArray(new Domain[0]));
 
+		analysisPanel.add(analysisButtonPanel, BorderLayout.CENTER);
+		
 		tabbedPane.setSelectedIndex(0);
 	}
 
@@ -270,6 +294,13 @@ public class SiteDetailPanel {
 				SiteDAO siteDao = new SiteDAO();
 				siteDao.updateCrawlNow(site.getDomain(), true);
 			}
+		}
+	}
+
+	private class ContentAnalysisAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			ContentAnalysis.analyse(site, analysisPanel);
 		}
 	}
 }

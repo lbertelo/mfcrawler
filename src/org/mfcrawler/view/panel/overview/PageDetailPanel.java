@@ -85,6 +85,9 @@ public class PageDetailPanel {
 	private JTree outgoingLinksTree;
 	private DefaultTreeModel outgoingLinksModel;
 
+	private JPanel analysisPanel;
+	private JPanel analysisButtonPanel;
+
 	private JEditorPane content;
 
 	public PageDetailPanel(OverviewPanel overviewPanel) {
@@ -175,7 +178,7 @@ public class PageDetailPanel {
 		incomingLinksTree = new JTree(incomingLinksModel);
 		incomingLinksTree.setBorder(BorderFactory.createTitledBorder(I18nUtil
 				.getMessage("overview.detail.incomingDomains")));
-		incomingLinksTree.addMouseListener(new JTreeMouseAction(incomingLinksTree));
+		incomingLinksTree.addMouseListener(new JTreeLinksAction(incomingLinksTree));
 		JScrollPane scrollPaneLinkTemp = new JScrollPane(incomingLinksTree, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		linkPanel.add(scrollPaneLinkTemp);
@@ -185,7 +188,7 @@ public class PageDetailPanel {
 		outgoingLinksTree = new JTree(outgoingLinksModel);
 		outgoingLinksTree.setBorder(BorderFactory.createTitledBorder(I18nUtil
 				.getMessage("overview.detail.outgoingDomains")));
-		outgoingLinksTree.addMouseListener(new JTreeMouseAction(outgoingLinksTree));
+		outgoingLinksTree.addMouseListener(new JTreeLinksAction(outgoingLinksTree));
 		scrollPaneLinkTemp = new JScrollPane(outgoingLinksTree, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		linkPanel.add(scrollPaneLinkTemp);
@@ -201,11 +204,13 @@ public class PageDetailPanel {
 		contentPanel.add(scrollPaneContent, BorderLayout.CENTER);
 
 		// Analysis Panel
-		// TODO ajouter un panel d'analyse des mots clefs (occurence)
-		JPanel analysisPanel = new JPanel();
+		analysisPanel = new JPanel();
 		analysisPanel.setLayout(new BorderLayout());
-
-		// JTable and JTableModel
+		JButton analysisButton = new JButton(I18nUtil.getMessage("overview.detail.launchAnalysis"));
+		analysisButton.addActionListener(new ContentAnalysisAction());
+		analysisButtonPanel = new JPanel(new FlowLayout());
+		analysisButtonPanel.add(analysisButton);
+		analysisPanel.add(analysisButtonPanel, BorderLayout.CENTER);
 
 		// Panel
 		panel = new JPanel();
@@ -256,6 +261,8 @@ public class PageDetailPanel {
 		outgoingLinksModel = new DefaultTreeModel(constructTree(page.getOutgoingInternLinks(),
 				page.getOutgoingExternLinks()));
 		outgoingLinksTree.setModel(outgoingLinksModel);
+
+		analysisPanel.add(analysisButtonPanel, BorderLayout.CENTER);
 
 		tabbedPane.setSelectedIndex(0);
 	}
@@ -333,11 +340,10 @@ public class PageDetailPanel {
 
 	// Listener Classes
 
-	private class JTreeMouseAction extends MouseAdapter {
-
+	private class JTreeLinksAction extends MouseAdapter {
 		private JTree linksTree;
 
-		public JTreeMouseAction(JTree linksTree) {
+		public JTreeLinksAction(JTree linksTree) {
 			this.linksTree = linksTree;
 		}
 
@@ -365,7 +371,6 @@ public class PageDetailPanel {
 				}
 			}
 		}
-
 	}
 
 	private class RecrawlPageAction implements ActionListener {
@@ -378,6 +383,13 @@ public class PageDetailPanel {
 				PageDAO pageDao = new PageDAO();
 				pageDao.updateCrawlNow(page.getLink(), true);
 			}
+		}
+	}
+
+	private class ContentAnalysisAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			ContentAnalysis.analyse(page, analysisPanel);
 		}
 	}
 

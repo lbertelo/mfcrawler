@@ -17,6 +17,8 @@
 
 package org.mfcrawler.model.pojo.site;
 
+import org.mfcrawler.model.util.I18nUtil;
+
 /**
  * Describes a robotPath from robots.txt
  * 
@@ -110,4 +112,18 @@ public class RobotPath {
 		return urlPath.matches(pathPattern.toString());
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer stringBuff = new StringBuffer();
+		if(allow) {
+			stringBuff.append(I18nUtil.getMessage("general.robotPath.allow"));
+		} else {
+			stringBuff.append(I18nUtil.getMessage("general.robotPath.disallow"));
+		}
+		stringBuff.append(" ");
+		stringBuff.append(path);
+		
+		return stringBuff.toString();
+	}
+	
 }
