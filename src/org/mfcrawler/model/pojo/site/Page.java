@@ -337,6 +337,11 @@ public class Page {
 	}
 
 	@Override
+	public String toString() {
+		return link.getUrl();
+	}
+	
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Page) {
 			Page page = (Page) object;
@@ -347,8 +352,8 @@ public class Page {
 	}
 
 	@Override
-	public String toString() {
-		return link.getUrl();
+	public int hashCode() {
+		return getLink().hashCode();
 	}
 
 }

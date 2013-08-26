@@ -273,6 +273,11 @@ public class Site {
 	}
 
 	@Override
+	public String toString() {
+		return domain.toString();
+	}
+	
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Site) {
 			Site site = (Site) object;
@@ -283,8 +288,8 @@ public class Site {
 	}
 
 	@Override
-	public String toString() {
-		return domain.toString();
+	public int hashCode() {
+		return getDomain().hashCode();
 	}
 
 }

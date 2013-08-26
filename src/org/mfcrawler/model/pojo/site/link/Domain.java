@@ -110,6 +110,11 @@ public class Domain implements Comparable<Domain> {
 		return (this.equals(blacklistDomain) || (blacklistDomain.isFilterBlacklist() && name.endsWith(blacklistDomain
 				.getName())));
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 
 	@Override
 	public boolean equals(Object object) {
@@ -134,11 +139,6 @@ public class Domain implements Comparable<Domain> {
 		} else {
 			return name.compareTo(otherDomain.getName());
 		}
-	}
-
-	@Override
-	public String toString() {
-		return name;
 	}
 
 }

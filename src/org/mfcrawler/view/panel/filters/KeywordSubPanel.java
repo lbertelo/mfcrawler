@@ -135,6 +135,11 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 				return false;
 			}
 		}
+		
+		@Override
+		public int hashCode() {
+			return word.hashCode();
+		}
 
 		@Override
 		public int compareTo(KeywordElement keyword) {

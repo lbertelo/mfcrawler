@@ -160,10 +160,15 @@ public class CrawlProject {
 	public boolean equals(Object object) {
 		if (object instanceof CrawlProject) {
 			CrawlProject crawlProject = (CrawlProject) object;
-			return getName().equals(crawlProject.getName());
+			return name.equals(crawlProject.getName());
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
 	}
 
 }

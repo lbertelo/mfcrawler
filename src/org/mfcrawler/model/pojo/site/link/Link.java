@@ -155,6 +155,11 @@ public class Link implements Comparable<Link> {
 	}
 
 	@Override
+	public String toString() {
+		return getUrl();
+	}
+	
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Link) {
 			Link link = (Link) object;
@@ -177,11 +182,6 @@ public class Link implements Comparable<Link> {
 		} else {
 			return getUrl().compareTo(link.getUrl());
 		}
-	}
-
-	@Override
-	public String toString() {
-		return getUrl();
 	}
 
 	/**
