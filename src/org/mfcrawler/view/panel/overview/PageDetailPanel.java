@@ -39,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -262,6 +263,7 @@ public class PageDetailPanel {
 				page.getOutgoingExternLinks()));
 		outgoingLinksTree.setModel(outgoingLinksModel);
 
+		analysisPanel.removeAll();
 		analysisPanel.add(analysisButtonPanel, BorderLayout.CENTER);
 
 		tabbedPane.setSelectedIndex(0);
@@ -309,7 +311,7 @@ public class PageDetailPanel {
 			return "";
 		}
 
-		Map<String, Integer> keywordMap = KeywordManager.get().getKeywordMap();
+		Map<String, Integer> keywordMap = KeywordManager.getKeywordMap();
 		for (String word : keywordMap.keySet()) {
 			Pattern pattern = Pattern.compile(KeywordManager.makeRegex(word), Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(formatedContent);
@@ -389,7 +391,12 @@ public class PageDetailPanel {
 	private class ContentAnalysisAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ContentAnalysis.analyse(page, analysisPanel);
+			JTable analysisTable = ContentAnalysis.analyse(page);
+			JScrollPane analysisScrollPane = new JScrollPane(analysisTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+			analysisPanel.removeAll();
+			analysisPanel.add(analysisScrollPane, BorderLayout.CENTER);
 		}
 	}
 

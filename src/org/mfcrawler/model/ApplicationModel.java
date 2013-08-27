@@ -145,7 +145,7 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 
 				// Load the new project
 				currentCrawlProject = LoadCrawlProjectConfig.loadCrawlProject(projectName);
-				KeywordManager.get().setKeywordMap(currentCrawlProject.getKeywordMap());
+				KeywordManager.setKeywordMap(currentCrawlProject.getKeywordMap());
 
 				dbmsManager.connect(currentCrawlProject.getName());
 				if (!dbmsManager.checkTables()) {
@@ -241,8 +241,8 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 				if (!keywordMap.equals(currentCrawlProject.getKeywordMap())) {
 					ApplicationModel.this.notify(IPropertyName.LOADING,
 							I18nUtil.getMessage("loading.recalculateScores.step1"));
-					KeywordManager.get().setKeywordMap(keywordMap);
-					KeywordManager.get().recalculateAll(ApplicationModel.this);
+					KeywordManager.setKeywordMap(keywordMap);
+					KeywordManager.recalculateAllPages(ApplicationModel.this);
 					currentCrawlProject.setKeywordMap(keywordMap);
 				}
 

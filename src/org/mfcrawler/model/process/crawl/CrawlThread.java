@@ -82,7 +82,7 @@ public class CrawlThread extends Thread {
 	/**
 	 * The keyword manager
 	 */
-	private KeywordManager keywordManager;
+	//private KeywordManager keywordManager;
 
 	/**
 	 * User agent used by the crawler
@@ -129,7 +129,6 @@ public class CrawlThread extends Thread {
 		this.crawlManager = crawlManager;
 		this.id = id;
 		crawlInfo = crawlManager.initCrawlThread(id);
-		keywordManager = KeywordManager.get();
 
 		ApplicationConfig config = ApplicationModel.getConfig();
 		userAgent = config.getUserAgent();
@@ -297,7 +296,7 @@ public class CrawlThread extends Thread {
 			if (page.getCrawlError() == null && !page.getRedirectPage()) {
 				// Calculates score
 				crawlInfo.notice(CrawlThreadInfo.CI_CALC + order.getLink());
-				Double score = keywordManager.calculate(page.getContent());
+				Double score = KeywordManager.calculateContent(page.getContent());
 				page.setScore(score);
 			}
 
@@ -388,7 +387,7 @@ public class CrawlThread extends Thread {
 	 * @param page the page
 	 */
 	private void savePageInDataBase(Page page) {
-		// TODO ajouter des commits et des rollbacks ?
+		// FIXME ajouter des commits et des rollbacks ?
 		pageDao.updateCrawledPage(page);
 
 		List<Link> outgoingLink = new ArrayList<Link>();

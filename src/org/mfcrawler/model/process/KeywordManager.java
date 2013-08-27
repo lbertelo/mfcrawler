@@ -51,57 +51,46 @@ public final class KeywordManager {
 	public static final int MAX_PAGE_SCORE = 1000;
 
 	/**
-	 * Regex which prefix a word
+	 * Regex which prefixes a word
 	 */
-	private static final String REGEX_PRE_WORD = "[\\p{Space}\\p{Punct}](";
+	private static final String REGEX_PRE_WORD = "[\\p{Space}\\p{Punct}]?(";
 
 	/**
-	 * Regex which suffix a word
+	 * Regex which suffixes a word
 	 */
-	private static final String REGEX_POST_WORD = ")[\\p{Space}\\p{Punct}]";
+	private static final String REGEX_POST_WORD = ")[\\p{Space}\\p{Punct}]?";
 
 	/**
-	 * Unique instance of this class
+	 * Regex which represents any word
 	 */
-	private static KeywordManager instance;
+	private static final String REGEX_WORD = "([^\\p{Space}\\p{Punct}]+)";
 
 	/**
 	 * Keyword Map with word as a key and score as a value
 	 */
-	private Map<String, Integer> keywordMap;
+	private static Map<String, Integer> KEYWORD_MAP = new HashMap<String, Integer>();;
 
 	/**
 	 * Private constructor
 	 */
 	private KeywordManager() {
-		keywordMap = new HashMap<String, Integer>();
-	}
 
-	/**
-	 * Returns the unique instance of the keywordManager
-	 * @return the unique instance
-	 */
-	public synchronized static KeywordManager get() {
-		if (instance == null) {
-			instance = new KeywordManager();
-		}
-		return instance;
 	}
 
 	/**
 	 * Getter of keyword map
-	 * @return the keyword map
+	 * @return the static keyword map
 	 */
-	public Map<String, Integer> getKeywordMap() {
-		return keywordMap;
+	public static synchronized Map<String, Integer> getKeywordMap() {
+		return KEYWORD_MAP;
 	}
 
 	/**
 	 * Setter of the keyword map
-	 * @param keywordMap the keyword map
+	 * @param keywordMap the static keyword map
 	 */
-	public void setKeywordMap(Map<String, Integer> keywordMap) {
-		this.keywordMap = keywordMap;
+	public static synchronized void setKeywordMap(Map<String, Integer> newKeywordMap) {
+		KEYWORD_MAP = newKeywordMap;
 	}
 
 	/**
@@ -118,15 +107,58 @@ public final class KeywordManager {
 	}
 
 	/**
+	 * Counts the occurrences of words in a content and adds the result to
+	 * wordsOccur
+	 * @param wordsOccur the map modified with words as keys and occurrences as
+	 *            values
+	 * @param content the content of a page
+	 */
+	public static void countOccurrences(Map<String, Integer> wordsOccur, String content) {
+		Pattern pattern = Pattern.compile(REGEX_WORD, Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(content);
+		while (matcher.find()) {
+			String word = matcher.group(1).toLowerCase();
+			Integer occurrence = wordsOccur.get(word);
+			if (occurrence == null) {
+				occurrence = 1;
+			} else {
+				occurrence++;
+			}
+
+			wordsOccur.put(word, occurrence);
+		}
+	}
+
+	/**
+	 * Calculates the score for a word with its occurrence and its weight
+	 * @param occurrence the occurrence of the word
+	 * @param weight the weight of the word
+	 * @return the score calculated
+	 */
+	public static double calculate(int occurrence, int weight) {
+		double score;
+		if (occurrence <= 0) {
+			// Score minimum
+			score = 0.0;
+		} else if (occurrence <= 100) {
+			// Score Calculation = weight * ( 25 * log(x) + 50 )
+			score = weight * (25.0 * Math.log10(occurrence) + 50.0);
+		} else {
+			// Score maximum
+			score = weight * 100.0;
+		}
+		return score;
+	}
+
+	/**
 	 * Calculates the score of a content
 	 * @param content the content of a page
 	 * @return the score calculated
 	 */
-	public synchronized double calculate(String content) {
+	public static synchronized double calculateContent(String content) {
 		double score = 0.0;
 
-		for (String word : keywordMap.keySet()) {
-
+		for (String word : KEYWORD_MAP.keySet()) {
 			Pattern pattern = Pattern.compile(makeRegex(word), Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(content);
 			int occurrence = 0;
@@ -134,18 +166,8 @@ public final class KeywordManager {
 				occurrence++;
 			}
 
-			int weight = keywordMap.get(word);
-
-			if (occurrence <= 0) {
-				// Score minimum
-				score += 0.0;
-			} else if (occurrence <= 100) {
-				// Score Calculation = weight * ( 25 * log(x) + 50 )
-				score += weight * (25.0 * Math.log10(occurrence) + 50.0);
-			} else {
-				// Score maximum
-				score += weight * 100.0;
-			}
+			int weight = KEYWORD_MAP.get(word);
+			score += calculate(occurrence, weight);
 		}
 
 		return score;
@@ -155,7 +177,7 @@ public final class KeywordManager {
 	 * Recalculates the scores of all the pages
 	 * @param propertyChangeModel to notify the progression
 	 */
-	public void recalculateAll(SwingPropertyChangeModel propertyChangeModel) {
+	public static void recalculateAllPages(SwingPropertyChangeModel propertyChangeModel) {
 		Set<Link> crawledLinks = new HashSet<Link>();
 		Map<Link, Double> estimatedScoreLinks = new HashMap<Link, Double>();
 
@@ -164,12 +186,12 @@ public final class KeywordManager {
 
 		pageDao.setAutoCommit(false);
 		List<Page> crawledPageList = pageDao.getCrawledPagesForRecalculating();
-		
+
 		propertyChangeModel.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.recalculateScores.step2"));
 		for (Page page : crawledPageList) {
 			double currentScore = 0;
 			if (page.getContent() != null) {
-				currentScore = calculate(page.getContent());
+				currentScore = calculateContent(page.getContent());
 			}
 
 			pageDao.updateScorePage(page.getLink(), currentScore);

@@ -35,6 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 import org.mfcrawler.model.dao.site.SiteDAO;
@@ -247,6 +248,7 @@ public class SiteDetailPanel {
 		incomingDomains.setListData((Domain[]) site.getIncomingDomains().toArray(new Domain[0]));
 		outgoingDomains.setListData((Domain[]) site.getOutgoingDomains().toArray(new Domain[0]));
 
+		analysisPanel.removeAll();
 		analysisPanel.add(analysisButtonPanel, BorderLayout.CENTER);
 		
 		tabbedPane.setSelectedIndex(0);
@@ -300,7 +302,12 @@ public class SiteDetailPanel {
 	private class ContentAnalysisAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ContentAnalysis.analyse(site, analysisPanel);
+			JTable analysisTable = ContentAnalysis.analyse(site);
+			JScrollPane analysisScrollPane = new JScrollPane(analysisTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+			analysisPanel.removeAll();
+			analysisPanel.add(analysisScrollPane, BorderLayout.CENTER);
 		}
 	}
 }
