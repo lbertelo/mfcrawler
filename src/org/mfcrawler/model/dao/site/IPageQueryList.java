@@ -139,8 +139,10 @@ public interface IPageQueryList extends ITablesVocabulary {
 			+ " WHERE " + DOMAIN + " NOT IN ( SELECT " + DOMAIN + " FROM " + TABLE_SITE + " WHERE " + BLACKLISTED
 			+ " = true ) ";
 
-	String SELECT_CRAWLED_PAGES_WITH_CONTENT = " SELECT * FROM " + TABLE_PAGE + " WHERE " + CRAWL_TIME
-			+ " IS NOT NULL AND " + CONTENT + " IS NOT NULL ";
+	String SELECT_PAGES_WITH_CONTENT = " SELECT * FROM " + TABLE_PAGE + " WHERE " + CRAWL_TIME + " IS NOT NULL AND "
+			+ CONTENT + " IS NOT NULL ";
+
+	String WITH_CONTENT_AND_DOMAIN = " AND " + DOMAIN + " = ? ";
 
 	String COUNT_CRAWLED_PAGES_NUMBER = " SELECT COUNT(*) as crawledPagesNumber FROM " + TABLE_PAGE + " WHERE "
 			+ CRAWL_TIME + " IS NOT NULL " + " AND " + DOMAIN + " NOT IN " + " ( SELECT " + DOMAIN + " FROM "

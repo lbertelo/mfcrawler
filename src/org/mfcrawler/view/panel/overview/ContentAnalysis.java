@@ -24,6 +24,8 @@ import java.util.Set;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.mfcrawler.model.dao.iterator.PageDbIterator;
+import org.mfcrawler.model.dao.site.PageDAO;
 import org.mfcrawler.model.pojo.site.Page;
 import org.mfcrawler.model.pojo.site.Site;
 import org.mfcrawler.model.process.KeywordManager;
@@ -40,7 +42,12 @@ public class ContentAnalysis {
 	public static JTable analyse(Site site) {
 		Map<String, Integer> wordsOccurrences = new HashMap<String, Integer>();
 
-		// FIXME Continuer ICI
+		PageDAO pageDao = new PageDAO();
+		PageDbIterator pageDbIterator = pageDao.getPagesWithContent(site.getDomain());
+		while (pageDbIterator.hasNext()) {
+			Page page = pageDbIterator.next();
+			KeywordManager.countOccurrences(wordsOccurrences, page.getContent());
+		}
 
 		return buildTable(wordsOccurrences);
 	}
@@ -48,14 +55,19 @@ public class ContentAnalysis {
 	private static JTable buildTable(Map<String, Integer> wordsOccurrences) {
 		Object[][] rowData = buildRowData(wordsOccurrences);
 
-		String[] columnNames = new String[4];
+		String[] columnNames = new String[3];
 		columnNames[0] = I18nUtil.getMessage("overview.detail.analysis.word");
 		columnNames[1] = I18nUtil.getMessage("overview.detail.analysis.occurrence");
 		columnNames[2] = I18nUtil.getMessage("overview.detail.analysis.weight");
-		columnNames[3] = I18nUtil.getMessage("overview.detail.analysis.calculatedScore");
 
 		JTable analysisTable = new JTable(new AnalysisTableModel(rowData, columnNames));
 		analysisTable.setAutoCreateRowSorter(true);
+		// default sorter
+		analysisTable.getRowSorter().toggleSortOrder(1);
+		analysisTable.getRowSorter().toggleSortOrder(1);
+		analysisTable.getRowSorter().toggleSortOrder(2);
+		analysisTable.getRowSorter().toggleSortOrder(2);
+
 		return analysisTable;
 	}
 
@@ -69,18 +81,11 @@ public class ContentAnalysis {
 
 		int i = 0;
 		Set<String> wordSet = wordsOccurrences.keySet();
-		Object[][] rowData = new Object[wordSet.size()][4];
+		Object[][] rowData = new Object[wordSet.size()][3];
 		for (String word : wordSet) {
-			Integer occurrence = wordsOccurrences.get(word);
 			rowData[i][0] = word;
-			rowData[i][1] = occurrence;
-
-			Integer weight = keywordMap.get(word);
-			if (weight != null) {
-				rowData[i][2] = weight;
-				rowData[i][3] = KeywordManager.calculate(occurrence, weight);
-			}
-
+			rowData[i][1] = wordsOccurrences.get(word);
+			rowData[i][2] = keywordMap.get(word);
 			i++;
 		}
 
@@ -94,17 +99,17 @@ public class ContentAnalysis {
 			super(rowData, columnNames);
 		}
 
+		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
 			return false;
 		}
 
+		@Override
 		public Class<?> getColumnClass(int columnIndex) {
 			switch (columnIndex) {
 			case 1:
 			case 2:
 				return Integer.class;
-			case 3:
-				return Double.class;
 			default:
 				return String.class;
 			}

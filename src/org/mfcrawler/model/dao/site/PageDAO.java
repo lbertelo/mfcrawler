@@ -456,21 +456,42 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	}
 
 	/**
-	 * 
-	 * @return
+	 * Selects crawled page with a content and return an iterator
+	 * @return the page iterator
 	 */
-	public PageDbIterator getCrawledPagesWithContent() {
+	public PageDbIterator getPagesWithContent() {
 		PageDbIterator pageIterator = new PageDbIterator();
 
 		try {
-			PreparedStatement preStatement = connection.prepareStatement(SELECT_CRAWLED_PAGES_WITH_CONTENT);
+			PreparedStatement preStatement = connection.prepareStatement(SELECT_PAGES_WITH_CONTENT);
 			ResultSet result = preStatement.executeQuery();
-
-			while (result.next()) {
-				pageIterator = new PageDbIterator(result, true);
-			}
+			pageIterator = new PageDbIterator(result, true);
 		} catch (SQLException e) {
-			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to get pages for recalculating", e);
+			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to get pages with a content", e);
+		}
+
+		return pageIterator;
+	}
+
+	/**
+	 * Selects crawled page with a content from a domain and return an iterator
+	 * @return the page iterator
+	 */
+	public PageDbIterator getPagesWithContent(Domain domain) {
+		PageDbIterator pageIterator = new PageDbIterator();
+
+		try {
+			StringBuilder sql = new StringBuilder(SELECT_PAGES_WITH_CONTENT);
+			sql.append(WITH_CONTENT_AND_DOMAIN);
+
+			PreparedStatement preStatement = connection.prepareStatement(sql.toString());
+			JdbcTools.setString(preStatement, 1, domain.getName());
+			
+			ResultSet result = preStatement.executeQuery();
+			pageIterator = new PageDbIterator(result, true);
+		} catch (SQLException e) {
+			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE,
+					"Error to get pages from a domain with a content", e);
 		}
 
 		return pageIterator;
