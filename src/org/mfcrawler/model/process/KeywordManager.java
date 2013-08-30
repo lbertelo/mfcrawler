@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import org.mfcrawler.model.IPropertyName;
 import org.mfcrawler.model.SwingPropertyChangeModel;
+import org.mfcrawler.model.dao.iterator.PageDbIterator;
 import org.mfcrawler.model.dao.site.PageDAO;
 import org.mfcrawler.model.pojo.site.Page;
 import org.mfcrawler.model.pojo.site.link.Link;
@@ -68,7 +69,7 @@ public final class KeywordManager {
 	/**
 	 * Keyword Map with word as a key and score as a value
 	 */
-	private static Map<String, Integer> KEYWORD_MAP = new HashMap<String, Integer>();;
+	private static Map<String, Integer> keywordMap = new HashMap<String, Integer>();
 
 	/**
 	 * Private constructor
@@ -82,7 +83,7 @@ public final class KeywordManager {
 	 * @return the static keyword map
 	 */
 	public static synchronized Map<String, Integer> getKeywordMap() {
-		return KEYWORD_MAP;
+		return keywordMap;
 	}
 
 	/**
@@ -90,7 +91,7 @@ public final class KeywordManager {
 	 * @param keywordMap the static keyword map
 	 */
 	public static synchronized void setKeywordMap(Map<String, Integer> newKeywordMap) {
-		KEYWORD_MAP = newKeywordMap;
+		keywordMap = newKeywordMap;
 	}
 
 	/**
@@ -158,7 +159,7 @@ public final class KeywordManager {
 	public static synchronized double calculateContent(String content) {
 		double score = 0.0;
 
-		for (String word : KEYWORD_MAP.keySet()) {
+		for (String word : keywordMap.keySet()) {
 			Pattern pattern = Pattern.compile(makeRegex(word), Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(content);
 			int occurrence = 0;
@@ -166,7 +167,7 @@ public final class KeywordManager {
 				occurrence++;
 			}
 
-			int weight = KEYWORD_MAP.get(word);
+			int weight = keywordMap.get(word);
 			score += calculate(occurrence, weight);
 		}
 
@@ -185,11 +186,13 @@ public final class KeywordManager {
 		pageDao.initAllScores();
 
 		pageDao.setAutoCommit(false);
-		List<Page> crawledPageList = pageDao.getCrawledPagesForRecalculating();
+		PageDbIterator pageDbIterator = pageDao.getCrawledPagesWithContent();
 
 		propertyChangeModel.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.recalculateScores.step2"));
-		for (Page page : crawledPageList) {
+		while (pageDbIterator.hasNext()) {
+			Page page = pageDbIterator.next();
 			double currentScore = 0;
+			
 			if (page.getContent() != null) {
 				currentScore = calculateContent(page.getContent());
 			}
@@ -198,6 +201,7 @@ public final class KeywordManager {
 			crawledLinks.add(page.getLink());
 			estimatedScoreLinks.remove(page.getLink());
 
+			pageDao.loadLinks(page, false);
 			List<Link> outgoingLinkList = new ArrayList<Link>();
 			outgoingLinkList.addAll(page.getOutgoingInternLinks());
 			outgoingLinkList.addAll(page.getOutgoingExternLinks());

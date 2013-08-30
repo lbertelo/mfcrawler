@@ -33,29 +33,41 @@ import org.mfcrawler.model.pojo.site.Page;
 public class PageDbIterator extends DbIterator {
 
 	/**
+	 * Indicates if the iterator return the page with or without its content
+	 */
+	private boolean withContent;
+
+	/**
 	 * Default constructor
 	 */
 	public PageDbIterator() {
 		super();
 	}
-	
+
 	/**
 	 * Constructor with a resultSet
 	 * @param resultSet the resultSet
+	 * @param withContent indicates if the page is returned with the content
 	 */
-	public PageDbIterator(ResultSet resultSet) {
+	public PageDbIterator(ResultSet resultSet, boolean withContent) {
 		super(resultSet);
+		this.withContent = withContent;
 	}
 
 	/**
 	 * Return the next page and move the cursor
-	 * @return the page without the content
+	 * @return the page
 	 */
 	public Page next() {
 		Page page = null;
 		try {
 			if (hasNext()) {
-				page = PageDAO.toPageWithoutContent(getResultSet());
+				if (withContent) {
+					page = PageDAO.toPageWithContent(getResultSet());
+				} else {
+					page = PageDAO.toPageWithoutContent(getResultSet());
+				}
+
 				setHasNext(getResultSet().next());
 				if (!hasNext()) {
 					getResultSet().close();

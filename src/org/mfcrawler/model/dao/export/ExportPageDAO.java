@@ -125,7 +125,7 @@ public class ExportPageDAO extends BaseDAO implements IPageQueryList {
 			}
 
 			ResultSet result = preStatement.executeQuery();
-			pageIterator = new PageDbIterator(result);
+			pageIterator = new PageDbIterator(result, false);
 		} catch (SQLException e) {
 			Logger.getLogger(ExportPageDAO.class.getName()).log(Level.SEVERE, "Error to get page list to export", e);
 		}
@@ -148,7 +148,7 @@ public class ExportPageDAO extends BaseDAO implements IPageQueryList {
 			PreparedStatement preStatement = connection.prepareStatement(sql.toString());
 			JdbcTools.setDouble(preStatement, 1, minScore);
 			ResultSet result = preStatement.executeQuery();
-			pageIterator = new PageDbIterator(result);
+			pageIterator = new PageDbIterator(result, false);
 		} catch (SQLException e) {
 			Logger.getLogger(ExportPageDAO.class.getName()).log(Level.SEVERE, "Error to get page list to export", e);
 		}

@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import org.mfcrawler.model.dao.BaseDAO;
 import org.mfcrawler.model.dao.JdbcTools;
+import org.mfcrawler.model.dao.iterator.PageDbIterator;
 import org.mfcrawler.model.pojo.OverviewParams;
 import org.mfcrawler.model.pojo.crawl.CrawlConfig;
 import org.mfcrawler.model.pojo.site.Page;
@@ -455,30 +456,24 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	}
 
 	/**
-	 * Return a iterator of all pages
-	 * @return the iterator
+	 * 
+	 * @return
 	 */
-	public List<Page> getCrawledPagesForRecalculating() {
-		List<Page> crawledPages = new ArrayList<Page>();
-		PreparedStatement preStatement = null;
-		ResultSet result = null;
+	public PageDbIterator getCrawledPagesWithContent() {
+		PageDbIterator pageIterator = new PageDbIterator();
 
 		try {
-			preStatement = connection.prepareStatement(SELECT_CRAWLED_PAGES_FOR_RECALCULATING);
-			result = preStatement.executeQuery();
+			PreparedStatement preStatement = connection.prepareStatement(SELECT_CRAWLED_PAGES_WITH_CONTENT);
+			ResultSet result = preStatement.executeQuery();
 
 			while (result.next()) {
-				Page page = toPageWithContent(result);
-				loadLinks(page, false);
-				crawledPages.add(page);
+				pageIterator = new PageDbIterator(result, true);
 			}
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to get pages for recalculating", e);
-		} finally {
-			close(result, preStatement);
 		}
 
-		return crawledPages;
+		return pageIterator;
 	}
 
 	/**
