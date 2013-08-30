@@ -17,11 +17,6 @@
 
 package org.mfcrawler;
 
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
 import org.mfcrawler.model.ApplicationModel;
 import org.mfcrawler.view.ApplicationView;
 
@@ -38,18 +33,6 @@ public class Main {
 	public static void main(String[] args) {
 		// Model
 		ApplicationModel model = new ApplicationModel();
-
-		// "Logger.GLOBAL_LOGGER_NAME" doesn't work so we use ""
-		Logger logger = Logger.getLogger("");
-		logger.setLevel(Level.INFO);
-		try {
-			FileHandler fileTxt = new FileHandler("crawler-%u-%g.log", 500000, 2);
-			SimpleFormatter formatterTxt = new SimpleFormatter();
-			fileTxt.setFormatter(formatterTxt);
-			logger.addHandler(fileTxt);
-		} catch (Exception e) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Logger initialisation error", e);
-		}
 
 		// View
 		ApplicationView view = new ApplicationView(model);

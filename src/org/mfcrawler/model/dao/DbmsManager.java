@@ -105,7 +105,8 @@ public final class DbmsManager {
 	}
 
 	/**
-	 * Connect to the dababase, init the connectionPool and the mainConnection
+	 * Connect to the database, initialize the connectionPool and the
+	 * mainConnection
 	 * @param projectName the projectName determines the name of database
 	 */
 	public void connect(String projectName) {
@@ -119,10 +120,21 @@ public final class DbmsManager {
 	}
 
 	/**
+	 * Initializes the DbmsManager by checking and creating tables, and testing
+	 * the connection
+	 */
+	public void init() {
+		if (!checkTables()) {
+			createTables();
+		}
+		testConnection();
+	}
+
+	/**
 	 * Test if the connection is ready
 	 * @return true if the test succeed, false otherwise
 	 */
-	public boolean testConnection() {
+	private boolean testConnection() {
 		boolean testConnect = false;
 		try {
 			if (mainConnection != null && mainConnection.isValid(VALID_CONNECTION_TIME_OUT)) {
@@ -140,7 +152,7 @@ public final class DbmsManager {
 	 * Check if tables are created
 	 * @return true if tables exist, false otherwise
 	 */
-	public boolean checkTables() {
+	private boolean checkTables() {
 		ResultSet result;
 		boolean hasAResult = false;
 		try {
@@ -157,7 +169,7 @@ public final class DbmsManager {
 	/**
 	 * Create all tables (Sites and Pages)
 	 */
-	public void createTables() {
+	private void createTables() {
 		StringBuilder sqlCreateTables = new StringBuilder();
 		sqlCreateTables.append(SiteDAO.getSqlTablesCreation());
 		sqlCreateTables.append(PageDAO.getSqlTablesCreation());
@@ -174,9 +186,17 @@ public final class DbmsManager {
 	}
 
 	/**
+	 * Clears the tables by dropping then creating tables
+	 */
+	public void clearTables() {
+		dropTables();
+		createTables();
+	}
+
+	/**
 	 * Drop all tables (Sites and Pages)
 	 */
-	public void dropTables() {
+	private void dropTables() {
 		StringBuilder sqlDropTables = new StringBuilder();
 		sqlDropTables.append(SiteDAO.getSqlTablesDeletion());
 		sqlDropTables.append(PageDAO.getSqlTablesDeletion());

@@ -20,7 +20,12 @@ package org.mfcrawler.model;
 import java.io.File;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
+import org.mfcrawler.Main;
 import org.mfcrawler.model.dao.DbmsManager;
 import org.mfcrawler.model.dao.site.SiteDAO;
 import org.mfcrawler.model.export.ExportResults;
@@ -62,6 +67,20 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 	 * Default constructor
 	 */
 	public ApplicationModel() {
+		// "Logger.GLOBAL_LOGGER_NAME" doesn't work so we use ""
+		Logger logger = Logger.getLogger("");
+		logger.setLevel(Level.ALL);
+		try {
+			FileHandler fileTxt = new FileHandler("crawler-%u-%g.log", 500000, 2);
+			SimpleFormatter formatterTxt = new SimpleFormatter();
+			fileTxt.setFormatter(formatterTxt);
+			fileTxt.setLevel(Level.INFO);
+			logger.addHandler(fileTxt);
+
+			// TODO add a personal handler
+		} catch (Exception e) {
+			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Logger initialisation error", e);
+		}
 	}
 
 	// Model
@@ -146,13 +165,8 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 				// Load the new project
 				currentCrawlProject = LoadCrawlProjectConfig.loadCrawlProject(projectName);
 				KeywordManager.setKeywordMap(currentCrawlProject.getKeywordMap());
-
 				dbmsManager.connect(currentCrawlProject.getName());
-				if (!dbmsManager.checkTables()) {
-					dbmsManager.createTables();
-				}
-				dbmsManager.testConnection();
-
+				dbmsManager.init();
 				supervisor = new Supervisor(ApplicationModel.this, currentCrawlProject);
 
 				// Notify
@@ -191,8 +205,7 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				DbmsManager.get().dropTables();
-				DbmsManager.get().createTables();
+				DbmsManager.get().clearTables();
 				ApplicationModel.this.notify(IPropertyName.LOADED, null);
 			}
 		}, "Loading").start();
@@ -210,7 +223,6 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 		if (supervisor.isStarted()) {
 			supervisor.launchCrawlThread();
 		}
-
 		supervisor.setRemainingCrawlNumber(crawlConfig.getRemainingCrawlNumber());
 	}
 
@@ -225,7 +237,6 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-
 				// Delete blacklist domain
 				if (!blacklistDomains.equals(currentCrawlProject.getBlacklistDomains())) {
 					ApplicationModel.this.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.reblacklistSites"));
@@ -274,7 +285,8 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 	 * @param format the format of the export
 	 * @param minScoreValue the minimum score value to export
 	 */
-	public void exportResult(final File file, final EScopeExport scope, final EFormatExport format, final Double minScore) {
+	public void exportResult(final File file, final EScopeExport scope, final EFormatExport format,
+			final Double minScore) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
