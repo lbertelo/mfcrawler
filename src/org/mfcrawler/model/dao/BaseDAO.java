@@ -21,6 +21,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +32,12 @@ import java.util.logging.Logger;
  * @author lbertelo
  */
 public class BaseDAO {
+
+	/**
+	 * Map containing a boolean which shows if errors have occurred for a
+	 * transaction (depending on the connection)
+	 */
+	private static Map<Connection, Boolean> errorConnectionMap = new HashMap<Connection, Boolean>();
 
 	/**
 	 * A connection to the database
@@ -52,37 +60,41 @@ public class BaseDAO {
 	}
 
 	/**
-	 * Enable or disable the auto commit (disable by default)
-	 * @param autoCommit true for enable, false for disable
+	 * Begin transaction, set the autoCommit to false and initialize the
+	 * variable which shows if errors have occurred
 	 */
-	public void setAutoCommit(boolean autoCommit) {
+	public void beginTransaction() {
 		try {
-			connection.setAutoCommit(autoCommit);
+			errorConnectionMap.put(connection, Boolean.FALSE);
+			connection.setAutoCommit(false);
 		} catch (SQLException e) {
-			Logger.getLogger(BaseDAO.class.getName()).log(Level.SEVERE, "Error to set autoCommit", e);
+			Logger.getLogger(BaseDAO.class.getName()).log(Level.SEVERE, "Error to begin transaction", e);
 		}
 	}
 
 	/**
-	 * Commit the transaction if the auto commit is disabled
+	 * End transaction, commit or rollback the transaction if errors have
+	 * occurred then set the autoCommit to true
 	 */
-	public void commit() {
+	public void endTransaction() {
 		try {
-			connection.commit();
+			Boolean error = errorConnectionMap.get(connection);
+			if (error != null && error.equals(Boolean.FALSE)) {
+				connection.commit();
+			} else {
+				connection.rollback();
+			}
+			connection.setAutoCommit(true);
 		} catch (SQLException e) {
-			Logger.getLogger(BaseDAO.class.getName()).log(Level.SEVERE, "Error to commit", e);
+			Logger.getLogger(BaseDAO.class.getName()).log(Level.SEVERE, "Error to end transaction", e);
 		}
 	}
 
 	/**
-	 * Rollback the transaction if the auto commit is disabled
+	 * Indicates if a error occurred during a transaction
 	 */
-	public void rollback() {
-		try {
-			connection.rollback();
-		} catch (SQLException e) {
-			Logger.getLogger(BaseDAO.class.getName()).log(Level.SEVERE, "Error to rollback", e);
-		}
+	protected void errorOccurred() {
+		errorConnectionMap.put(connection, Boolean.TRUE);
 	}
 
 	/**
@@ -113,7 +125,6 @@ public class BaseDAO {
 		} catch (SQLException e) {
 			Logger.getLogger(BaseDAO.class.getName()).log(Level.SEVERE, "Error to close resultSet", e);
 		}
-
 		close(statement);
 	}
 

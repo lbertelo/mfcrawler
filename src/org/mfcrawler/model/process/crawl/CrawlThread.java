@@ -387,7 +387,7 @@ public class CrawlThread extends Thread {
 	 * @param page the page
 	 */
 	private void savePageInDataBase(Page page) {
-		// FIXME ajouter des commits et des rollbacks ?
+		pageDao.beginTransaction();
 		pageDao.updateCrawledPage(page);
 
 		List<Link> outgoingLink = new ArrayList<Link>();
@@ -411,6 +411,7 @@ public class CrawlThread extends Thread {
 			pageDao.updateFoundPage(foundPage);
 			siteDao.insertEmptySite(link.getDomain());
 		}
+		pageDao.endTransaction();
 	}
 
 }

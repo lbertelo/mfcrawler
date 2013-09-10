@@ -565,6 +565,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			preStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to update crawled page", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}
@@ -578,6 +579,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			preStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to delete links", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}
@@ -604,6 +606,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 				preStatement.executeUpdate();
 			} catch (SQLException e) {
 				Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to insert links", e);
+				errorOccurred();
 			} finally {
 				close(preStatement);
 			}
@@ -630,6 +633,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			}
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to select found page", e);
+			errorOccurred();
 		} finally {
 			close(result, preStatement);
 		}
@@ -649,6 +653,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			} catch (SQLException e) {
 				if (!e.getSQLState().equals(DUPLICATE_KEY_SQL_STATE)) {
 					Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to insert found page", e);
+					errorOccurred();
 				}
 			} finally {
 				close(preStatement);
@@ -703,6 +708,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 				}
 			} catch (SQLException e) {
 				Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to update found page", e);
+				errorOccurred();
 			} finally {
 				close(preStatement);
 			}
@@ -724,6 +730,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			}
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to update found page", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}
@@ -737,7 +744,6 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	 */
 	public void updateAllowCrawlPage(Link pageLink, boolean allowCrawl) {
 		PreparedStatement preStatement = null;
-
 		try {
 			preStatement = connection.prepareStatement(UPDATE_ALLOW_CRAWL);
 			JdbcTools.setBoolean(preStatement, 1, allowCrawl);
@@ -747,6 +753,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			preStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to update allow crawl page", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}
@@ -769,6 +776,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			preStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to update crawl now page", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}
@@ -784,6 +792,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			preStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to init all scores", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}
@@ -808,6 +817,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			preStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to update score page", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}

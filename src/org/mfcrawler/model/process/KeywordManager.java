@@ -183,9 +183,9 @@ public final class KeywordManager {
 		Map<Link, Double> estimatedScoreLinks = new HashMap<Link, Double>();
 
 		PageDAO pageDao = new PageDAO();
-		pageDao.initAllScores();
+		pageDao.beginTransaction();
 
-		pageDao.setAutoCommit(false);
+		pageDao.initAllScores();
 		PageDbIterator pageDbIterator = pageDao.getPagesWithContent();
 
 		propertyChangeModel.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.recalculateScores.step2"));
@@ -219,8 +219,7 @@ public final class KeywordManager {
 			pageDao.updateScorePage(link, estimatedScoreLinks.get(link));
 		}
 
-		pageDao.commit();
-		pageDao.setAutoCommit(true);
+		pageDao.endTransaction();
 	}
 
 }

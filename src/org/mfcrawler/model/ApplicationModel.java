@@ -76,8 +76,6 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 			fileTxt.setFormatter(formatterTxt);
 			fileTxt.setLevel(Level.INFO);
 			logger.addHandler(fileTxt);
-
-			// TODO add a personal handler
 		} catch (Exception e) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Logger initialisation error", e);
 		}
@@ -241,10 +239,12 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 				if (!blacklistDomains.equals(currentCrawlProject.getBlacklistDomains())) {
 					ApplicationModel.this.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.reblacklistSites"));
 					SiteDAO siteDao = new SiteDAO();
+					siteDao.beginTransaction();
 					siteDao.initBlacklist();
 					for (Domain domain : blacklistDomains) {
 						siteDao.updateBlacklist(domain, true);
 					}
+					siteDao.endTransaction();
 					currentCrawlProject.setBlacklistDomains(blacklistDomains);
 				}
 

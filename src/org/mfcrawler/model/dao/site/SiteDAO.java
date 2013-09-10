@@ -355,6 +355,7 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 			preStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.getLogger(SiteDAO.class.getName()).log(Level.SEVERE, "Error to update robot site", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}
@@ -365,12 +366,12 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 	 */
 	public void initBlacklist() {
 		PreparedStatement preStatement = null;
-
 		try {
 			preStatement = connection.prepareStatement(UPDATE_INIT_BLACKLIST);
 			preStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.getLogger(SiteDAO.class.getName()).log(Level.SEVERE, "Error to init blacklist", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}
@@ -382,7 +383,6 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 	 */
 	public void insertEmptySite(Domain domain) {
 		PreparedStatement preStatement = null;
-
 		try {
 			preStatement = connection.prepareStatement(INSERT_EMPTY_SITE);
 			JdbcTools.setString(preStatement, 1, domain.getName());
@@ -391,6 +391,7 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 		} catch (SQLException e) {
 			if (!e.getSQLState().equals(DUPLICATE_KEY_SQL_STATE)) {
 				Logger.getLogger(SiteDAO.class.getName()).log(Level.SEVERE, "Error to insert into blacklist", e);
+				errorOccurred();
 			}
 		} finally {
 			close(preStatement);
@@ -404,7 +405,6 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 	 */
 	public void updateBlacklist(Domain blacklistDomain, boolean blacklisted) {
 		PreparedStatement preStatement = null;
-
 		try {
 			String blacklistValue;
 			if (blacklistDomain.isFilterBlacklist()) {
@@ -418,9 +418,9 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 			JdbcTools.setBoolean(preStatement, 1, blacklisted);
 			JdbcTools.setString(preStatement, 2, blacklistValue);
 			preStatement.executeUpdate();
-
 		} catch (SQLException e) {
 			Logger.getLogger(SiteDAO.class.getName()).log(Level.SEVERE, "Error to update blacklist", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}
@@ -433,9 +433,8 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 	 * @param crawlNow the value of "crawlNow"
 	 */
 	public void updateCrawlNow(Domain domain, boolean crawlNow) {
-		PreparedStatement preStatement = null;
-
 		// This method update all the pages but don't update the site
+		PreparedStatement preStatement = null;
 		try {
 			preStatement = connection.prepareStatement(UPDATE_PAGES_CRAWL_NOW);
 			JdbcTools.setBoolean(preStatement, 1, crawlNow);
@@ -444,6 +443,7 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 		} catch (SQLException e) {
 			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE,
 					"Error to update crawl now the pages from the site", e);
+			errorOccurred();
 		} finally {
 			close(preStatement);
 		}
