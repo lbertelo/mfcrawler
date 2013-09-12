@@ -70,7 +70,6 @@ public class MenuBarView {
 		JMenuItem manageProject = new JMenuItem(I18nUtil.getMessage("menubar.project.manage"));
 		manageProject.addActionListener(new ManageProjectsAction());
 		projectMenu.add(manageProject);
-		// FIXME Ajouter import et export des filtres
 		projectMenu.add(new JSeparator());
 		JMenuItem exit = new JMenuItem(I18nUtil.getMessage("menubar.exit"));
 		exit.addActionListener(new ExitAction());

@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.mfcrawler.model.dao.site.PageDAO;
 import org.mfcrawler.model.dao.site.SiteDAO;
-import org.mfcrawler.model.util.file.LoadCrawlProjectConfig;
+import org.mfcrawler.model.export.config.LoadCrawlProjectConfig;
 
 /**
  * Handles the Database Management System

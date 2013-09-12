@@ -82,6 +82,7 @@ public class BaseDAO {
 			if (error != null && error.equals(Boolean.FALSE)) {
 				connection.commit();
 			} else {
+				Logger.getLogger(BaseDAO.class.getName()).log(Level.WARNING, "Rollback transaction");
 				connection.rollback();
 			}
 			connection.setAutoCommit(true);
@@ -91,7 +92,7 @@ public class BaseDAO {
 	}
 
 	/**
-	 * Indicates if a error occurred during a transaction
+	 * Indicates that a error occurred during a transaction
 	 */
 	protected void errorOccurred() {
 		errorConnectionMap.put(connection, Boolean.TRUE);

@@ -31,6 +31,8 @@ import org.mfcrawler.model.dao.site.SiteDAO;
 import org.mfcrawler.model.export.ExportResults;
 import org.mfcrawler.model.export.ExportResults.EFormatExport;
 import org.mfcrawler.model.export.ExportResults.EScopeExport;
+import org.mfcrawler.model.export.config.LoadApplicationConfig;
+import org.mfcrawler.model.export.config.LoadCrawlProjectConfig;
 import org.mfcrawler.model.pojo.ApplicationConfig;
 import org.mfcrawler.model.pojo.crawl.CrawlConfig;
 import org.mfcrawler.model.pojo.crawl.CrawlProject;
@@ -38,8 +40,6 @@ import org.mfcrawler.model.pojo.site.link.Domain;
 import org.mfcrawler.model.process.KeywordManager;
 import org.mfcrawler.model.process.Supervisor;
 import org.mfcrawler.model.util.I18nUtil;
-import org.mfcrawler.model.util.file.LoadApplicationConfig;
-import org.mfcrawler.model.util.file.LoadCrawlProjectConfig;
 
 /**
  * Model of the application

@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mfcrawler.model.util.extraction;
+package org.mfcrawler.model.process.extraction;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;

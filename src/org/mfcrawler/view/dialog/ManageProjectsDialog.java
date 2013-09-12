@@ -39,9 +39,9 @@ import javax.swing.event.ListSelectionListener;
 
 import org.mfcrawler.model.ApplicationModel;
 import org.mfcrawler.model.IPropertyName;
+import org.mfcrawler.model.export.config.LoadCrawlProjectConfig;
 import org.mfcrawler.model.pojo.crawl.CrawlProject;
 import org.mfcrawler.model.util.I18nUtil;
-import org.mfcrawler.model.util.file.LoadCrawlProjectConfig;
 import org.mfcrawler.view.ApplicationView;
 import org.mfcrawler.view.SortedListModel;
 

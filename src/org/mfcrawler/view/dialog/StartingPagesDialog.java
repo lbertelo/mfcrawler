@@ -42,10 +42,10 @@ import javax.swing.event.ListSelectionListener;
 
 import org.mfcrawler.model.ApplicationModel;
 import org.mfcrawler.model.dao.site.PageDAO;
+import org.mfcrawler.model.export.config.LoadTextFile;
 import org.mfcrawler.model.pojo.site.Page;
 import org.mfcrawler.model.pojo.site.link.Link;
 import org.mfcrawler.model.util.I18nUtil;
-import org.mfcrawler.model.util.file.LoadTextFile;
 import org.mfcrawler.view.ApplicationView;
 import org.mfcrawler.view.SortedListModel;
 

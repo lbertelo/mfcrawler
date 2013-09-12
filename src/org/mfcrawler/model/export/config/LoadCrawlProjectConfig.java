@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.mfcrawler.model.util.file;
+package org.mfcrawler.model.export.config;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

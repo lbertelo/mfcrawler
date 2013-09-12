@@ -33,7 +33,7 @@ import org.mfcrawler.model.dao.JdbcTools;
 import org.mfcrawler.model.pojo.OverviewParams;
 import org.mfcrawler.model.pojo.site.Site;
 import org.mfcrawler.model.pojo.site.link.Domain;
-import org.mfcrawler.model.util.extraction.RobotExtractionUtil;
+import org.mfcrawler.model.process.extraction.RobotExtractionUtil;
 
 /**
  * DAO for Sites

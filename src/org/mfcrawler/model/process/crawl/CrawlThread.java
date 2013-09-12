@@ -44,8 +44,8 @@ import org.mfcrawler.model.pojo.site.Site;
 import org.mfcrawler.model.pojo.site.link.Link;
 import org.mfcrawler.model.process.ICrawlManager;
 import org.mfcrawler.model.process.KeywordManager;
+import org.mfcrawler.model.process.extraction.PageExtractionUtil;
 import org.mfcrawler.model.util.I18nUtil;
-import org.mfcrawler.model.util.extraction.PageExtractionUtil;
 
 /**
  * CrawlThread executes the crawling action
