@@ -31,7 +31,7 @@ import org.json.simple.JSONValue;
 import org.mfcrawler.model.pojo.ApplicationConfig;
 
 /**
- * Allows to load the application configuration
+ * Allows to load and save the application configuration
  * 
  * @author lbertelo
  */

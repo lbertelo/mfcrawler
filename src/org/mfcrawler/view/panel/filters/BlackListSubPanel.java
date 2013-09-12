@@ -41,7 +41,6 @@ import org.mfcrawler.view.panel.DefaultPanel;
 import org.mfcrawler.view.panel.DefaultSubPanel;
 import org.mfcrawler.view.panel.FiltersPanel;
 
-
 /**
  * SubPanel for blacklist domains
  * 
@@ -62,23 +61,22 @@ public class BlackListSubPanel extends DefaultSubPanel implements IFiltersParams
 		blacklistDomains = new HashSet<Domain>();
 	}
 
-	public void setBlacklistDomains(Set<Domain> blacklistDomains) {
+	public void initBlacklistDomains(Set<Domain> blacklistDomains) {
 		this.blacklistDomains = new HashSet<Domain>(blacklistDomains);
 		domainListModel = new SortedListModel<Domain>();
-		
+
 		for (Domain domain : blacklistDomains) {
 			domainListModel.addElement(domain);
 		}
 		domainJList.setModel(domainListModel);
 	}
 
-	public void addBlacklistDomain(String domainStr) {
-		Link link = Link.parseUrl(domainStr);
-		if (link != null) {
-			blacklistDomains.add(link.getDomain());
-			domainListModel.addElement(link.getDomain());
+	public void addBlacklistDomain(Domain domain) {
+		if (!blacklistDomains.contains(domain)) {
+			blacklistDomains.add(domain);
+			domainListModel.addElement(domain);
 		}
-		((FiltersPanel) getParentPanel()).enabledButtonApply(true);
+		((FiltersPanel) getParentPanel()).enabledApplyButton(true);
 	}
 
 	public Set<Domain> getBlacklistDomains() {
@@ -144,10 +142,8 @@ public class BlackListSubPanel extends DefaultSubPanel implements IFiltersParams
 		public void actionPerformed(ActionEvent e) {
 			String valueTextField = domainTextField.getText();
 			Link link = Link.parseUrl(valueTextField);
-			if (link != null && !blacklistDomains.contains(link.getDomain())) {
-				blacklistDomains.add(link.getDomain());
-				domainListModel.addElement(link.getDomain());
-				((FiltersPanel) getParentPanel()).enabledButtonApply(true);
+			if (link != null) {
+				addBlacklistDomain(link.getDomain());
 			}
 		}
 	}
@@ -159,7 +155,7 @@ public class BlackListSubPanel extends DefaultSubPanel implements IFiltersParams
 				blacklistDomains.remove(domainJList.getSelectedValue());
 				domainListModel.removeElement(domainJList.getSelectedValue());
 				domainTextField.setText("");
-				((FiltersPanel) getParentPanel()).enabledButtonApply(true);
+				((FiltersPanel) getParentPanel()).enabledApplyButton(true);
 			}
 		}
 	}

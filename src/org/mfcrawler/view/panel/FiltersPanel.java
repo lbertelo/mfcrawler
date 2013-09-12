@@ -22,15 +22,23 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
+import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
 import org.mfcrawler.model.ApplicationModel;
 import org.mfcrawler.model.IPropertyName;
+import org.mfcrawler.model.export.config.LoadCrawlProjectConfig;
 import org.mfcrawler.model.pojo.crawl.CrawlProject;
+import org.mfcrawler.model.pojo.site.link.Domain;
 import org.mfcrawler.model.util.I18nUtil;
 import org.mfcrawler.view.ApplicationView;
 import org.mfcrawler.view.panel.filters.BlackListSubPanel;
@@ -43,9 +51,11 @@ import org.mfcrawler.view.panel.filters.KeywordSubPanel;
  */
 public class FiltersPanel extends DefaultPanel {
 
+	private JPanel panel;
 	private KeywordSubPanel keywordSubPanel;
 	private BlackListSubPanel blackListSubPanel;
-	private JButton buttonApply;
+	private JFileChooser fileChooser;
+	private JButton applyButton;
 
 	public FiltersPanel(ApplicationView view, ApplicationModel model) {
 		super(view, model, I18nUtil.getMessage("filters.title"), I18nUtil.getMessage("filters.description"));
@@ -55,7 +65,8 @@ public class FiltersPanel extends DefaultPanel {
 
 	@Override
 	protected JComponent buildContent() {
-		JPanel panel = new JPanel(new BorderLayout());
+		fileChooser = new JFileChooser();
+		panel = new JPanel(new BorderLayout());
 
 		JPanel filtersPanel = new JPanel();
 		filtersPanel.setLayout(new BoxLayout(filtersPanel, BoxLayout.PAGE_AXIS));
@@ -68,10 +79,16 @@ public class FiltersPanel extends DefaultPanel {
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout());
-		buttonApply = new JButton(I18nUtil.getMessage("filters.apply"));
-		buttonApply.addActionListener(new ApplyFiltersAction());
-		buttonApply.setEnabled(false);
-		buttonPanel.add(buttonApply);
+		JButton importButton = new JButton(I18nUtil.getMessage("filters.import"));
+		importButton.addActionListener(new ImportFiltersAction());
+		buttonPanel.add(importButton);
+		applyButton = new JButton(I18nUtil.getMessage("filters.apply"));
+		applyButton.addActionListener(new ApplyFiltersAction());
+		applyButton.setEnabled(false);
+		buttonPanel.add(applyButton);
+		JButton exportButton = new JButton(I18nUtil.getMessage("filters.export"));
+		exportButton.addActionListener(new ExportFiltersAction());
+		buttonPanel.add(exportButton);
 
 		panel.add(filtersPanel, BorderLayout.CENTER);
 		panel.add(buttonPanel, BorderLayout.PAGE_END);
@@ -79,31 +96,65 @@ public class FiltersPanel extends DefaultPanel {
 		return panel;
 	}
 
-	public void enabledButtonApply(boolean enabled) {
-		buttonApply.setEnabled(enabled);
+	public void enabledApplyButton(boolean enabled) {
+		applyButton.setEnabled(enabled);
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		String propertyName = evt.getPropertyName();
 		if (propertyName.equals(IPropertyName.PROJECT_LOADED)) {
 			CrawlProject crawlProject = (CrawlProject) evt.getNewValue();
-			blackListSubPanel.setBlacklistDomains(crawlProject.getBlacklistDomains());
-			keywordSubPanel.setKeywordMap(crawlProject.getKeywordMap());
+			blackListSubPanel.initBlacklistDomains(crawlProject.getBlacklistDomains());
+			keywordSubPanel.initKeywordMap(crawlProject.getKeywordMap());
 		} else if (propertyName.equals(IPropertyName.ADD_BLACKLIST_DOMAIN)) {
-			String domainStr = (String) evt.getNewValue();
-			blackListSubPanel.addBlacklistDomain(domainStr);
+			Domain domain = (Domain) evt.getNewValue();
+			blackListSubPanel.addBlacklistDomain(domain);
 		}
 	}
-	
+
+	// Listener Classes
+
+	private class ImportFiltersAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int returnVal = fileChooser.showOpenDialog(panel);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File filtersFile = fileChooser.getSelectedFile();
+				Map<String, Integer> keywordMap = new HashMap<String, Integer>();
+				Set<Domain> blacklistDomains = new HashSet<Domain>();
+
+				LoadCrawlProjectConfig.loadFilters(filtersFile, keywordMap, blacklistDomains);
+				for (String word : keywordMap.keySet()) {
+					keywordSubPanel.addKeyword(word, keywordMap.get(word));
+				}
+				for (Domain domain : blacklistDomains) {
+					blackListSubPanel.addBlacklistDomain(domain);
+				}
+			}
+		}
+	}
+
 	private class ApplyFiltersAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (getModel().getSupervisor().isStopped()) {
 				getModel().applyFilters(blackListSubPanel.getBlacklistDomains(), keywordSubPanel.getKeywordMap());
-				buttonApply.setEnabled(false);
+				applyButton.setEnabled(false);
 			} else {
 				getView().notifyDialog(IPropertyName.WARNING, I18nUtil.getMessage("warning.stopCrawl"));
+			}
+		}
+	}
+
+	private class ExportFiltersAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int returnVal = fileChooser.showOpenDialog(panel);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File filtersFile = fileChooser.getSelectedFile();
+				LoadCrawlProjectConfig.saveFilters(filtersFile, keywordSubPanel.getKeywordMap(),
+						blackListSubPanel.getBlacklistDomains());
 			}
 		}
 	}

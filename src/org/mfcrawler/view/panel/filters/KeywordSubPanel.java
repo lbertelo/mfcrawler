@@ -41,8 +41,6 @@ import org.mfcrawler.view.panel.DefaultPanel;
 import org.mfcrawler.view.panel.DefaultSubPanel;
 import org.mfcrawler.view.panel.FiltersPanel;
 
-
-
 public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 
 	private JPanel panel;
@@ -58,10 +56,10 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 		super(parentPanel, I18nUtil.getMessage("filters.keywords"));
 		keywordMap = new HashMap<String, Integer>();
 	}
-	
-	public void setKeywordMap(Map<String, Integer> keywordMap) {
+
+	public void initKeywordMap(Map<String, Integer> keywordMap) {
 		this.keywordMap = new HashMap<String, Integer>(keywordMap);
-		
+
 		keywordListModel = new SortedListModel<KeywordElement>();
 		for (String word : keywordMap.keySet()) {
 			KeywordElement keyword = new KeywordElement();
@@ -71,7 +69,33 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 		}
 		keywordJList.setModel(keywordListModel);
 	}
-	
+
+	public void addKeyword(String newWord, Integer newWeight) {
+		keywordMap.put(newWord, newWeight);
+
+		// Check if the JList contains the word
+		int indexKeywordElement = -1;
+		for (KeywordElement keyword : keywordListModel.getElements()) {
+			if (newWord.equals(keyword.word)) {
+				indexKeywordElement = keywordListModel.getElements().indexOf(keyword);
+			}
+		}
+
+		if (indexKeywordElement != -1) {
+			// Update list
+			keywordListModel.getElementAt(indexKeywordElement).weight = newWeight;
+		} else {
+			// Add element
+			KeywordElement newKeywordElement = new KeywordElement();
+			newKeywordElement.word = newWord;
+			newKeywordElement.weight = newWeight;
+			keywordListModel.addElement(newKeywordElement);
+		}
+
+		keywordJList.updateUI();
+		((FiltersPanel) getParentPanel()).enabledApplyButton(true);
+	}
+
 	public Map<String, Integer> getKeywordMap() {
 		return new HashMap<String, Integer>(keywordMap);
 	}
@@ -117,7 +141,7 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 	}
 
 	// Class which represents a element in my JList
-	
+
 	private class KeywordElement implements Comparable<KeywordElement> {
 		public String word;
 		public Integer weight;
@@ -135,7 +159,7 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 				return false;
 			}
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return word.hashCode();
@@ -148,7 +172,7 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 	}
 
 	// Listener Classes
-	
+
 	private class SelectedValueAction implements ListSelectionListener {
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
@@ -171,28 +195,7 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 			if (!wordTextField.getText().isEmpty()) {
 				String newWord = wordTextField.getText().toLowerCase();
 				Integer newWeight = (Integer) weightSpinner.getValue();
-
-				keywordMap.put(newWord, newWeight);
-
-				// Update the JList
-				int indexKeywordElement = -1;
-				for (KeywordElement keyword : keywordListModel.getElements()) {
-					if (newWord.equals(keyword.word)) {
-						indexKeywordElement = keywordListModel.getElements().indexOf(keyword);
-					}
-				}
-				
-				if (indexKeywordElement != -1) {
-					keywordListModel.getElementAt(indexKeywordElement).weight = newWeight;
-				} else {
-					KeywordElement newKeywordElement = new KeywordElement();
-					newKeywordElement.word = newWord;
-					newKeywordElement.weight = newWeight;
-					keywordListModel.addElement(newKeywordElement);
-				}
-				
-				keywordJList.updateUI();
-				((FiltersPanel) getParentPanel()).enabledButtonApply(true);
+				addKeyword(newWord, newWeight);
 			}
 		}
 	}
@@ -204,7 +207,7 @@ public class KeywordSubPanel extends DefaultSubPanel implements IFiltersParams {
 				KeywordElement keywordSelected = keywordJList.getSelectedValue();
 				keywordMap.remove(keywordSelected.word);
 				keywordListModel.removeElement(keywordSelected);
-				((FiltersPanel) getParentPanel()).enabledButtonApply(true);
+				((FiltersPanel) getParentPanel()).enabledApplyButton(true);
 			}
 		}
 	}

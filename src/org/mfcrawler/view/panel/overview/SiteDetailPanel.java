@@ -216,7 +216,7 @@ public class SiteDetailPanel {
 			if (site.getRobotPathList() != null) {
 				for (RobotPath robotPath : site.getRobotPathList()) {
 					robotPathStr.append(robotPath.toString());
-					robotPathStr.append("\n");
+					robotPathStr.append('\n');
 				}				
 			}
 			robotCrawlDisallowPath.setText(robotPathStr.toString());

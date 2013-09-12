@@ -273,7 +273,7 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 		siteDao.updateBlacklist(domain, true);
 
 		currentCrawlProject.getBlacklistDomains().add(domain);
-		notify(IPropertyName.ADD_BLACKLIST_DOMAIN, domain.getName());
+		notify(IPropertyName.ADD_BLACKLIST_DOMAIN, domain);
 	}
 
 	// Export

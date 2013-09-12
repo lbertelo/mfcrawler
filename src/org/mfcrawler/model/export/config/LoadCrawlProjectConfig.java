@@ -26,7 +26,6 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +39,7 @@ import org.mfcrawler.model.pojo.site.link.Domain;
 import org.mfcrawler.model.util.ConversionUtils;
 
 /**
- * Allows to load the crawl project (configuration, keywordList and
+ * Allows to load and save the crawl project (configuration, keywordList and
  * blacklistDomain)
  * 
  * @author lbertelo
@@ -58,14 +57,9 @@ public class LoadCrawlProjectConfig {
 	private static final String CRAWL_CONFIG_FILENAME = "crawlConfig.json";
 
 	/**
-	 * Filename of the blacklist Domain
+	 * Filename of the filters (keyword list and blacklist domains)
 	 */
-	private static final String BLACKLIST_DOMAINS_FILENAME = "blacklistDomains.txt";
-
-	/**
-	 * Filename of the keyword list
-	 */
-	private static final String KEYWORD_LIST_FILENAME = "keywordList.txt";
+	private static final String FILTERS_FILENAME = "filters.txt";
 
 	/**
 	 * Thread number key in json configuration file
@@ -121,9 +115,9 @@ public class LoadCrawlProjectConfig {
 			if (directory.exists()) {
 				crawlProject = new CrawlProject(projectName, new Date(directory.lastModified()));
 				crawlProject.setCrawlConfig(loadCrawlConfig(projectName));
-				crawlProject.setBlacklistDomains(loadBlacklistDomains(projectName));
-				crawlProject.getKeywordMap().clear();
-				crawlProject.getKeywordMap().putAll((loadKeywordList(projectName)));
+
+				File fileFilters = new File(getCompleteFilename(projectName, FILTERS_FILENAME));
+				loadFilters(fileFilters, crawlProject.getKeywordMap(), crawlProject.getBlacklistDomains());
 			} else {
 				crawlProject = new CrawlProject(projectName, new Date());
 				saveCrawlProject(crawlProject);
@@ -147,8 +141,9 @@ public class LoadCrawlProjectConfig {
 		}
 
 		saveCrawlConfig(crawlProject.getName(), crawlProject.getCrawlConfig());
-		saveBlacklistDomains(crawlProject.getName(), crawlProject.getBlacklistDomains());
-		saveKeywordList(crawlProject.getName(), crawlProject.getKeywordMap());
+
+		File fileFilters = new File(getCompleteFilename(crawlProject.getName(), FILTERS_FILENAME));
+		saveFilters(fileFilters, crawlProject.getKeywordMap(), crawlProject.getBlacklistDomains());
 	}
 
 	/**
@@ -206,103 +201,68 @@ public class LoadCrawlProjectConfig {
 		projectFolder.delete();
 	}
 
-	// Keyword List
+	// Filters
 
 	/**
-	 * Load the keyword list
-	 * @param projectName the name of the project
-	 * @return the map of keywords
+	 * Load the filters (keyword list and blacklist domains)
+	 * @param filtersFile the file loaded
+	 * @param keywordMap the map of the keywords modified
+	 * @param blacklistDomains the set of blacklisted domains modified
 	 */
-	private static Map<String, Integer> loadKeywordList(String projectName) {
-		Map<String, Integer> keywordMap = new HashMap<String, Integer>();
-		File keywordListFile = new File(getCompleteFilename(projectName, KEYWORD_LIST_FILENAME));
-		if (keywordListFile.exists()) {
+	public static void loadFilters(File filtersFile, Map<String, Integer> keywordMap, Set<Domain> blacklistDomains) {
+		if (filtersFile.exists()) {
 			try {
-				BufferedReader bufferedReader = new BufferedReader(new FileReader(keywordListFile));
+				BufferedReader bufferedReader = new BufferedReader(new FileReader(filtersFile));
 				while (bufferedReader.ready()) {
-					String line = bufferedReader.readLine();
+					String line = bufferedReader.readLine().trim();
+					int colonIndex = line.indexOf(':');
 
-					int separatorIndex = line.indexOf(":");
-					String word = line.substring(separatorIndex + 1).trim().toLowerCase();
-					Integer weight = ConversionUtils.toInteger(line.substring(0, separatorIndex));
-
-					keywordMap.put(word, weight);
+					if (colonIndex != -1) {
+						// Keyword List
+						String word = line.substring(colonIndex + 1).toLowerCase();
+						Integer weight = ConversionUtils.toInteger(line.substring(0, colonIndex));
+						keywordMap.put(word, weight);
+					} else if (!line.isEmpty()) {
+						// Blacklist domains
+						Domain domain = new Domain(line);
+						blacklistDomains.add(domain);
+					}
 				}
 				bufferedReader.close();
 			} catch (Exception e) {
-				Logger.getLogger(LoadCrawlProjectConfig.class.getName()).log(Level.SEVERE,
-						"Error to read crawl project", e);
+				Logger.getLogger(LoadCrawlProjectConfig.class.getName()).log(Level.SEVERE, "Error to read filters", e);
 			}
 		} else {
-			saveKeywordList(projectName, keywordMap);
+			saveFilters(filtersFile, keywordMap, blacklistDomains);
 		}
-		return keywordMap;
 	}
 
 	/**
-	 * Save the keyword list
-	 * @param projectName the name of the project
-	 * @param keywordMap the map of keywords
+	 * Save the filters (keyword list and blacklist domains)
+	 * @param filtersFile the file saved
+	 * @param keywordMap the map of the keywords to save
+	 * @param blacklistDomains the set of blacklisted domains to save
 	 */
-	public static void saveKeywordList(String projectName, Map<String, Integer> keywordMap) {
-		File keywordListFile = new File(getCompleteFilename(projectName, KEYWORD_LIST_FILENAME));
+	public static void saveFilters(File filtersFile, Map<String, Integer> keywordMap, Set<Domain> blacklistDomains) {
 		try {
-			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(keywordListFile));
+			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filtersFile));
+			// Keyword List
 			for (String word : keywordMap.keySet()) {
 				Integer weight = keywordMap.get(word);
-				bufferedWriter.write(weight + ":" + word + "\n");
+				bufferedWriter.write(weight.toString());
+				bufferedWriter.write(':');
+				bufferedWriter.write(word);
+				bufferedWriter.write('\n');
 			}
-			bufferedWriter.close();
-		} catch (Exception e) {
-			Logger.getLogger(LoadCrawlProjectConfig.class.getName())
-					.log(Level.SEVERE, "Error to save crawl project", e);
-		}
-	}
-
-	// Blacklist Domain
-
-	/**
-	 * Load the blacklist domains
-	 * @param projectName the name of the project
-	 * @return the set of blacklisted domains
-	 */
-	private static Set<Domain> loadBlacklistDomains(String projectName) {
-		Set<Domain> blacklistDomains = new HashSet<Domain>();
-		File blackListDomainFile = new File(getCompleteFilename(projectName, BLACKLIST_DOMAINS_FILENAME));
-		if (blackListDomainFile.exists()) {
-			try {
-				BufferedReader bufferedReader = new BufferedReader(new FileReader(blackListDomainFile));
-				while (bufferedReader.ready()) {
-					Domain domain = new Domain(bufferedReader.readLine().trim());
-					blacklistDomains.add(domain);
-				}
-				bufferedReader.close();
-			} catch (Exception e) {
-				Logger.getLogger(LoadCrawlProjectConfig.class.getName()).log(Level.SEVERE,
-						"Error to read crawl project", e);
-			}
-		} else {
-			saveBlacklistDomains(projectName, blacklistDomains);
-		}
-		return blacklistDomains;
-	}
-
-	/**
-	 * Save the blacklist domains
-	 * @param projectName the name of the project
-	 * @param blacklistDomains the set of blacklisted domains
-	 */
-	public static void saveBlacklistDomains(String projectName, Set<Domain> blacklistDomains) {
-		File blackListDomainFile = new File(getCompleteFilename(projectName, BLACKLIST_DOMAINS_FILENAME));
-		try {
-			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(blackListDomainFile));
+			bufferedWriter.write('\n');
+			// Blacklist domains
 			for (Domain domain : blacklistDomains) {
-				bufferedWriter.write(domain.getName() + "\n");
+				bufferedWriter.write(domain.getName());
+				bufferedWriter.write('\n');
 			}
 			bufferedWriter.close();
 		} catch (Exception e) {
-			Logger.getLogger(LoadCrawlProjectConfig.class.getName())
-					.log(Level.SEVERE, "Error to save crawl project", e);
+			Logger.getLogger(LoadCrawlProjectConfig.class.getName()).log(Level.SEVERE, "Error to save filters", e);
 		}
 	}
 
