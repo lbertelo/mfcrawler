@@ -666,10 +666,11 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 				if (foundPageInDatabase.getOuterDeep().intValue() > foundPage.getOuterDeep().intValue()) {
 					preStatement = connection.prepareStatement(UPDATE_OUTER_DEEP);
 					JdbcTools.setInteger(preStatement, 1, foundPage.getOuterDeep());
-					JdbcTools.setString(preStatement, 2, foundPage.getLink().getDomain().getName());
-					JdbcTools.setString(preStatement, 3, foundPage.getLink().getLinkPath().getPath());
-					JdbcTools.setString(preStatement, 4, foundPage.getLink().getLinkPath().getProtocol());
-					JdbcTools.setInteger(preStatement, 5, foundPage.getOuterDeep());
+					JdbcTools.setInteger(preStatement, 2, foundPage.getInnerDeep());
+					JdbcTools.setString(preStatement, 3, foundPage.getLink().getDomain().getName());
+					JdbcTools.setString(preStatement, 4, foundPage.getLink().getLinkPath().getPath());
+					JdbcTools.setString(preStatement, 5, foundPage.getLink().getLinkPath().getProtocol());
+					JdbcTools.setInteger(preStatement, 6, foundPage.getOuterDeep());
 					preStatement.executeUpdate();
 
 				} else if (foundPageInDatabase.getOuterDeep().intValue() == foundPage.getOuterDeep().intValue()

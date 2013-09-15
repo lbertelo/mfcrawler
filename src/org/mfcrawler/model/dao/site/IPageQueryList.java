@@ -28,14 +28,14 @@ public interface IPageQueryList extends ITablesVocabulary {
 
 	// Create and drop
 
-	String CREATE_TABLES = " CREATE TABLE " + TABLE_PAGE + " ( " + PROTOCOL + " VARCHAR(10) NOT NULL" + DOMAIN
+	String CREATE_TABLES = " CREATE TABLE " + TABLE_PAGE + " ( " + PROTOCOL + " VARCHAR(10) NOT NULL, " + DOMAIN
 			+ " VARCHAR(255) NOT NULL, " + PATH + " VARCHAR(2048) NOT NULL, " + CONTENT + " CLOB, " + SCORE
 			+ " DOUBLE, " + INNER_DEEP + " INTEGER NOT NULL, " + OUTER_DEEP + " INTEGER NOT NULL, " + CRAWL_TIME
 			+ " TIMESTAMP, " + ALLOW_CRAWL + " BOOLEAN, " + REDIRECT_PAGE + " BOOLEAN, " + CRAWL_NOW + " BOOLEAN, "
 			+ CRAWL_ERROR + " VARCHAR(20000), " + INCOMING_INTERN_LINKS_NUMBER + " INTEGER DEFAULT 0, "
 			+ INCOMING_EXTERN_LINKS_NUMBER + " INTEGER DEFAULT 0, " + OUTGOING_INTERN_LINKS_NUMBER
-			+ " INTEGER DEFAULT 0, " + OUTGOING_EXTERN_LINKS_NUMBER + " INTEGER DEFAULT 0, " + "PRIMARY KEY ( "
-			+ DOMAIN + ", " + PATH + ", " + PROTOCOL + " ) ); "
+			+ " INTEGER DEFAULT 0, " + OUTGOING_EXTERN_LINKS_NUMBER + " INTEGER DEFAULT 0, PRIMARY KEY ( " + DOMAIN
+			+ ", " + PATH + ", " + PROTOCOL + " ) ); "
 
 			+ " CREATE INDEX " + TABLE_PAGE + "_" + DOMAIN + "_INDEX " + "ON " + TABLE_PAGE + " ( " + DOMAIN + " );  "
 
@@ -171,8 +171,8 @@ public interface IPageQueryList extends ITablesVocabulary {
 	String INSERT_PAGE = " INSERT INTO " + TABLE_PAGE + " ( " + DOMAIN + ", " + PATH + ", " + PROTOCOL + ", "
 			+ INNER_DEEP + ", " + OUTER_DEEP + ", " + SCORE + ", " + CRAWL_NOW + " ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
 
-	String UPDATE_OUTER_DEEP = " UPDATE " + TABLE_PAGE + " SET " + OUTER_DEEP + " = ?  WHERE " + DOMAIN + " = ? AND "
-			+ PATH + " = ? AND " + PROTOCOL + " = ? AND " + OUTER_DEEP + " > ? ";
+	String UPDATE_OUTER_DEEP = " UPDATE " + TABLE_PAGE + " SET " + OUTER_DEEP + " = ?, " + INNER_DEEP + " = ?  WHERE "
+			+ DOMAIN + " = ? AND " + PATH + " = ? AND " + PROTOCOL + " = ? AND " + OUTER_DEEP + " > ? ";
 
 	String UPDATE_INNER_DEEP = " UPDATE " + TABLE_PAGE + " SET " + INNER_DEEP + " = ?  WHERE " + DOMAIN + " = ? AND "
 			+ PATH + " = ? AND " + PROTOCOL + " = ? AND " + INNER_DEEP + " > ? AND " + OUTER_DEEP + " = ? ";

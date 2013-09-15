@@ -2,24 +2,110 @@ MfCrawler - Mini Focused Crawler
 =================================
 MfCrawler is a intuitive [Web crawler](http://en.wikipedia.org/wiki/Web_crawler).
 You can easily configure crawl parameters and set keywords and domain in blacklist.
-Finally, the results can be analysed and exported in different formats.
+Finally, the results can be analyzed and exported in different formats.
 
 Install and use
 ---------------
-First, you need the Java Virtual Machine version 7 that you can download on [java.com](http://java.com).
-Then, download the last version of MfCrawler and launch the "Jar", no installation is required.
-**Currently, you can't download packaged version of MfCrawler because the project is not yet ready to use**
+First, you need the Java Virtual Machine version 7 that you can download on
+[java.com](http://java.com). Then, download the last version of MfCrawler and launch
+the "Jar", no installation is required.
+
+[Download : Mini Focused Crawler v0.8 - september 2013](http://lbertelo.free.fr/mfcrawler/mfcrawler_v0.8.jar)
 
 Screenshots
 -----------
-![Screenshot 1](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_1.png)
+![Screenshot 1](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_4.png)
 
-![Screenshot 2](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_2.png)
+![Screenshot 2](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_5.png)
 
-![Screenshot 3](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_3.png)
+User Manual
+-----------
+
+### Menu
+
+* Project
+    * Clear database : Clear all the crawling information from current project.
+    * New Project : Create a new project and the current project is saved.
+    * Manage Project : Allow to load or delete projects.
+    
+* Configuration
+    * Proxy : Allow to configure proxy settings
+    * General : Allow to configure global settings that not depend on the crawl project.
+
+### Tabbed Panes
+
+##### Monitoring
+
+The monitoring pane allow to configure the project and monitoring the crawler.
+
+On this pane, you can start and stop the crawler, and you can see the detail of crawling 
+threads. The crawler use several threads to speed up the crawling but between 2 requests
+on a same site (a site is identified by its full domain name).
+
+With the button "Manage starting pages", you have access to a dialog window that allow
+to add starting pages from a file or from a text field.
+
+##### Filters
+
+There are 2 types of filters, the keywords and the blacklisted sites.
+You can import and export this filters into a txt file.
+
+The keywords are words associated with a score which can be negative or positive.
+The keywords with their scores determine score's pages and sites.
+
+The blacklisted sites which will not be crawled, are identified by their full domain name.
+You can also blacklist a root domain by prefixing the root domain name with a dot.
+
+##### Overview
+
+The overview pane allow to see the results from crawling. You can see the crawled pages,
+the found pages, the errors and the redirect pages, and sort the results by name, score,
+deep or crawl time.
+
+By seeing the results, you can adjust the crawl configuration and the keywords, and you can
+add domains to the blacklist.
+
+##### Export
+
+With the export pane, you can export the results with a page scope or site scope into
+a CSV file or a GEXF file.
+
+GEXF file format is a XML file for describing networks structures, for more information
+visit [gexf.net](http://gexf.net). Gephi is an opensource software that can read GEXF file
+and allow to visualize and explore the associated networks, you can download Gephi on
+[gephi.org](http://gephi.org/).
+
+### Configuration
+
+* Thread number : the number of thread which perform the crawl
+* Inner deep : the deep from page to page in a same site.
+* Outer deep : the deep from site to site.
+* Crawl remaining number : the number of remaining crawl before to stop the crawler
+* Minimum score : the minimum score for pages that are considered interesting
+* Default crawl delay : the delay between 2 requests on a same site
+(if the robots.txt doesn't contain crawl delay information)
+* Force crawl despite robots.txt : allow to crawl pages despite disallow on robots.txt
+* Crawl delay when crawl is forced : the delay between 2 requests if the page is not allowed
+
+Pages can have many inner deeps and outer deeps because they can have many incoming links
+but the only saved deep is the smaller outer deep found with the smaller inner deep found.
+(The smaller outer deep overrides the inner deep)
+
+### How to crawl
+
+1. Add starting pages and, if possible add the first keywords. Set short limits to
+crawl configuration especially for inner deep, outer deep and crawl remaining number.
+
+2. Stop the crawler, look the result in the overview pane. Then, adjust keywords, add 
+domains to the blacklist and extend the crawl configuration. Repeat this step
+until you are satisfied. (if you derive from your goal, identify important pages,
+clean the project and restart the process)
+
+3. Visualize the result in the overview pane or export it into a file.
 
 License
 -------
-MfCrawler is distributed under [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html).
+Mini Focused Crawler is distributed under
+[GNU General Public License v3](http://www.gnu.org/licenses/gpl.html).
 
 

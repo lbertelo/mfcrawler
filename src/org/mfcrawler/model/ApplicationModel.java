@@ -204,6 +204,8 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 			@Override
 			public void run() {
 				DbmsManager.get().clearTables();
+				ApplicationModel.this.notify(IPropertyName.SITES_PAGES_NUMBER, null);
+				ApplicationModel.this.notify(IPropertyName.PROJECT_LOADED, currentCrawlProject);
 				ApplicationModel.this.notify(IPropertyName.LOADED, null);
 			}
 		}, "Loading").start();

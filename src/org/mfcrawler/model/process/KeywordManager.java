@@ -54,18 +54,18 @@ public final class KeywordManager {
 	/**
 	 * Regex which prefixes a word
 	 */
-	private static final String REGEX_PRE_WORD = "[\\p{Space}\\p{Punct}]?(";
-
+	private static final String REGEX_PRE_WORD = "(?U)\\b(";
+	
 	/**
 	 * Regex which suffixes a word
 	 */
-	private static final String REGEX_POST_WORD = ")[\\p{Space}\\p{Punct}]?";
-
+	private static final String REGEX_POST_WORD = ")\\b";
+	
 	/**
 	 * Regex which represents any word
 	 */
-	private static final String REGEX_WORD = "([^\\p{Space}\\p{Punct}]+)";
-
+	private static final String REGEX_WORD = "(?U)\\b(\\w+)\\b";
+	
 	/**
 	 * Keyword Map with word as a key and score as a value
 	 */

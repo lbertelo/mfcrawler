@@ -107,8 +107,8 @@ public class Domain implements Comparable<Domain> {
 	 * @return true if the domain must be blacklisted, false otherwise
 	 */
 	public boolean checkBlacklist(Domain blacklistDomain) {
-		return (this.equals(blacklistDomain) || (blacklistDomain.isFilterBlacklist() && name.endsWith(blacklistDomain
-				.getName())));
+		return (getName().equals(blacklistDomain.getName()) || (blacklistDomain.isFilterBlacklist()
+				&& getRootDomain().equals(blacklistDomain.getRootDomain())) );
 	}
 	
 	@Override

@@ -105,8 +105,8 @@ public interface ISiteQueryList extends ITablesVocabulary {
 	String INSERT_EMPTY_SITE = " INSERT INTO " + TABLE_SITE + " ( " + DOMAIN + ", " + ROOT_DOMAIN
 			+ ") VALUES ( ?, ? ) ";
 
-	String UPDATE_BLACKLIST = " UPDATE " + TABLE_SITE + " SET " + BLACKLISTED + " = ? WHERE " + DOMAIN
-			+ " LIKE ? escape '$' ";
+	String UPDATE_BLACKLIST = " UPDATE " + TABLE_SITE + " SET " + BLACKLISTED + " = ? WHERE " + DOMAIN + " = ? OR "
+			+ DOMAIN + " LIKE ? escape '$' ";
 
 	String UPDATE_PAGES_CRAWL_NOW = " UPDATE " + TABLE_PAGE + " SET " + CRAWL_NOW + " = ?  WHERE " + DOMAIN + " = ? ";
 

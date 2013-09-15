@@ -406,17 +406,20 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 	public void updateBlacklist(Domain blacklistDomain, boolean blacklisted) {
 		PreparedStatement preStatement = null;
 		try {
-			String blacklistValue;
+			String blacklistValue, blacklistValueLike;
 			if (blacklistDomain.isFilterBlacklist()) {
-				blacklistValue = "%" + blacklistDomain.getName();
+				blacklistValue = blacklistDomain.getRootDomain();
+				blacklistValueLike = "%" + blacklistDomain.getName();
 			} else {
 				blacklistValue = blacklistDomain.getName();
+				blacklistValueLike = "";
 				insertEmptySite(blacklistDomain);
 			}
 
 			preStatement = connection.prepareStatement(UPDATE_BLACKLIST);
 			JdbcTools.setBoolean(preStatement, 1, blacklisted);
 			JdbcTools.setString(preStatement, 2, blacklistValue);
+			JdbcTools.setString(preStatement, 3, blacklistValueLike);
 			preStatement.executeUpdate();
 		} catch (SQLException e) {
 			Logger.getLogger(SiteDAO.class.getName()).log(Level.SEVERE, "Error to update blacklist", e);

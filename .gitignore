@@ -9,3 +9,5 @@
 /.settings/*
 /.classpath
 /.project
+/project_default/*
+/applicationConfig.json
