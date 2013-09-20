@@ -35,7 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 import org.mfcrawler.model.dao.site.SiteDAO;
@@ -67,10 +66,10 @@ public class SiteDetailPanel {
 	private JLabel robotCrawlDelay;
 	private JTextArea robotCrawlDisallowPath;
 	private JScrollPane scrollPane;
-	
+
 	private JList<Domain> incomingDomains;
 	private JList<Domain> outgoingDomains;
-	
+
 	private JPanel analysisPanel;
 	private JPanel analysisButtonPanel;
 
@@ -211,13 +210,13 @@ public class SiteDetailPanel {
 
 			robotFileExist.setSelected(ConversionUtils.toBoolean(site.getRobotFileExist()));
 			robotCrawlDelay.setText(ConversionUtils.toString(site.getRobotCrawlDelay()));
-			
+
 			StringBuffer robotPathStr = new StringBuffer();
 			if (site.getRobotPathList() != null) {
 				for (RobotPath robotPath : site.getRobotPathList()) {
 					robotPathStr.append(robotPath.toString());
 					robotPathStr.append('\n');
-				}				
+				}
 			}
 			robotCrawlDisallowPath.setText(robotPathStr.toString());
 		} else {
@@ -250,7 +249,7 @@ public class SiteDetailPanel {
 
 		analysisPanel.removeAll();
 		analysisPanel.add(analysisButtonPanel, BorderLayout.CENTER);
-		
+
 		tabbedPane.setSelectedIndex(0);
 	}
 
@@ -302,9 +301,9 @@ public class SiteDetailPanel {
 	private class ContentAnalysisAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JTable analysisTable = ContentAnalysis.analyse(site);
-			JScrollPane analysisScrollPane = new JScrollPane(analysisTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			ContentAnalysisPane analysisPane = new ContentAnalysisPane(site);
+			JScrollPane analysisScrollPane = new JScrollPane(analysisPane.getTable(),
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 			analysisPanel.removeAll();
 			analysisPanel.add(analysisScrollPane, BorderLayout.CENTER);

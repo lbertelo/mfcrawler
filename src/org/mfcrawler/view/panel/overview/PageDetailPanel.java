@@ -39,7 +39,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -391,9 +390,9 @@ public class PageDetailPanel {
 	private class ContentAnalysisAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JTable analysisTable = ContentAnalysis.analyse(page);
-			JScrollPane analysisScrollPane = new JScrollPane(analysisTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-					JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			ContentAnalysisPane analysisPane = new ContentAnalysisPane(page);
+			JScrollPane analysisScrollPane = new JScrollPane(analysisPane.getTable(),
+					JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 			analysisPanel.removeAll();
 			analysisPanel.add(analysisScrollPane, BorderLayout.CENTER);
