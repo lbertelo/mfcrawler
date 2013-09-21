@@ -54,7 +54,9 @@ public class WordAnalysisUtil {
 		Map<String, Integer> wordsOccurrences = new HashMap<String, Integer>();
 		Map<String, Integer> keywordMap = KeywordManager.getKeywordMap();
 
-		KeywordManager.countOccurrences(wordsOccurrences, page.getContent(), keywordMap.keySet());
+		if (page.getContent() != null) {
+			KeywordManager.countOccurrences(wordsOccurrences, page.getContent(), keywordMap.keySet());
+		}
 		initKeywordsOccurences(wordsOccurrences, keywordMap);
 
 		for (String word : wordsOccurrences.keySet()) {
@@ -78,7 +80,9 @@ public class WordAnalysisUtil {
 		PageDbIterator pageDbIterator = pageDao.getPagesWithContent(site.getDomain());
 		while (pageDbIterator.hasNext()) {
 			Page page = pageDbIterator.next();
-			KeywordManager.countOccurrences(wordsOccurrences, page.getContent(), keywordMap.keySet());
+			if (page.getContent() != null) {
+				KeywordManager.countOccurrences(wordsOccurrences, page.getContent(), keywordMap.keySet());
+			}
 		}
 		initKeywordsOccurences(wordsOccurrences, keywordMap);
 
