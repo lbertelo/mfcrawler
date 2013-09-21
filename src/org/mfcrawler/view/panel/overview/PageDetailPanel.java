@@ -312,7 +312,7 @@ public class PageDetailPanel {
 
 		Map<String, Integer> keywordMap = KeywordManager.getKeywordMap();
 		for (String word : keywordMap.keySet()) {
-			Pattern pattern = Pattern.compile(KeywordManager.makeRegex(word), Pattern.CASE_INSENSITIVE);
+			Pattern pattern = Pattern.compile(KeywordManager.makeRegexPattern(word), Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(formatedContent);
 
 			StringBuffer newContent = new StringBuffer();

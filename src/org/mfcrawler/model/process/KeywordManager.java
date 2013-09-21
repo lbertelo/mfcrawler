@@ -55,17 +55,17 @@ public final class KeywordManager {
 	 * Regex which prefixes a word
 	 */
 	private static final String REGEX_PRE_WORD = "(?U)\\b(";
-	
+
 	/**
 	 * Regex which suffixes a word
 	 */
 	private static final String REGEX_POST_WORD = ")\\b";
-	
+
 	/**
 	 * Regex which represents any word
 	 */
-	private static final String REGEX_WORD = "(?U)\\b(\\w+)\\b";
-	
+	private static final String REGEX_WORD = "\\w+";
+
 	/**
 	 * Keyword Map with word as a key and score as a value
 	 */
@@ -95,28 +95,40 @@ public final class KeywordManager {
 	}
 
 	/**
-	 * Makes a regex from a word
+	 * Makes a regex pattern from a word
 	 * @param word the word
 	 * @return the regex from the word
 	 */
-	public static String makeRegex(String word) {
-		StringBuilder regex = new StringBuilder();
-		regex.append(REGEX_PRE_WORD);
-		regex.append(word);
-		regex.append(REGEX_POST_WORD);
-		return regex.toString();
+	public static String makeRegexPattern(String word) {
+		StringBuilder pattern = new StringBuilder();
+		pattern.append(REGEX_PRE_WORD);
+		pattern.append(Pattern.quote(word));
+		pattern.append(REGEX_POST_WORD);
+		return pattern.toString();
 	}
 
 	/**
-	 * Counts the occurrences of words in a content and adds the result to
-	 * wordsOccur
+	 * Counts the occurrences of words and keywords in a content and adds the
+	 * result to wordsOccur
 	 * @param wordsOccur the map modified with words as keys and occurrences as
 	 *            values
 	 * @param content the content of a page
+	 * @param keywords the set of keywords
 	 */
-	public static void countOccurrences(Map<String, Integer> wordsOccur, String content) {
-		Pattern pattern = Pattern.compile(REGEX_WORD, Pattern.CASE_INSENSITIVE);
+	public static void countOccurrences(Map<String, Integer> wordsOccur, String content, Set<String> keywords) {
+		StringBuilder patternStr = new StringBuilder();
+		patternStr.append(REGEX_PRE_WORD);
+		for (String word : keywords) {
+			patternStr.append("");
+			patternStr.append(Pattern.quote(word));
+			patternStr.append("|");
+		}
+		patternStr.append(REGEX_WORD);
+		patternStr.append(REGEX_POST_WORD);
+
+		Pattern pattern = Pattern.compile(patternStr.toString(), Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(content);
+
 		while (matcher.find()) {
 			String word = matcher.group(1).toLowerCase();
 			Integer occurrence = wordsOccur.get(word);
@@ -160,7 +172,7 @@ public final class KeywordManager {
 		double score = 0.0;
 
 		for (String word : keywordMap.keySet()) {
-			Pattern pattern = Pattern.compile(makeRegex(word), Pattern.CASE_INSENSITIVE);
+			Pattern pattern = Pattern.compile(makeRegexPattern(word), Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(content);
 			int occurrence = 0;
 			while (matcher.find()) {
@@ -192,7 +204,7 @@ public final class KeywordManager {
 		while (pageDbIterator.hasNext()) {
 			Page page = pageDbIterator.next();
 			double currentScore = 0;
-			
+
 			if (page.getContent() != null) {
 				currentScore = calculateContent(page.getContent());
 			}

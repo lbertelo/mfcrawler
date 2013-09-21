@@ -35,35 +35,38 @@ public class ContentAnalysisPane {
 
 	private JTable analysisTable;
 	private int columnNumber;
-	
+
 	public ContentAnalysisPane(Page page) {
 		Map<String, Integer> wordsOccurrences = new HashMap<String, Integer>();
-		KeywordManager.countOccurrences(wordsOccurrences, page.getContent());
-		
+		Map<String, Integer> keywordMap = KeywordManager.getKeywordMap();
+
+		KeywordManager.countOccurrences(wordsOccurrences, page.getContent(), keywordMap.keySet());
+
 		columnNumber = 4;
-		analysisTable = buildTable(wordsOccurrences);
+		analysisTable = buildTable(wordsOccurrences, keywordMap);
 	}
 
 	public ContentAnalysisPane(Site site) {
 		Map<String, Integer> wordsOccurrences = new HashMap<String, Integer>();
+		Map<String, Integer> keywordMap = KeywordManager.getKeywordMap();
 
 		PageDAO pageDao = new PageDAO();
 		PageDbIterator pageDbIterator = pageDao.getPagesWithContent(site.getDomain());
 		while (pageDbIterator.hasNext()) {
 			Page page = pageDbIterator.next();
-			KeywordManager.countOccurrences(wordsOccurrences, page.getContent());
+			KeywordManager.countOccurrences(wordsOccurrences, page.getContent(), keywordMap.keySet());
 		}
 
 		columnNumber = 3;
-		analysisTable = buildTable(wordsOccurrences);
+		analysisTable = buildTable(wordsOccurrences, keywordMap);
 	}
-	
+
 	public JTable getTable() {
 		return analysisTable;
 	}
 
-	private JTable buildTable(Map<String, Integer> wordsOccurrences) {
-		Object[][] rowData = buildRowData(wordsOccurrences);
+	private JTable buildTable(Map<String, Integer> wordsOccurrences, Map<String, Integer> keywordMap) {
+		Object[][] rowData = buildRowData(wordsOccurrences, keywordMap);
 
 		String[] columnNames = new String[columnNumber];
 		columnNames[0] = I18nUtil.getMessage("overview.detail.analysis.word");
@@ -84,8 +87,7 @@ public class ContentAnalysisPane {
 		return analysisTable;
 	}
 
-	private Object[][] buildRowData(Map<String, Integer> wordsOccurrences) {
-		Map<String, Integer> keywordMap = KeywordManager.getKeywordMap();
+	private Object[][] buildRowData(Map<String, Integer> wordsOccurrences, Map<String, Integer> keywordMap) {
 		for (String word : keywordMap.keySet()) {
 			if (wordsOccurrences.get(word) == null) {
 				wordsOccurrences.put(word, 0);
@@ -98,21 +100,21 @@ public class ContentAnalysisPane {
 		for (String word : wordSet) {
 			Integer occurrence = wordsOccurrences.get(word);
 			Integer weight = keywordMap.get(word);
-			
+
 			rowData[i][0] = word;
 			rowData[i][1] = occurrence;
 			rowData[i][2] = weight;
 			if (columnNumber == 4 && weight != null) {
 				rowData[i][3] = KeywordManager.calculate(occurrence, weight);
 			}
-			
+
 			i++;
 		}
 
 		return rowData;
 	}
 
-	private static class AnalysisTableModel extends DefaultTableModel {
+	private class AnalysisTableModel extends DefaultTableModel {
 		private static final long serialVersionUID = -8836034757791958634L;
 
 		public AnalysisTableModel(Object[][] rowData, String[] columnNames) {
