@@ -37,8 +37,8 @@ import org.mfcrawler.model.pojo.ApplicationConfig;
 import org.mfcrawler.model.pojo.crawl.CrawlConfig;
 import org.mfcrawler.model.pojo.crawl.CrawlProject;
 import org.mfcrawler.model.pojo.site.link.Domain;
-import org.mfcrawler.model.process.KeywordManager;
 import org.mfcrawler.model.process.Supervisor;
+import org.mfcrawler.model.process.content.KeywordManager;
 import org.mfcrawler.model.util.I18nUtil;
 
 /**

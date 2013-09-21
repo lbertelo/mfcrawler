@@ -17,18 +17,16 @@
 
 package org.mfcrawler.view.panel.overview;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import org.mfcrawler.model.dao.iterator.PageDbIterator;
-import org.mfcrawler.model.dao.site.PageDAO;
 import org.mfcrawler.model.pojo.site.Page;
 import org.mfcrawler.model.pojo.site.Site;
-import org.mfcrawler.model.process.KeywordManager;
+import org.mfcrawler.model.process.content.BasicAnalysis;
+import org.mfcrawler.model.process.content.PageAnalysis;
+import org.mfcrawler.model.process.content.WordAnalysisUtil;
 import org.mfcrawler.model.util.I18nUtil;
 
 public class ContentAnalysisPane {
@@ -37,37 +35,23 @@ public class ContentAnalysisPane {
 	private int columnNumber;
 
 	public ContentAnalysisPane(Page page) {
-		Map<String, Integer> wordsOccurrences = new HashMap<String, Integer>();
-		Map<String, Integer> keywordMap = KeywordManager.getKeywordMap();
-
-		KeywordManager.countOccurrences(wordsOccurrences, page.getContent(), keywordMap.keySet());
-
+		List<BasicAnalysis> analysisData = WordAnalysisUtil.analyze(page);
 		columnNumber = 4;
-		analysisTable = buildTable(wordsOccurrences, keywordMap);
+		analysisTable = buildTable(analysisData);
 	}
 
 	public ContentAnalysisPane(Site site) {
-		Map<String, Integer> wordsOccurrences = new HashMap<String, Integer>();
-		Map<String, Integer> keywordMap = KeywordManager.getKeywordMap();
-
-		PageDAO pageDao = new PageDAO();
-		PageDbIterator pageDbIterator = pageDao.getPagesWithContent(site.getDomain());
-		while (pageDbIterator.hasNext()) {
-			Page page = pageDbIterator.next();
-			KeywordManager.countOccurrences(wordsOccurrences, page.getContent(), keywordMap.keySet());
-		}
-
+		List<BasicAnalysis> analysisData = WordAnalysisUtil.analyze(site);
 		columnNumber = 3;
-		analysisTable = buildTable(wordsOccurrences, keywordMap);
+		analysisTable = buildTable(analysisData);
 	}
 
 	public JTable getTable() {
 		return analysisTable;
 	}
 
-	private JTable buildTable(Map<String, Integer> wordsOccurrences, Map<String, Integer> keywordMap) {
-		Object[][] rowData = buildRowData(wordsOccurrences, keywordMap);
-
+	private JTable buildTable(List<BasicAnalysis> analysisData) {
+		// header
 		String[] columnNames = new String[columnNumber];
 		columnNames[0] = I18nUtil.getMessage("overview.detail.analysis.word");
 		columnNames[1] = I18nUtil.getMessage("overview.detail.analysis.occurrence");
@@ -76,8 +60,23 @@ public class ContentAnalysisPane {
 			columnNames[3] = I18nUtil.getMessage("overview.detail.analysis.score");
 		}
 
+		// data
+		Object[][] rowData = new Object[analysisData.size()][columnNumber];
+		int i = 0;
+		for (BasicAnalysis basicAnalysis : analysisData) {
+			rowData[i][0] = basicAnalysis.getWord();
+			rowData[i][1] = basicAnalysis.getOccurrence();
+			rowData[i][2] = basicAnalysis.getWeight();
+			if (columnNumber == 4 && basicAnalysis instanceof PageAnalysis) {
+				rowData[i][3] = ((PageAnalysis) basicAnalysis).getScore();
+			}
+			i++;
+		}
+
+		// JTable
 		JTable analysisTable = new JTable(new AnalysisTableModel(rowData, columnNames));
 		analysisTable.setAutoCreateRowSorter(true);
+
 		// default sorter
 		analysisTable.getRowSorter().toggleSortOrder(1);
 		analysisTable.getRowSorter().toggleSortOrder(1);
@@ -85,33 +84,6 @@ public class ContentAnalysisPane {
 		analysisTable.getRowSorter().toggleSortOrder(2);
 
 		return analysisTable;
-	}
-
-	private Object[][] buildRowData(Map<String, Integer> wordsOccurrences, Map<String, Integer> keywordMap) {
-		for (String word : keywordMap.keySet()) {
-			if (wordsOccurrences.get(word) == null) {
-				wordsOccurrences.put(word, 0);
-			}
-		}
-
-		int i = 0;
-		Set<String> wordSet = wordsOccurrences.keySet();
-		Object[][] rowData = new Object[wordSet.size()][columnNumber];
-		for (String word : wordSet) {
-			Integer occurrence = wordsOccurrences.get(word);
-			Integer weight = keywordMap.get(word);
-
-			rowData[i][0] = word;
-			rowData[i][1] = occurrence;
-			rowData[i][2] = weight;
-			if (columnNumber == 4 && weight != null) {
-				rowData[i][3] = KeywordManager.calculate(occurrence, weight);
-			}
-
-			i++;
-		}
-
-		return rowData;
 	}
 
 	private class AnalysisTableModel extends DefaultTableModel {
@@ -133,7 +105,7 @@ public class ContentAnalysisPane {
 			case 2:
 				return Integer.class;
 			case 3:
-				return Double.class;
+				return Long.class;
 			default:
 				return String.class;
 			}

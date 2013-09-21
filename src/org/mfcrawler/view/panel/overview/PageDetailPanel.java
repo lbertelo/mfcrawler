@@ -51,7 +51,7 @@ import org.mfcrawler.model.pojo.site.link.Domain;
 import org.mfcrawler.model.pojo.site.link.Link;
 import org.mfcrawler.model.pojo.site.link.LinkPath;
 import org.mfcrawler.model.pojo.site.link.OutgoingLink;
-import org.mfcrawler.model.process.KeywordManager;
+import org.mfcrawler.model.process.content.KeywordManager;
 import org.mfcrawler.model.util.ConversionUtils;
 import org.mfcrawler.model.util.I18nUtil;
 import org.mfcrawler.view.panel.OverviewPanel;
