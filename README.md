@@ -73,7 +73,7 @@ add domains to the blacklist.
 
 This pane allow to analyze the contents of crawled pages.
 For each word, you can see :
-* Weighted Tf * Idf : (Tf *Idf) * Average scores of documents which contain the word
+* Weighted Tf * Idf : (Tf *Idf) * (Average scores of documents which contain the word)
 * Tf * Idf : (Word Frequency) * log(1.0 / (Document Frequency))
 * Word frequency (in ‰) : Frequency of the word on average per document
 * Document frequency (in  ‰) : Frequency of documents which contain the word
