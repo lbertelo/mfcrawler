@@ -114,8 +114,9 @@ public final class KeywordManager {
 	 *            values
 	 * @param content the content of a page
 	 * @param keywords the set of keywords
+	 * @return the number of words (and keywords) in the content
 	 */
-	public static void countOccurrences(Map<String, Integer> wordsOccur, String content, Set<String> keywords) {
+	public static Integer countOccurrences(Map<String, Integer> wordsOccur, String content, Set<String> keywords) {
 		StringBuilder patternStr = new StringBuilder();
 		patternStr.append(REGEX_PRE_WORD);
 		for (String word : keywords) {
@@ -129,6 +130,7 @@ public final class KeywordManager {
 		Pattern pattern = Pattern.compile(patternStr.toString(), Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(content);
 
+		Integer wordsCount = 0;
 		while (matcher.find()) {
 			String word = matcher.group(1).toLowerCase();
 			Integer occurrence = wordsOccur.get(word);
@@ -138,8 +140,11 @@ public final class KeywordManager {
 				occurrence++;
 			}
 
+			wordsCount++;
 			wordsOccur.put(word, occurrence);
 		}
+
+		return wordsCount;
 	}
 
 	/**

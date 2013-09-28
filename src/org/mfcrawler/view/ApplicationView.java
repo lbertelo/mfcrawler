@@ -38,6 +38,7 @@ import org.mfcrawler.model.IPropertyName;
 import org.mfcrawler.model.pojo.crawl.CrawlProject;
 import org.mfcrawler.model.util.I18nUtil;
 import org.mfcrawler.view.dialog.LoadingDialog;
+import org.mfcrawler.view.panel.AnalyzePanel;
 import org.mfcrawler.view.panel.ExportPanel;
 import org.mfcrawler.view.panel.FiltersPanel;
 import org.mfcrawler.view.panel.MonitoringPanel;
@@ -169,6 +170,9 @@ public final class ApplicationView implements PropertyChangeListener {
 
 		OverviewPanel overview = new OverviewPanel(this, getModel());
 		overview.addToTabbedPane(tabbedPane);
+
+		AnalyzePanel analyse = new AnalyzePanel(this, getModel());
+		analyse.addToTabbedPane(tabbedPane);
 
 		ExportPanel export = new ExportPanel(this, getModel());
 		export.addToTabbedPane(tabbedPane);

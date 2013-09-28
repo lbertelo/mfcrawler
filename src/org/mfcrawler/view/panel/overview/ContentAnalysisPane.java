@@ -29,6 +29,11 @@ import org.mfcrawler.model.process.content.PageAnalysis;
 import org.mfcrawler.model.process.content.WordAnalysisUtil;
 import org.mfcrawler.model.util.I18nUtil;
 
+/**
+ * Pane for content analysis
+ * 
+ * @author lbertelo
+ */
 public class ContentAnalysisPane {
 
 	private JTable analysisTable;
@@ -86,6 +91,8 @@ public class ContentAnalysisPane {
 		return analysisTable;
 	}
 
+	// TableModel class
+	
 	private class AnalysisTableModel extends DefaultTableModel {
 		private static final long serialVersionUID = -8836034757791958634L;
 

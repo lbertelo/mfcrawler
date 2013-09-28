@@ -28,21 +28,11 @@ import org.mfcrawler.model.pojo.site.Page;
 import org.mfcrawler.model.pojo.site.Site;
 
 /**
- * Analyzes words of a page, a site
+ * Analyzes words of a page, a site, or all the crawled pages
  * 
  * @author lbertelo
  */
 public class WordAnalysisUtil {
-
-	/**
-	 * Data analysis for all the crawled sites
-	 */
-	public class GlobalData {
-		public String word;
-		public Integer pageOccurrence;
-		public Double wordOccurrence;
-		public Double tfIdf, weightedTfIdf;
-	}
 
 	/**
 	 * Analyzes the content of a page
@@ -106,4 +96,122 @@ public class WordAnalysisUtil {
 		}
 	}
 
+	/**
+	 * Analyzes the content of all the crawled pages with content
+	 * @return the result of the analysis
+	 */
+	public static List<GlobalAnalysis> analyze() {
+		Map<String, Integer> keywordMap = KeywordManager.getKeywordMap();
+
+		double nbDocsTotal = 0;
+		double scoresTotal = 0;
+		Map<String, GlobalSum> globalSumMap = new HashMap<String, GlobalSum>();
+
+		PageDAO pageDao = new PageDAO();
+		PageDbIterator pageDbIterator = pageDao.getPagesWithContent();
+		// Explore documents
+		while (pageDbIterator.hasNext()) {
+			Page page = pageDbIterator.next();
+			if (page.getContent() != null) {
+				nbDocsTotal += 1.0;
+				scoresTotal += page.getScore();
+
+				Map<String, Integer> wordsOccurrences = new HashMap<String, Integer>();
+				Integer wordsCount = KeywordManager.countOccurrences(wordsOccurrences, page.getContent(),
+						keywordMap.keySet());
+
+				// Explore words of the document
+				for (String word : wordsOccurrences.keySet()) {
+					Integer occurrence = wordsOccurrences.get(word);
+					Double frequency = occurrence / (1.0 * wordsCount);
+
+					GlobalSum globalSum = globalSumMap.get(word);
+					if (globalSum == null) {
+						globalSumMap.put(word, new GlobalSum(frequency, page.getScore()));
+					} else {
+						globalSum.increment(frequency, page.getScore());
+					}
+				}
+			}
+		}
+
+		// Final counting
+		List<GlobalAnalysis> analysisResult = new ArrayList<GlobalAnalysis>();
+		for (String word : globalSumMap.keySet()) {
+			GlobalSum globalSum = globalSumMap.get(word);
+			Double wordFrequency = globalSum.getWordsFreqSum() / nbDocsTotal;
+			Double docFrequency = globalSum.getNbDocsSum() / nbDocsTotal;
+			Double tfIdf = wordFrequency * Math.log(1.0 / docFrequency);
+			Double weightedTfIdf = tfIdf * (globalSum.getScoreDocsSum() / scoresTotal);
+			analysisResult.add(new GlobalAnalysis(word, wordFrequency, docFrequency, tfIdf, weightedTfIdf));
+		}
+
+		return analysisResult;
+	}
+
+	/**
+	 * Utility class used by global analysis for the calculations
+	 */
+	private static class GlobalSum {
+		/**
+		 * The sum of the words frequency
+		 */
+		private double wordsFreqSum;
+
+		/**
+		 * The sum of the number of documents
+		 */
+		private double nbDocsSum;
+
+		/**
+		 * The sum of the score of documents
+		 */
+		private double scoreDocsSum;
+
+		/**
+		 * Default constructor
+		 * @param wordFreq the frequency of the word
+		 * @param scoreDoc the score of the document (the page)
+		 */
+		public GlobalSum(double wordFreq, double scoreDoc) {
+			wordsFreqSum = wordFreq;
+			nbDocsSum = 1.0;
+			scoreDocsSum = scoreDoc;
+		}
+
+		/**
+		 * Increments the attributes
+		 * @param wordFreq the frequency of the word
+		 * @param scoreDoc the score of the document (the page)
+		 */
+		public void increment(double wordFreq, double scoreDoc) {
+			wordsFreqSum += wordFreq;
+			nbDocsSum += 1.0;
+			scoreDocsSum += scoreDoc;
+		}
+
+		/**
+		 * Getter of the sum of the words frequency
+		 * @return the sum of the words frequency
+		 */
+		public double getWordsFreqSum() {
+			return wordsFreqSum;
+		}
+
+		/**
+		 * Getter of the sum of the number of documents
+		 * @return the sum of the number of documents
+		 */
+		public double getNbDocsSum() {
+			return nbDocsSum;
+		}
+
+		/**
+		 * Getter of the sum of the score of documents
+		 * @return the sum of the score of documents
+		 */
+		public double getScoreDocsSum() {
+			return scoreDocsSum;
+		}
+	}
 }

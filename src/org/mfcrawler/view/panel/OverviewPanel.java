@@ -77,7 +77,7 @@ public class OverviewPanel extends DefaultPanel {
 	}
 
 	public void selectAndShowSite(Domain domain) {
-		// If the node is not selected, we still display it
+		// If the node is not selectable, we still display it
 		if (!indexSubPanel.selectSiteNode(domain)) {
 			showSiteInfos(domain);
 		}
@@ -88,7 +88,7 @@ public class OverviewPanel extends DefaultPanel {
 	}
 
 	public void selectAndShowPage(Link link) {
-		// If the node is not selected, we still display it
+		// If the node is not selectable, we still display it
 		if (!indexSubPanel.selectPageNode(link)) {
 			showPageInfos(link);
 		}
