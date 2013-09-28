@@ -18,6 +18,7 @@
 package org.mfcrawler.model;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.FileHandler;
@@ -38,7 +39,9 @@ import org.mfcrawler.model.pojo.crawl.CrawlConfig;
 import org.mfcrawler.model.pojo.crawl.CrawlProject;
 import org.mfcrawler.model.pojo.site.link.Domain;
 import org.mfcrawler.model.process.Supervisor;
+import org.mfcrawler.model.process.content.GlobalAnalysis;
 import org.mfcrawler.model.process.content.KeywordManager;
+import org.mfcrawler.model.process.content.WordAnalysisUtil;
 import org.mfcrawler.model.util.I18nUtil;
 
 /**
@@ -276,6 +279,20 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 
 		currentCrawlProject.getBlacklistDomains().add(domain);
 		notify(IPropertyName.ADD_BLACKLIST_DOMAIN, domain);
+	}
+
+	// Analyze
+
+	public void analyzeContents() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				ApplicationModel.this.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.analyze"));
+				List<GlobalAnalysis> analysisData = WordAnalysisUtil.analyze();
+				ApplicationModel.this.notify(IPropertyName.CONTENTS_ANALYZED, analysisData);
+				ApplicationModel.this.notify(IPropertyName.LOADED, null);
+			}
+		}, "Loading").start();
 	}
 
 	// Export

@@ -107,6 +107,7 @@ public class FiltersPanel extends DefaultPanel {
 			CrawlProject crawlProject = (CrawlProject) evt.getNewValue();
 			blackListSubPanel.initBlacklistDomains(crawlProject.getBlacklistDomains());
 			keywordSubPanel.initKeywordMap(crawlProject.getKeywordMap());
+
 		} else if (propertyName.equals(IPropertyName.ADD_BLACKLIST_DOMAIN)) {
 			Domain domain = (Domain) evt.getNewValue();
 			blackListSubPanel.addBlacklistDomain(domain);

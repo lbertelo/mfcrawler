@@ -40,8 +40,11 @@ public interface IPropertyName {
 	String CRAWL_THREAD_INFO = "crawlThreadInfo";
 	String SITES_PAGES_NUMBER = "sitesPagesNumber";
 	String REMAINING_CRAWL_NUMBER = "remainingCrawlNumber";
-	
+
 	// Filters Panel
 	String ADD_BLACKLIST_DOMAIN = "addBlacklistDomain";
+
+	// Analyze Panel
+	String CONTENTS_ANALYZED = "contentsAnalyzed";
 
 }
