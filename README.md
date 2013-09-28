@@ -12,6 +12,8 @@ First, you need the Java Virtual Machine version 7 that you can download on
 [java.com](http://java.com). Then, download the last version of MfCrawler and launch
 the "Jar", no installation is required.
 
+[Download : Mini Focused Crawler v0.9 - october 2013](http://lbertelo.free.fr/mfcrawler/mfcrawler_v0.9.jar)
+
 [Download : Mini Focused Crawler v0.8 - september 2013](http://lbertelo.free.fr/mfcrawler/mfcrawler_v0.8.jar)
 
 Screenshots
@@ -66,6 +68,15 @@ deep or crawl time.
 
 By seeing the results, you can adjust the crawl configuration and the keywords, and you can
 add domains to the blacklist.
+
+##### Analyze
+
+This pane allow to analyze the contents of crawled pages.
+For each word, you can see :
+* Weighted Tf * Idf : (Tf *Idf) * Frequency
+* Tf * Idf : (Word Frequency) * log(1.0 / (Document Frequency))
+* Word frequency (in ‰) : Frequency of the word on average per document
+* Document frequency (in  ‰) : Frequency of documents which contain the word
 
 ##### Export
 
