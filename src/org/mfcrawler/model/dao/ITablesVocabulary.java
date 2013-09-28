@@ -18,8 +18,7 @@
 package org.mfcrawler.model.dao;
 
 /**
- * Constants for DAO classes 
- * Contain names of tables and columns
+ * Constants for DAO classes Contain names of tables and columns
  * 
  * @author lbertelo
  */
@@ -59,8 +58,8 @@ public interface ITablesVocabulary {
 
 	String DUPLICATE_KEY_SQL_STATE = "23505";
 
-	String TEST_QUERY = "SELECT " + DOMAIN + " FROM " + TABLE_SITE + " WHERE " + DOMAIN + " = 'test.test' ";
-	
+	String TEST_QUERY = "SELECT " + DOMAIN + ", " + PATH + " FROM " + TABLE_PAGE + " ORDER BY " + DOMAIN;
+
 	String OR = " OR ";
 
 }

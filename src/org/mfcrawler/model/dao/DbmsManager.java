@@ -131,7 +131,7 @@ public final class DbmsManager {
 	}
 
 	/**
-	 * Test if the connection is ready
+	 * Test if the connection is ready and initialize the DBMS
 	 * @return true if the test succeed, false otherwise
 	 */
 	private boolean testConnection() {
@@ -139,7 +139,11 @@ public final class DbmsManager {
 		try {
 			if (mainConnection != null && mainConnection.isValid(VALID_CONNECTION_TIME_OUT)) {
 				PreparedStatement preStatement = mainConnection.prepareStatement(ITablesVocabulary.TEST_QUERY);
-				preStatement.execute();
+				ResultSet result = preStatement.executeQuery();
+				while (result.next()) {
+					result.getString(1);
+				}
+
 				testConnect = true;
 			}
 		} catch (SQLException e) {
