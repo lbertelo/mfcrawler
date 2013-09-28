@@ -98,7 +98,7 @@ public final class ExportPagesGexf {
 		fileWriter.write("<creator> ");
 		fileWriter.write(I18nUtil.getMessage("export.creator"));
 		fileWriter.write(" </creator> \n <description> ");
-		fileWriter.write(I18nUtil.getMessage("export.description"));
+		fileWriter.write(I18nUtil.getMessage("export.descriptionGexf"));
 		fileWriter.write(" </description> \n");
 		fileWriter.write("</meta> \n <graph defaultedgetype=\"directed\" idtype=\"string\" mode=\"dynamic\" timeformat=\"dateTime\"> ");
 		fileWriter.write("<attributes class=\"node\" mode=\"static\"> ");

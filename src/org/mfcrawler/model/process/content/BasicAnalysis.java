@@ -18,7 +18,7 @@
 package org.mfcrawler.model.process.content;
 
 /**
- * Basic Data analysis (used for a site)
+ * Basic data analysis (used for a site)
  * 
  * @author lbertelo
  */

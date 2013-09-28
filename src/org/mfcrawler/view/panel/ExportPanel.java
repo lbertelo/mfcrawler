@@ -44,7 +44,7 @@ import org.mfcrawler.model.util.I18nUtil;
 import org.mfcrawler.view.ApplicationView;
 
 /**
- * Panel for export
+ * Panel for export in GEXF and CSV
  * 
  * @author lbertelo
  */
