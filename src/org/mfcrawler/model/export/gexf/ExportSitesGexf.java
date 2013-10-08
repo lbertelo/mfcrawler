@@ -163,7 +163,7 @@ public final class ExportSitesGexf {
 
 		fileWriter.write("\"> <attvalues> <attvalue for=\"totalScore\" value=\"");
 		fileWriter.write(ConversionUtils.toString(site.getTotalScore()));
-		fileWriter.write("\"/> <attvalues> <attvalue for=\"averageScore\" value=\"");
+		fileWriter.write("\"/> <attvalue for=\"averageScore\" value=\"");
 		fileWriter.write(ConversionUtils.toString(site.getTotalScore() / site.getCrawledPagesNumber()));
 		fileWriter.write("\"/> <attvalue for=\"crawledPagesNumber\" value=\"");
 		fileWriter.write(ConversionUtils.toString(site.getCrawledPagesNumber()));

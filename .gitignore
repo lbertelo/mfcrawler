@@ -11,3 +11,5 @@
 /.project
 /project_default/*
 /applicationConfig.json
+/crawler-0-0.log
+/crawler-0-1.log
