@@ -215,11 +215,11 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 		Page page = null;
 		StringBuilder sql = new StringBuilder(SELECT_INTERESTING_FOUND_PAGE_START);
 
-		if (crawlConfig.getInnerDeep() != -1) {
+		if (!crawlConfig.getInnerDeep().equals(-1)) {
 			sql.append(SELECT_INTERESTING_FOUND_PAGE_INNER_DEEP);
 		}
 
-		if (crawlConfig.getOuterDeep() != -1) {
+		if (!crawlConfig.getOuterDeep().equals(-1)) {
 			sql.append(SELECT_INTERESTING_FOUND_PAGE_OUTER_DEEP);
 		}
 
@@ -244,10 +244,10 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			preStatement = connection.prepareStatement(sql.toString());
 			int i = 1;
 			JdbcTools.setInteger(preStatement, i++, crawlConfig.getMinimumScore());
-			if (crawlConfig.getInnerDeep() != -1) {
+			if (!crawlConfig.getInnerDeep().equals(-1)) {
 				JdbcTools.setInteger(preStatement, i++, crawlConfig.getInnerDeep());
 			}
-			if (crawlConfig.getOuterDeep() != -1) {
+			if (!crawlConfig.getOuterDeep().equals(-1)) {
 				JdbcTools.setInteger(preStatement, i++, crawlConfig.getOuterDeep());
 			}
 			for (Domain forbiddenDomain : forbiddenDomainList) {

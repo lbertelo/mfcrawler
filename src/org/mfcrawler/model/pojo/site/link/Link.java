@@ -209,9 +209,6 @@ public class Link implements Comparable<Link> {
 			if (myUrl.getQuery() != null) {
 				path += "?" + myUrl.getQuery();
 			}
-			if (myUrl.getRef() != null) {
-				path += "#" + myUrl.getRef();
-			}
 
 			if (!domain.isEmpty() && !protocol.isEmpty()) {
 				if (path.isEmpty()) {

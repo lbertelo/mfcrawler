@@ -26,7 +26,7 @@ public interface IFiltersParams {
 
 	static final int DEFAULT_KEYWORD_COLUMNS = 10;
 	static final int KEYWORD_NUMBER_DEFAULT = 100;
-	static final int KEYWORD_NUMBER_MIN = -100;
+	static final int KEYWORD_NUMBER_MIN = -200;
 	static final int KEYWORD_NUMBER_MAX = 200;
 	static final int KEYWORD_SPINNER_STEP = 1;
 

@@ -51,7 +51,7 @@ public class Site {
 	private List<RobotPath> robotPathList;
 
 	/**
-	 * Crawl delay from robots.txt
+	 * Crawl delay from robots.txt (in secondes)
 	 */
 	private Integer robotCrawlDelay;
 

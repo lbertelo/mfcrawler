@@ -362,7 +362,7 @@ public class PageDetailPanel {
 						Object parentUserObject = ((DefaultMutableTreeNode) currentNode.getParent()).getUserObject();
 						Domain domain;
 						if (parentUserObject instanceof Domain) {
-							domain = (Domain) userObject;
+							domain = (Domain) parentUserObject;
 						} else {
 							domain = page.getLink().getDomain();
 						}

@@ -57,7 +57,7 @@ public interface ICrawlConfigParams {
 	/**
 	 * Maximum value for inner deep
 	 */
-	static final int INNER_DEEP_MAX = 1000;
+	static final int INNER_DEEP_MAX = 1_000;
 	
 	/**
 	 * Default value for outer deep
@@ -72,7 +72,7 @@ public interface ICrawlConfigParams {
 	/**
 	 * Maximum value for outer deep
 	 */
-	static final int OUTER_DEEP_MAX = 10000;
+	static final int OUTER_DEEP_MAX = 1_000;
 
 	/**
 	 * Default value for remaining crawl number
@@ -87,7 +87,7 @@ public interface ICrawlConfigParams {
 	/**
 	 * Maximum value for remaining crawl number
 	 */
-	static final int REMAINING_CRAWL_NUMBER_MAX = 1000000;
+	static final int REMAINING_CRAWL_NUMBER_MAX = 100_000;
 
 	/**
 	 * Default value for minimum score
@@ -97,12 +97,12 @@ public interface ICrawlConfigParams {
 	/**
 	 * Minimum value for minimum score
 	 */
-	static final int MINIMUM_SCORE_MIN = -100;
+	static final int MINIMUM_SCORE_MIN = -100_000;
 	
 	/**
 	 * Maximum value for minimum score
 	 */
-	static final int MINIMUM_SCORE_MAX = 100;
+	static final int MINIMUM_SCORE_MAX = 100_000;
 
 	/**
 	 * Default value for crawl delay
@@ -117,7 +117,7 @@ public interface ICrawlConfigParams {
 	/**
 	 * Maximum value for crawl delay
 	 */
-	static final int CRAWL_DELAY_MAX = 60000;
+	static final int CRAWL_DELAY_MAX = 60_000;
 	
 	/**
 	 * Default value for force crawl
@@ -127,7 +127,7 @@ public interface ICrawlConfigParams {
 	/**
 	 * Default value for force crawl delay
 	 */
-	static final int FORCE_CRAWL_DELAY_DEFAULT = 5000;
+	static final int FORCE_CRAWL_DELAY_DEFAULT = 5_000;
 	
 	/**
 	 * Minimum value for force crawl delay 
@@ -137,6 +137,6 @@ public interface ICrawlConfigParams {
 	/**
 	 * Maximum value for force crawl delay
 	 */
-	static final int FORCE_CRAWL_DELAY_MAX = 60000;
+	static final int FORCE_CRAWL_DELAY_MAX = 60_000;
 
 }

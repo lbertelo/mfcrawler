@@ -76,7 +76,6 @@ public final class ApplicationView implements PropertyChangeListener {
 		model.addListener(IPropertyName.PROJECT_LOADED, this);
 
 		loadingDialog = new LoadingDialog(this, model);
-
 		loading = false;
 		closing = false;
 
@@ -123,6 +122,7 @@ public final class ApplicationView implements PropertyChangeListener {
 		} else if (propertyName.equals(IPropertyName.LOADED)) {
 			loading = false;
 			loadingDialog.hide();
+			window.toFront();
 			if (closing) {
 				window.dispose();
 			}

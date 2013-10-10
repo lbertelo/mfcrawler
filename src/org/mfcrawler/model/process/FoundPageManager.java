@@ -18,7 +18,6 @@
 package org.mfcrawler.model.process;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -207,12 +206,12 @@ public class FoundPageManager {
 
 		Date now = new Date();
 		nextWaitDate = null;
-		Collection<Site> siteWaitMapValues = new ArrayList<Site>(siteWaitMap.values());
+		List<Site> siteWaitMapValues = new ArrayList<Site>(siteWaitMap.values());
 		for (Site siteWait : siteWaitMapValues) {
 			int delay;
 
-			if (siteWait.getRobotFileExist() && siteWait.getRobotCrawlDelay() != null) {
-				delay = siteWait.getRobotCrawlDelay();
+			if (siteWait.getRobotFileExist().booleanValue() && siteWait.getRobotCrawlDelay() != null) {
+				delay = 1000 * siteWait.getRobotCrawlDelay();
 			} else {
 				delay = crawlProject.getCrawlConfig().getCrawlDelay();
 			}

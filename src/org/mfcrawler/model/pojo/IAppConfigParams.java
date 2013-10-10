@@ -32,7 +32,7 @@ public interface IAppConfigParams {
 	/**
 	 * Default value of user agent
 	 */
-	static final String USER_AGENT_DEFAULT = "My Mini Crawler";
+	static final String USER_AGENT_DEFAULT = "MfCrawler";
 
 	/**
 	 * Default value of page request timeout
