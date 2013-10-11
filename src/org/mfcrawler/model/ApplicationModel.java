@@ -28,6 +28,7 @@ import java.util.logging.SimpleFormatter;
 
 import org.mfcrawler.Main;
 import org.mfcrawler.model.dao.DbmsManager;
+import org.mfcrawler.model.dao.site.PageDAO;
 import org.mfcrawler.model.dao.site.SiteDAO;
 import org.mfcrawler.model.export.ExportResults;
 import org.mfcrawler.model.export.ExportResults.EFormatExport;
@@ -244,12 +245,16 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 				if (!blacklistDomains.equals(currentCrawlProject.getBlacklistDomains())) {
 					ApplicationModel.this.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.reblacklistSites"));
 					SiteDAO siteDao = new SiteDAO();
+					PageDAO pageDao = new PageDAO();
+					
 					siteDao.beginTransaction();
 					siteDao.initBlacklist();
 					for (Domain domain : blacklistDomains) {
 						siteDao.updateBlacklist(domain, true);
 					}
+					pageDao.deleteBlacklistedPages();
 					siteDao.endTransaction();
+					
 					currentCrawlProject.setBlacklistDomains(blacklistDomains);
 				}
 
@@ -267,18 +272,6 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 			}
 		}, "Loading").start();
 
-	}
-
-	/**
-	 * Add a blacklisted domain to the list
-	 * @param domain the new blacklisted domain
-	 */
-	public void addBlacklistDomain(final Domain domain) {
-		SiteDAO siteDao = new SiteDAO();
-		siteDao.updateBlacklist(domain, true);
-
-		currentCrawlProject.getBlacklistDomains().add(domain);
-		notify(IPropertyName.ADD_BLACKLIST_DOMAIN, domain);
 	}
 
 	// Analyze

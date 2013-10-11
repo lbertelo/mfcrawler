@@ -37,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
+import org.mfcrawler.model.IPropertyName;
 import org.mfcrawler.model.dao.site.SiteDAO;
 import org.mfcrawler.model.pojo.site.RobotPath;
 import org.mfcrawler.model.pojo.site.Site;
@@ -280,7 +281,7 @@ public class SiteDetailPanel {
 					I18nUtil.getMessage("overview.siteDetail.blacklist"), JOptionPane.YES_NO_OPTION);
 
 			if (option == JOptionPane.YES_OPTION) {
-				overviewPanel.getModel().addBlacklistDomain(site.getDomain());
+				overviewPanel.getModel().notify(IPropertyName.ADD_BLACKLIST_DOMAIN, domain);
 			}
 		}
 	}

@@ -141,7 +141,7 @@ public class WordAnalysisUtil {
 			Double wordFrequency = globalSum.getWordsFreqSum() / nbDocsTotal;
 			Double docFrequency = globalSum.getNbDocsSum() / nbDocsTotal;
 			Double tfIdf = wordFrequency * Math.log(1.0 / docFrequency);
-			Double weightedTfIdf = (globalSum.getScoreDocsSum() / scoresTotal) * Math.log(1.0 / docFrequency);
+			Double weightedTfIdf = tfIdf * (globalSum.getScoreDocsSum() / scoresTotal);
 			analysisResult.add(new GlobalAnalysis(word, wordFrequency, docFrequency, tfIdf, weightedTfIdf));
 		}
 

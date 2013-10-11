@@ -196,4 +196,7 @@ public interface IPageQueryList extends ITablesVocabulary {
 	String UPDATE_SCORE_PAGE = " UPDATE " + TABLE_PAGE + " SET " + SCORE + " = ?  WHERE " + DOMAIN + " = ? AND " + PATH
 			+ " = ? AND " + PROTOCOL + " = ? ";
 
+	String DELETE_BLACKLISTED_PAGES = " DELETE FROM " + TABLE_PAGE + " WHERE " + DOMAIN + " IN ( SELECT " + DOMAIN
+			+ " FROM " + TABLE_SITE + " WHERE " + BLACKLISTED + " =  true ) ";
+
 }

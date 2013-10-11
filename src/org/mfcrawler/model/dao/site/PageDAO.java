@@ -486,7 +486,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 
 			PreparedStatement preStatement = connection.prepareStatement(sql.toString());
 			JdbcTools.setString(preStatement, 1, domain.getName());
-			
+
 			ResultSet result = preStatement.executeQuery();
 			pageIterator = new PageDbIterator(result, true);
 		} catch (SQLException e) {
@@ -784,22 +784,6 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	}
 
 	/**
-	 * Set all scores to null (init for recalculating)
-	 */
-	public void initAllScores() {
-		PreparedStatement preStatement = null;
-		try {
-			preStatement = connection.prepareStatement(UPDATE_INIT_ALL_SCORES);
-			preStatement.executeUpdate();
-		} catch (SQLException e) {
-			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to init all scores", e);
-			errorOccurred();
-		} finally {
-			close(preStatement);
-		}
-	}
-
-	/**
 	 * Update the score of a page
 	 * @param pageLink the link of a page
 	 * @param score the score
@@ -824,4 +808,35 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 		}
 	}
 
+	/**
+	 * Set all scores to null (init for recalculating)
+	 */
+	public void initAllScores() {
+		PreparedStatement preStatement = null;
+		try {
+			preStatement = connection.prepareStatement(UPDATE_INIT_ALL_SCORES);
+			preStatement.executeUpdate();
+		} catch (SQLException e) {
+			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to init all scores", e);
+			errorOccurred();
+		} finally {
+			close(preStatement);
+		}
+	}
+
+	/**
+	 * Delete all blacklisted pages (from SITE.BLACKLISTED)
+	 */
+	public void deleteBlacklistedPages() {
+		PreparedStatement preStatement = null;
+		try {
+			preStatement = connection.prepareStatement(DELETE_BLACKLISTED_PAGES);
+			preStatement.executeUpdate();
+		} catch (SQLException e) {
+			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to delete all blacklisted pages", e);
+			errorOccurred();
+		} finally {
+			close(preStatement);
+		}
+	}
 }
