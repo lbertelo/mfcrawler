@@ -90,6 +90,8 @@ public class GeneralConfigDialog extends DefaultDialog implements IAppConfigPara
 		userAgentText.setEnabled(false);
 		tempPanel.add(userAgentText);
 		dialog.getContentPane().add(tempPanel);
+		
+		// TODO ajouter un champ pour la taille du cache de H2
 
 		tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel pageRequestTimeoutLabel = new JLabel(I18nUtil.getMessage("dialog.applicationConfig.pageRequestTimeout"));

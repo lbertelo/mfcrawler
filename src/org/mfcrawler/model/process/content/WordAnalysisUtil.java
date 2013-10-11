@@ -117,13 +117,12 @@ public class WordAnalysisUtil {
 				scoresTotal += page.getScore();
 
 				Map<String, Integer> wordsOccurrences = new HashMap<String, Integer>();
-				Integer wordsCount = KeywordManager.countOccurrences(wordsOccurrences, page.getContent(),
-						keywordMap.keySet());
+				KeywordManager.countOccurrences(wordsOccurrences, page.getContent(), keywordMap.keySet());
 
 				// Explore words of the document
 				for (String word : wordsOccurrences.keySet()) {
 					Integer occurrence = wordsOccurrences.get(word);
-					Double frequency = occurrence / (1.0 * wordsCount);
+					Double frequency = Math.log(occurrence);
 
 					GlobalSum globalSum = globalSumMap.get(word);
 					if (globalSum == null) {
@@ -142,7 +141,7 @@ public class WordAnalysisUtil {
 			Double wordFrequency = globalSum.getWordsFreqSum() / nbDocsTotal;
 			Double docFrequency = globalSum.getNbDocsSum() / nbDocsTotal;
 			Double tfIdf = wordFrequency * Math.log(1.0 / docFrequency);
-			Double weightedTfIdf = tfIdf * (globalSum.getScoreDocsSum() / scoresTotal);
+			Double weightedTfIdf = (globalSum.getScoreDocsSum() / scoresTotal) * Math.log(1.0 / docFrequency);
 			analysisResult.add(new GlobalAnalysis(word, wordFrequency, docFrequency, tfIdf, weightedTfIdf));
 		}
 

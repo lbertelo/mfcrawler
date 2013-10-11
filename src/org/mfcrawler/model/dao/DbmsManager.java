@@ -111,8 +111,9 @@ public final class DbmsManager {
 	 */
 	public void connect(String projectName) {
 		dbname = LoadCrawlProjectConfig.getCompleteFilename(projectName, "h2Database");
+		String dbOptions = ";CACHE_SIZE=128000";
 		try {
-			connectionPool = JdbcConnectionPool.create(PROTOCOL + dbname, USER, PASSWD);
+			connectionPool = JdbcConnectionPool.create(PROTOCOL + dbname + dbOptions, USER, PASSWD);
 			mainConnection = connectionPool.getConnection();
 		} catch (SQLException e) {
 			Logger.getLogger(DbmsManager.class.getName()).log(Level.SEVERE, "Error to connect to DB", e);

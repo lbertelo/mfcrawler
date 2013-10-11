@@ -41,9 +41,6 @@ public interface IPageQueryList extends ITablesVocabulary {
 
 			+ " CREATE INDEX " + TABLE_PAGE + "_" + PATH + "_INDEX " + "ON " + TABLE_PAGE + " ( " + PATH + " );  "
 
-			+ " CREATE INDEX " + TABLE_PAGE + "_" + PROTOCOL + "_INDEX " + "ON " + TABLE_PAGE + " ( " + PROTOCOL
-			+ " );  "
-
 			+ " CREATE INDEX " + TABLE_PAGE + "_" + SCORE + "_INDEX " + "ON " + TABLE_PAGE + " ( " + SCORE + " );  "
 
 			+ " CREATE INDEX " + TABLE_PAGE + "_" + CRAWL_TIME + "_INDEX " + "ON " + TABLE_PAGE + " ( " + CRAWL_TIME

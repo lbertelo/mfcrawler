@@ -40,6 +40,8 @@ public class Page {
 	 */
 	private String content;
 
+	// TODO ajouter un attribut pour enregistrer le titre de la page
+	
 	/**
 	 * Score of the page (calculated or estimated)
 	 */
