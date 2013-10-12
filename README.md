@@ -84,6 +84,7 @@ For each word, you can see :
 * Tf * Idf : Tf * Idf, with Idf = log(1.0 / (Document Frequency))
 * Word frequency (in ‰) : Logarithmically scaled frequency Tf
 * Document frequency (in  ‰) : Frequency of documents which contain the term
+
 [see details of Tf*Idf on wikipedia](http://en.wikipedia.org/wiki/Tf%E2%80%93idf)
 
 ##### Export
