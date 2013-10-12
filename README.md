@@ -12,15 +12,21 @@ First, you need the Java Virtual Machine version 7 that you can download on
 [java.com](http://java.com). Then, download the last version of MfCrawler and launch
 the "Jar", no installation is required.
 
-[Download : Mini Focused Crawler v0.9 - october 2013](http://lbertelo.free.fr/mfcrawler/mfcrawler_v0.9.jar)
-
-[Download : Mini Focused Crawler v0.8 - september 2013](http://lbertelo.free.fr/mfcrawler/mfcrawler_v0.8.jar)
+[Download : Mini Focused Crawler v1.0 - october 2013](http://lbertelo.free.fr/mfcrawler/mfcrawler_v1.0.jar)
 
 Screenshots
 -----------
 ![Screenshot 1](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_4.png)
 
 ![Screenshot 2](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_5.png)
+
+Notes
+-----
+* For optimal crawl result, you need to crawl, analyze result, adapt filters and parameters,
+restart the crawl and loop until you have a good result. 
+
+* Some structures of sites like Wikis or social networks are difficult to crawl and analyze because
+many links refer to the same content.
 
 User Manual
 -----------
@@ -58,7 +64,8 @@ The keywords are words associated with a score which can be negative or positive
 The keywords with their scores determine score's pages and sites.
 
 The blacklisted sites which will not be crawled, are identified by their full domain name.
-You can also blacklist a root domain by prefixing the root domain name with a dot.
+You can also blacklist a root domain or domain extension by prefixing the term with a dot.
+By blacklisting a site, all pages of the site are deleted.
 
 ##### Overview
 
@@ -73,10 +80,11 @@ add domains to the blacklist.
 
 This pane allow to analyze the contents of crawled pages.
 For each word, you can see :
-* Weighted Tf * Idf : (Tf *Idf) * (Average scores of documents which contain the word)
-* Tf * Idf : (Word Frequency) * log(1.0 / (Document Frequency))
-* Word frequency (in ‰) : Frequency of the word on average per document
-* Document frequency (in  ‰) : Frequency of documents which contain the word
+* Weighted Tf * Idf : Idf * (sum of pages' scores which contain the term) / (sum of all pages' scores)
+* Tf * Idf : Tf * Idf, with Idf = log(1.0 / (Document Frequency))
+* Word frequency (in ‰) : Logarithmically scaled frequency Tf
+* Document frequency (in  ‰) : Frequency of documents which contain the term
+[see details of Tf*Idf on wikipedia](http://en.wikipedia.org/wiki/Tf%E2%80%93idf)
 
 ##### Export
 
@@ -120,5 +128,3 @@ License
 -------
 Mini Focused Crawler is distributed under
 [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html).
-
-
