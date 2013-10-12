@@ -16,20 +16,32 @@ the "Jar", no installation is required.
 
 Screenshots
 -----------
-![Screenshot 1](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_4.png)
+![Screenshot 1](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_4_mini.png)
 
-![Screenshot 2](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_5.png)
+![Screenshot 2](http://lbertelo.free.fr/mfcrawler/mfcrawler_screenshot_5_mini.png)
 
-Notes
------
+User Manual
+-----------
+
+### How to crawl
+
+1. Add starting pages and, if possible add the first keywords. Set short limits to
+crawl configuration especially for inner deep, outer deep and crawl remaining number.
+
+2. Stop the crawler, look the result in the overview pane. Then, adjust keywords, add 
+domains to the blacklist and extend the crawl configuration. Repeat this step
+until you are satisfied. (if you derive from your goal, identify important pages,
+clean the project and restart the process)
+
+3. Visualize the result in the overview pane or export it into a file.
+
+### Notes
+
 * For optimal crawl result, you need to crawl, analyze result, adapt filters and parameters,
 restart the crawl and loop until you have a good result. 
 
 * Some structures of sites like Wikis or social networks are difficult to crawl and analyze because
 many links refer to the same content.
-
-User Manual
------------
 
 ### Menu
 
@@ -113,19 +125,8 @@ Pages can have many inner deeps and outer deeps because they can have many incom
 but the only saved deep is the smaller outer deep found with the smaller inner deep found.
 (The smaller outer deep overrides the inner deep)
 
-### How to crawl
-
-1. Add starting pages and, if possible add the first keywords. Set short limits to
-crawl configuration especially for inner deep, outer deep and crawl remaining number.
-
-2. Stop the crawler, look the result in the overview pane. Then, adjust keywords, add 
-domains to the blacklist and extend the crawl configuration. Repeat this step
-until you are satisfied. (if you derive from your goal, identify important pages,
-clean the project and restart the process)
-
-3. Visualize the result in the overview pane or export it into a file.
-
 License
 -------
 Mini Focused Crawler is distributed under
 [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html).
+
