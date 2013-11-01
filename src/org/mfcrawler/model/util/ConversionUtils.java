@@ -28,6 +28,8 @@ import java.util.Date;
  */
 public final class ConversionUtils {
 
+	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+
 	/**
 	 * Private constructor
 	 */
@@ -45,7 +47,8 @@ public final class ConversionUtils {
 			return I18nUtil.getMessage("general.undefined");
 		} else {
 			if (object instanceof Date) {
-				return DateFormat.getDateTimeInstance().format((Date) object);
+				SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+				return dateFormat.format((Date) object);
 			} else {
 				return object.toString();
 			}

@@ -40,7 +40,7 @@ public final class ExportPagesCsvData implements ICsvParams {
 	/**
 	 * Header of the CSV
 	 */
-	private static final String CSV_HEADER = "link, crawl time, inner deep, outer deep, score\n";
+	private static final String CSV_HEADER = "link, title, crawl time, inner deep, outer deep, score\n";
 
 	/**
 	 * Private constructor
@@ -64,6 +64,8 @@ public final class ExportPagesCsvData implements ICsvParams {
 			while (pageIterator.hasNext()) {
 				Page page = pageIterator.next();
 				csvFileWriter.write(StringEscapeUtils.escapeCsv(page.getLink().getUrl()));
+				csvFileWriter.write(CSV_COLUMN_SEPARATOR);
+				csvFileWriter.write(StringEscapeUtils.escapeCsv(page.getTitle()));
 				csvFileWriter.write(CSV_COLUMN_SEPARATOR);
 				csvFileWriter.write(StringEscapeUtils.escapeCsv(ConversionUtils.toString(page.getCrawlTime())));
 				csvFileWriter.write(CSV_COLUMN_SEPARATOR);

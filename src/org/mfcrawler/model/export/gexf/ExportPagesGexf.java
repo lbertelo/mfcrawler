@@ -144,10 +144,11 @@ public final class ExportPagesGexf {
 	 */
 	private static void writeGexfNode(FileWriter fileWriter, Page page) throws IOException {
 		String linkName = StringEscapeUtils.escapeXml(page.getLink().getUrl());
+		String titleName = StringEscapeUtils.escapeXml(page.getTitle());
 		fileWriter.write("<node id=\"");
 		fileWriter.write(linkName);
 		fileWriter.write("\" label=\"");
-		fileWriter.write(linkName);
+		fileWriter.write(titleName);
 		fileWriter.write("\" start=\"");
 		fileWriter.write(ConversionUtils.toFormattedDate(page.getCrawlTime(), DATETIME_FORMAT));
 
