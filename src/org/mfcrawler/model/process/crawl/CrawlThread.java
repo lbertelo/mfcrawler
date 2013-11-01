@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 
 import org.mfcrawler.model.ApplicationModel;
@@ -78,11 +79,6 @@ public class CrawlThread extends Thread {
 	 * The crawl thread informant
 	 */
 	private CrawlThreadInfo crawlInfo;
-
-	/**
-	 * The keyword manager
-	 */
-	//private KeywordManager keywordManager;
 
 	/**
 	 * User agent used by the crawler
@@ -278,6 +274,15 @@ public class CrawlThread extends Thread {
 				parsedContent.setLogger(null);
 				parsedContent.fullSequentialParse();
 				page.setContent(parsedContent.getTextExtractor().toString().trim());
+
+				page.setTitle(page.getLink().toString());
+				Element titleElement = parsedContent.getFirstElement("title");
+				if (titleElement != null) {
+					String title = titleElement.getTextExtractor().toString().trim();
+					if (!title.isEmpty()) {
+						page.setTitle(title);
+					}
+				}
 
 				// Redirect request
 				if (httpConnection.getResponseCode() >= 300 || page.getContent().isEmpty()) {

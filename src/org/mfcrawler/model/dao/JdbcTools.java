@@ -164,6 +164,25 @@ public class JdbcTools {
 	// Setter to PreparedStatement
 
 	/**
+	 * Set a Varchar in the prepared statement (and cut the string value at its
+	 * end if necessary)
+	 * @param preStatement the prepared statement
+	 * @param parameterIndex the parameter index
+	 * @param value a String or null
+	 * @param maxLength the maximum length of the string value
+	 * @throws SQLException
+	 */
+	public static void setString(PreparedStatement preStatement, int parameterIndex, String value, int maxLength)
+			throws SQLException {
+		String correctValue = value;
+		if (value != null && value.length() > maxLength) {
+			correctValue = value.substring(0, maxLength);
+		}
+
+		setString(preStatement, parameterIndex, correctValue);
+	}
+
+	/**
 	 * Set a Varchar in the prepared statement
 	 * @param preStatement the prepared statement
 	 * @param parameterIndex the parameter index

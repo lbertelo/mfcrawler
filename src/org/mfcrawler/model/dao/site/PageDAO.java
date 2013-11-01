@@ -93,6 +93,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 					JdbcTools.getString(result, PATH));
 			page = new Page(linkPage);
 
+			page.setTitle(JdbcTools.getString(result, TITLE));
 			page.setScore(JdbcTools.getDouble(result, SCORE));
 			page.setInnerDeep(JdbcTools.getInteger(result, INNER_DEEP));
 			page.setOuterDeep(JdbcTools.getInteger(result, OUTER_DEEP));
@@ -531,36 +532,24 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 		int externLinksNumber = crawledPage.getOutgoingExternLinks().size();
 
 		// Update page
-		StringBuilder sql = new StringBuilder(UPDATE_CRAWLED_PAGE_START);
-		if (crawledPage.getCrawlError() != null) {
-			sql.append(UPDATE_CRAWLED_PAGE_CRAWL_ERROR);
-		}
-		if (crawledPage.getContent() != null) {
-			sql.append(UPDATE_CRAWLED_PAGE_CRAWL_CONTENT);
-		}
-		sql.append(UPDATE_CRAWLED_PAGE_END);
+		StringBuilder sql = new StringBuilder(UPDATE_CRAWLED_PAGE);
 
 		PreparedStatement preStatement = null;
 		try {
 			preStatement = connection.prepareStatement(sql.toString());
-			int i = 1;
 
-			JdbcTools.setDouble(preStatement, i++, crawledPage.getScore());
-			if (crawledPage.getCrawlError() != null) {
-				JdbcTools.setString(preStatement, i++, crawledPage.getCrawlError());
-			}
-			if (crawledPage.getContent() != null) {
-				JdbcTools.setClob(preStatement, i++, crawledPage.getContent());
-			}
-
-			JdbcTools.setDate(preStatement, i++, crawledPage.getCrawlTime());
-			JdbcTools.setBoolean(preStatement, i++, crawledPage.getRedirectPage());
-			JdbcTools.setBoolean(preStatement, i++, false);
-			JdbcTools.setInteger(preStatement, i++, internLinksNumber);
-			JdbcTools.setInteger(preStatement, i++, externLinksNumber);
-			JdbcTools.setString(preStatement, i++, crawledPage.getLink().getDomain().getName());
-			JdbcTools.setString(preStatement, i++, crawledPage.getLink().getLinkPath().getPath());
-			JdbcTools.setString(preStatement, i++, crawledPage.getLink().getLinkPath().getProtocol());
+			JdbcTools.setDouble(preStatement, 1, crawledPage.getScore());
+			JdbcTools.setString(preStatement, 2, crawledPage.getTitle(), 2048);
+			JdbcTools.setClob(preStatement, 3, crawledPage.getContent());
+			JdbcTools.setDate(preStatement, 4, crawledPage.getCrawlTime());
+			JdbcTools.setBoolean(preStatement, 5, crawledPage.getRedirectPage());
+			JdbcTools.setBoolean(preStatement, 6, false);
+			JdbcTools.setString(preStatement, 7, crawledPage.getCrawlError(), 10_000);
+			JdbcTools.setInteger(preStatement, 8, internLinksNumber);
+			JdbcTools.setInteger(preStatement, 9, externLinksNumber);
+			JdbcTools.setString(preStatement, 10, crawledPage.getLink().getDomain().getName());
+			JdbcTools.setString(preStatement, 11, crawledPage.getLink().getLinkPath().getPath());
+			JdbcTools.setString(preStatement, 12, crawledPage.getLink().getLinkPath().getProtocol());
 
 			preStatement.executeUpdate();
 		} catch (SQLException e) {

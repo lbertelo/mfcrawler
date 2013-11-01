@@ -69,6 +69,7 @@ public class PageDetailPanel {
 	private JTabbedPane tabbedPane;
 
 	private JEditorPane path;
+	private JLabel title;
 	private JCheckBox allowCrawl;
 	private JLabel score;
 	private JLabel innerDeep;
@@ -112,6 +113,10 @@ public class PageDetailPanel {
 		path.setContentType("text/html");
 		path.setBorder(BorderFactory.createTitledBorder(I18nUtil.getMessage("overview.pageDetail.path")));
 		tempPanel.add(path);
+
+		title = new JLabel();
+		title.setBorder(BorderFactory.createTitledBorder(I18nUtil.getMessage("overview.pageDetail.title")));
+		tempPanel.add(title);
 
 		JPanel subTempPanel = new JPanel();
 		subTempPanel.setLayout(new GridLayout());
@@ -227,6 +232,7 @@ public class PageDetailPanel {
 		this.page = page;
 
 		path.setText("<a href=\"" + page.getLink().getUrl() + "\">" + page.getLink().toString() + "</a>");
+		title.setText(ConversionUtils.toString(page.getTitle()));
 		allowCrawl.setSelected(ConversionUtils.toBoolean(page.getAllowCrawl()));
 
 		score.setText(ConversionUtils.toString(Math.round(page.getScore())));

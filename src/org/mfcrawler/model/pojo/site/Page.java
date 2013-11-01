@@ -36,12 +36,15 @@ public class Page {
 	private Link link; // key
 
 	/**
+	 * Title of the page (tag title in head)
+	 */
+	private String title;
+
+	/**
 	 * Content of the page (without html tags)
 	 */
 	private String content;
 
-	// TODO ajouter un attribut pour enregistrer le titre de la page
-	
 	/**
 	 * Score of the page (calculated or estimated)
 	 */
@@ -128,6 +131,22 @@ public class Page {
 	 */
 	public void setLink(Link link) {
 		this.link = link;
+	}
+
+	/**
+	 * Getter of title
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * Setter of title
+	 * @param title the title
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	/**
@@ -342,7 +361,7 @@ public class Page {
 	public String toString() {
 		return link.getUrl();
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Page) {

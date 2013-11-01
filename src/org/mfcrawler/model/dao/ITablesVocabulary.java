@@ -29,6 +29,7 @@ public interface ITablesVocabulary {
 	String DOMAIN = "DOMAIN";
 	String PATH = "PATH";
 	String PROTOCOL = "PROTOCOL";
+	String TITLE = "TITLE";
 	String CONTENT = "CONTENT";
 	String SCORE = "SCORE";
 	String INNER_DEEP = "INNER_DEEP";
