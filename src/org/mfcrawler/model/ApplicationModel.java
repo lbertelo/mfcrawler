@@ -167,7 +167,7 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 				// Load the new project
 				currentCrawlProject = LoadCrawlProjectConfig.loadCrawlProject(projectName);
 				KeywordManager.setKeywordMap(currentCrawlProject.getKeywordMap());
-				dbmsManager.connect(currentCrawlProject.getName());
+				dbmsManager.connect(currentCrawlProject.getName(), config.getCacheSizeOfDbms());
 				dbmsManager.init();
 				supervisor = new Supervisor(ApplicationModel.this, currentCrawlProject);
 

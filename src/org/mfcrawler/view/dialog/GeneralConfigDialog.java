@@ -26,6 +26,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
@@ -55,6 +56,7 @@ public class GeneralConfigDialog extends DefaultDialog implements IAppConfigPara
 
 	private JDialog dialog;
 	private JTextField userAgentText;
+	private JSpinner cacheSizeOfDbmsSpinner;
 	private JSpinner pageRequestTimeoutSpinner;
 	private JSpinner robotsRequestTimeoutSpinner;
 	private JTextArea forbiddenFileExtensionsTextArea;
@@ -68,6 +70,7 @@ public class GeneralConfigDialog extends DefaultDialog implements IAppConfigPara
 		ApplicationConfig config = ApplicationModel.getConfig();
 
 		userAgentText.setText(config.getUserAgent());
+		cacheSizeOfDbmsSpinner.setValue(config.getCacheSizeOfDbms());
 		pageRequestTimeoutSpinner.setValue(config.getPageRequestTimeout());
 		robotsRequestTimeoutSpinner.setValue(config.getRobotsRequestTimeout());
 		forbiddenFileExtensionsTextArea.setText(config.getForbiddenFileExtensions());
@@ -90,8 +93,14 @@ public class GeneralConfigDialog extends DefaultDialog implements IAppConfigPara
 		userAgentText.setEnabled(false);
 		tempPanel.add(userAgentText);
 		dialog.getContentPane().add(tempPanel);
-		
-		// TODO ajouter un champ pour la taille du cache de H2
+
+		tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JLabel cacheSizeOfDbmsLabel = new JLabel(I18nUtil.getMessage("dialog.applicationConfig.cacheSizeOfDbms"));
+		tempPanel.add(cacheSizeOfDbmsLabel);
+		cacheSizeOfDbmsSpinner = new JSpinner(new SpinnerNumberModel(CACHE_SIZE_OF_DBMS_DEFAULT.intValue(),
+				CACHE_SIZE_OF_DBMS_MIN, CACHE_SIZE_OF_DBMS_MAX, CACHE_SIZE_OF_DBMS_STEP));
+		tempPanel.add(cacheSizeOfDbmsSpinner);
+		dialog.getContentPane().add(tempPanel);
 
 		tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel pageRequestTimeoutLabel = new JLabel(I18nUtil.getMessage("dialog.applicationConfig.pageRequestTimeout"));
@@ -136,9 +145,14 @@ public class GeneralConfigDialog extends DefaultDialog implements IAppConfigPara
 	private class ApplyAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			JOptionPane.showMessageDialog(getView().getFrame(),
+					I18nUtil.getMessage("dialog.applicationConfig.applyMessage"),
+					I18nUtil.getMessage("dialog.applicationConfig.applyTitle"), JOptionPane.INFORMATION_MESSAGE);
+
 			ApplicationConfig config = ApplicationModel.getConfig();
 
 			config.setUserAgent(userAgentText.getText());
+			config.setCacheSizeOfDbms(ConversionUtils.toInteger(cacheSizeOfDbmsSpinner.getValue()));
 			config.setPageRequestTimeout(ConversionUtils.toInteger(pageRequestTimeoutSpinner.getValue()));
 			config.setRobotsRequestTimeout(ConversionUtils.toInteger(robotsRequestTimeoutSpinner.getValue()));
 			config.setForbiddenFileExtensions(forbiddenFileExtensionsTextArea.getText());

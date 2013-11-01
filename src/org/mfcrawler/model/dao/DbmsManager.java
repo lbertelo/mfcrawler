@@ -108,10 +108,11 @@ public final class DbmsManager {
 	 * Connect to the database, initialize the connectionPool and the
 	 * mainConnection
 	 * @param projectName the projectName determines the name of database
+	 * @param cacheSizeOfDbms the cache size of Dbms (in ko)
 	 */
-	public void connect(String projectName) {
+	public void connect(String projectName, Integer cacheSizeOfDbms) {
 		dbname = LoadCrawlProjectConfig.getCompleteFilename(projectName, "h2Database");
-		String dbOptions = ";CACHE_SIZE=128000";
+		String dbOptions = ";CACHE_SIZE="+cacheSizeOfDbms;
 		try {
 			connectionPool = JdbcConnectionPool.create(PROTOCOL + dbname + dbOptions, USER, PASSWD);
 			mainConnection = connectionPool.getConnection();

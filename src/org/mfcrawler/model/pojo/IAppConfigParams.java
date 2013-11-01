@@ -18,7 +18,7 @@
 package org.mfcrawler.model.pojo;
 
 /**
- * Constants for Application Config 
+ * Constants for Application Config
  * 
  * @author lbertelo
  */
@@ -35,29 +35,49 @@ public interface IAppConfigParams {
 	static final String USER_AGENT_DEFAULT = "MfCrawler";
 
 	/**
-	 * Default value of page request timeout
+	 * Default value of the cache size of dbms
 	 */
-	static final Integer PAGE_REQUEST_TIMEOUT_DEFAULT = 8000;
+	static final Integer CACHE_SIZE_OF_DBMS_DEFAULT = 128_000;
 
 	/**
-	 * Default value of robots.txt request timeout
+	 * Default value of page request timeout (in ms)
 	 */
-	static final Integer ROBOTS_REQUEST_TIMEOUT_DEFAULT = 4000;
-	
+	static final Integer PAGE_REQUEST_TIMEOUT_DEFAULT = 8_000;
+
+	/**
+	 * Default value of robots.txt request timeout (in ms)
+	 */
+	static final Integer ROBOTS_REQUEST_TIMEOUT_DEFAULT = 4_000;
+
 	/**
 	 * Minimum value for request timeout
 	 */
 	static final int REQUEST_TIMEOUT_MIN = 0;
-	
+
 	/**
 	 * Maximum value for request timeout
 	 */
 	static final int REQUEST_TIMEOUT_MAX = 20000;
-	
+
 	/**
 	 * Step of the spinner for request timeout
 	 */
 	static final int REQUEST_TIMEOUT_SPINNER_STEP = 200;
+	
+	/**
+	 * Minimum value for cache size of dbms
+	 */
+	static final int CACHE_SIZE_OF_DBMS_MIN = 32_000;
+
+	/**
+	 * Maximum value for cache size of dbms
+	 */
+	static final int CACHE_SIZE_OF_DBMS_MAX = 4_000_0000;
+
+	/**
+	 * Step of the spinner for cache size of dbms
+	 */
+	static final int CACHE_SIZE_OF_DBMS_STEP = 1_000;
 
 	/**
 	 * Default value of forbidden file extensions

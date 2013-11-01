@@ -35,12 +35,17 @@ public class ApplicationConfig implements IAppConfigParams {
 	private String userAgent;
 
 	/**
-	 * Http connection timeout for a page request
+	 * Cache size of Dbms (in ko)
+	 */
+	private Integer cacheSizeOfDbms;
+
+	/**
+	 * Http connection timeout for a page request (in ms)
 	 */
 	private Integer pageRequestTimeout;
 
 	/**
-	 * Http connection timeout for a robots.txt request
+	 * Http connection timeout for a robots.txt request (in ms)
 	 */
 	private Integer robotsRequestTimeout;
 
@@ -70,6 +75,7 @@ public class ApplicationConfig implements IAppConfigParams {
 	public ApplicationConfig() {
 		lastOpenedProject = LAST_OPENED_PROJECT_DEFAULT;
 		userAgent = USER_AGENT_DEFAULT;
+		cacheSizeOfDbms = CACHE_SIZE_OF_DBMS_DEFAULT;
 		pageRequestTimeout = PAGE_REQUEST_TIMEOUT_DEFAULT;
 		robotsRequestTimeout = ROBOTS_REQUEST_TIMEOUT_DEFAULT;
 		forbiddenFileExtensions = FORBIDDEN_FILE_EXTENSIONS;
@@ -112,6 +118,22 @@ public class ApplicationConfig implements IAppConfigParams {
 	}
 
 	/**
+	 * Getter of the cache size of Dbms
+	 * @return the cache size of Dbms
+	 */
+	public Integer getCacheSizeOfDbms() {
+		return cacheSizeOfDbms;
+	}
+
+	/**
+	 * Setter of the cache size of Dbms
+	 * @param cacheSizeOfDbms the cache size of Dbms
+	 */
+	public void setCacheSizeOfDbms(Integer cacheSizeOfDbms) {
+		this.cacheSizeOfDbms = cacheSizeOfDbms;
+	}
+
+	/**
 	 * Getter of the page request timeout
 	 * @return the page request timeout
 	 */
@@ -121,7 +143,7 @@ public class ApplicationConfig implements IAppConfigParams {
 
 	/**
 	 * Setter of the page request timeout
-	 * @param the page request timeout
+	 * @param pageRequestTimeout the page request timeout
 	 */
 	public void setPageRequestTimeout(Integer pageRequestTimeout) {
 		this.pageRequestTimeout = pageRequestTimeout;
