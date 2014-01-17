@@ -203,7 +203,7 @@ public final class KeywordManager {
 		pageDao.beginTransaction();
 
 		pageDao.initAllScores();
-		PageDbIterator pageDbIterator = pageDao.getPagesWithContent();
+		PageDbIterator pageDbIterator = pageDao.getCrawledPages();
 
 		propertyChangeModel.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.recalculateScores.step2"));
 		while (pageDbIterator.hasNext()) {

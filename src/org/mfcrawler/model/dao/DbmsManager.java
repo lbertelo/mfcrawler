@@ -58,9 +58,14 @@ public final class DbmsManager {
 	private static final String PASSWD = "";
 
 	/**
+	 * Time out for h2's lock table
+	 */
+	private static final int LOCK_TIME_OUT = 90_000;
+
+	/**
 	 * Time out allowed for a database connection
 	 */
-	private static final int VALID_CONNECTION_TIME_OUT = 5000;
+	private static final int VALID_CONNECTION_TIME_OUT = 5_000;
 
 	/**
 	 * Singleton instance
@@ -112,7 +117,9 @@ public final class DbmsManager {
 	 */
 	public void connect(String projectName, Integer cacheSizeOfDbms) {
 		dbname = LoadCrawlProjectConfig.getCompleteFilename(projectName, "h2Database");
-		String dbOptions = ";CACHE_SIZE="+cacheSizeOfDbms;
+		String dbOptions = ";CACHE_SIZE=" + cacheSizeOfDbms;
+		dbOptions += ";LOCK_TIMEOUT=" + LOCK_TIME_OUT;
+
 		try {
 			connectionPool = JdbcConnectionPool.create(PROTOCOL + dbname + dbOptions, USER, PASSWD);
 			mainConnection = connectionPool.getConnection();
@@ -252,7 +259,7 @@ public final class DbmsManager {
 				mainConnection.close();
 			}
 		} catch (SQLException e) {
-			Logger.getLogger(DbmsManager.class.getName()).log(Level.INFO, "Error to close main connection", e);
+			Logger.getLogger(DbmsManager.class.getName()).log(Level.WARNING, "Error to close main connection", e);
 		}
 
 		if (connectionPool != null) {

@@ -219,7 +219,7 @@ public class Link implements Comparable<Link> {
 			}
 
 		} catch (Exception e) {
-			Logger.getLogger(Link.class.getName()).log(Level.INFO, "Error to parse : " + stringUrl, e);
+			Logger.getLogger(Link.class.getName()).log(Level.WARNING, "Error to parse : " + stringUrl, e);
 		}
 
 		return link;

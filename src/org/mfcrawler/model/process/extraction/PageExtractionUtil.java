@@ -131,7 +131,7 @@ public class PageExtractionUtil {
 			}
 
 			Link link = Link.parseUrl(newUrl.toString());
-			if (link.getDomain().getName().length() < MAX_DOMAIN_LENGTH
+			if (link != null && link.getDomain().getName().length() < MAX_DOMAIN_LENGTH
 					&& link.getLinkPath().getPath().length() < MAX_PATH_LENGTH) {
 				return link;
 			} else {

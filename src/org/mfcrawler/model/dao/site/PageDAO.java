@@ -457,7 +457,25 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	}
 
 	/**
-	 * Selects crawled page with a content and return an iterator
+	 * Selects crawled pages and return an iterator
+	 * @return the page iterator
+	 */
+	public PageDbIterator getCrawledPages() {
+		PageDbIterator pageIterator = new PageDbIterator();
+
+		try {
+			PreparedStatement preStatement = connection.prepareStatement(SELECT_CRAWLED_PAGES);
+			ResultSet result = preStatement.executeQuery();
+			pageIterator = new PageDbIterator(result, true);
+		} catch (SQLException e) {
+			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to get crawled pages", e);
+		}
+
+		return pageIterator;
+	}
+
+	/**
+	 * Selects crawled pages with a content and return an iterator
 	 * @return the page iterator
 	 */
 	public PageDbIterator getPagesWithContent() {
@@ -475,7 +493,7 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	}
 
 	/**
-	 * Selects crawled page with a content from a domain and return an iterator
+	 * Selects crawled pages with a content from a domain and return an iterator
 	 * @return the page iterator
 	 */
 	public PageDbIterator getPagesWithContent(Domain domain) {
@@ -828,4 +846,5 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			close(preStatement);
 		}
 	}
+
 }

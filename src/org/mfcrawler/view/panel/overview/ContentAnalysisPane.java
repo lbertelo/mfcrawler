@@ -92,7 +92,7 @@ public class ContentAnalysisPane {
 	}
 
 	// TableModel class
-	
+
 	private class AnalysisTableModel extends DefaultTableModel {
 		private static final long serialVersionUID = -8836034757791958634L;
 
@@ -107,13 +107,11 @@ public class ContentAnalysisPane {
 
 		@Override
 		public Class<?> getColumnClass(int columnIndex) {
-			switch (columnIndex) {
-			case 1:
-			case 2:
+			if (columnIndex == 1 || columnIndex == 2) {
 				return Integer.class;
-			case 3:
+			} else if (columnIndex == 3) {
 				return Long.class;
-			default:
+			} else {
 				return String.class;
 			}
 		}

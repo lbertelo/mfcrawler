@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
 
@@ -50,12 +49,10 @@ public class GeneralConfigDialog extends DefaultDialog implements IAppConfigPara
 
 	private static final int DIALOG_WIDTH = 350;
 	private static final int DIALOG_HEIGHT = 250;
-	private static final int USER_AGENT_COLUMNS = 15;
 	private static final int FORBIDDEN_FILE_EXT_ROWS = 3;
 	private static final int FORBIDDEN_FILE_EXT_COLUMNS = 30;
 
 	private JDialog dialog;
-	private JTextField userAgentText;
 	private JSpinner cacheSizeOfDbmsSpinner;
 	private JSpinner pageRequestTimeoutSpinner;
 	private JSpinner robotsRequestTimeoutSpinner;
@@ -69,7 +66,6 @@ public class GeneralConfigDialog extends DefaultDialog implements IAppConfigPara
 	public void display() {
 		ApplicationConfig config = ApplicationModel.getConfig();
 
-		userAgentText.setText(config.getUserAgent());
 		cacheSizeOfDbmsSpinner.setValue(config.getCacheSizeOfDbms());
 		pageRequestTimeoutSpinner.setValue(config.getPageRequestTimeout());
 		robotsRequestTimeoutSpinner.setValue(config.getRobotsRequestTimeout());
@@ -85,16 +81,7 @@ public class GeneralConfigDialog extends DefaultDialog implements IAppConfigPara
 		dialog.setMinimumSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
 		dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.PAGE_AXIS));
 
-		// TODO rendre le user agent modifiable, attention aux effets de bord
 		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel userAgentLabel = new JLabel(I18nUtil.getMessage("dialog.applicationConfig.userAgent"));
-		tempPanel.add(userAgentLabel);
-		userAgentText = new JTextField(USER_AGENT_COLUMNS);
-		userAgentText.setEnabled(false);
-		tempPanel.add(userAgentText);
-		dialog.getContentPane().add(tempPanel);
-
-		tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel cacheSizeOfDbmsLabel = new JLabel(I18nUtil.getMessage("dialog.applicationConfig.cacheSizeOfDbms"));
 		tempPanel.add(cacheSizeOfDbmsLabel);
 		cacheSizeOfDbmsSpinner = new JSpinner(new SpinnerNumberModel(CACHE_SIZE_OF_DBMS_DEFAULT.intValue(),
@@ -151,7 +138,6 @@ public class GeneralConfigDialog extends DefaultDialog implements IAppConfigPara
 
 			ApplicationConfig config = ApplicationModel.getConfig();
 
-			config.setUserAgent(userAgentText.getText());
 			config.setCacheSizeOfDbms(ConversionUtils.toInteger(cacheSizeOfDbmsSpinner.getValue()));
 			config.setPageRequestTimeout(ConversionUtils.toInteger(pageRequestTimeoutSpinner.getValue()));
 			config.setRobotsRequestTimeout(ConversionUtils.toInteger(robotsRequestTimeoutSpinner.getValue()));

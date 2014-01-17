@@ -117,7 +117,7 @@ public class AnalyzePanel extends DefaultPanel {
 		analysisButton.setText(I18nUtil.getMessage("analyze.refreshAnalysis"));
 		JScrollPane analysisScrollPane = new JScrollPane(analysisTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		
+
 		panel.removeAll();
 		panel.add(buttonPanel, BorderLayout.PAGE_START);
 		panel.add(analysisScrollPane, BorderLayout.CENTER);
@@ -148,10 +148,9 @@ public class AnalyzePanel extends DefaultPanel {
 
 		@Override
 		public Class<?> getColumnClass(int columnIndex) {
-			switch (columnIndex) {
-			case 0:
+			if (columnIndex == 0) {
 				return String.class;
-			default:
+			} else {
 				return Double.class;
 			}
 		}

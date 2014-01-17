@@ -138,10 +138,21 @@ public class WordAnalysisUtil {
 		List<GlobalAnalysis> analysisResult = new ArrayList<GlobalAnalysis>();
 		for (String word : globalSumMap.keySet()) {
 			GlobalSum globalSum = globalSumMap.get(word);
-			Double wordFrequency = globalSum.getWordsFreqSum() / nbDocsTotal;
-			Double docFrequency = globalSum.getNbDocsSum() / nbDocsTotal;
-			Double tfIdf = wordFrequency * Math.log(1.0 / docFrequency);
-			Double weightedTfIdf = tfIdf * (globalSum.getScoreDocsSum() / scoresTotal);
+			
+			Double wordFrequency = 0.0;
+			Double docFrequency = 0.0;
+			Double tfIdf = 0.0;
+			if (nbDocsTotal != 0.0) {
+				wordFrequency = globalSum.getWordsFreqSum() / nbDocsTotal;
+				docFrequency = globalSum.getNbDocsSum() / nbDocsTotal;
+				tfIdf = wordFrequency * Math.log(1.0 / docFrequency);
+			}
+			
+			Double weightedTfIdf = 0.0;
+			if (scoresTotal != 0.0) {
+				weightedTfIdf = tfIdf * (globalSum.getScoreDocsSum() / scoresTotal);
+			}
+			
 			analysisResult.add(new GlobalAnalysis(word, wordFrequency, docFrequency, tfIdf, weightedTfIdf));
 		}
 

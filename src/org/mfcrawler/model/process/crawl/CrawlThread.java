@@ -260,7 +260,7 @@ public class CrawlThread extends Thread {
 			}
 
 		} catch (Exception e) {
-			Logger.getLogger(CrawlThread.class.getName()).log(Level.INFO, "Crawl error", e);
+			Logger.getLogger(CrawlThread.class.getName()).log(Level.WARNING, "Crawl error : Get page", e);
 			page.setCrawlError(e.toString());
 		}
 
@@ -294,20 +294,20 @@ public class CrawlThread extends Thread {
 				}
 
 			} catch (Exception e) {
-				Logger.getLogger(CrawlThread.class.getName()).log(Level.INFO, "Crawl error", e);
+				Logger.getLogger(CrawlThread.class.getName()).log(Level.WARNING, "Crawl error : Read content", e);
 				page.setCrawlError(e.toString());
 			}
 
 			if (page.getCrawlError() == null && !page.getRedirectPage()) {
 				// Calculates score
 				crawlInfo.notice(CrawlThreadInfo.CI_CALC + order.getLink());
-				Double score = KeywordManager.calculateContent(page.getContent());
+				double score = KeywordManager.calculateContent(page.getContent());
 				page.setScore(score);
 			}
 
 		}
 
-		if (page.getCrawlError() != null) {
+		if (page.getScore() == null) {
 			page.setScore(0.0);
 		}
 
@@ -342,7 +342,7 @@ public class CrawlThread extends Thread {
 			}
 
 		} catch (Exception e) {
-			Logger.getLogger(CrawlThread.class.getName()).log(Level.INFO, "Crawl error", e);
+			Logger.getLogger(CrawlThread.class.getName()).log(Level.WARNING, "Crawl error : Get site", e);
 			site.setRobotFileExist(false);
 		}
 
