@@ -1,6 +1,6 @@
 /*
     Mini Focused Crawler : focused web crawler with a simple GUI
-    Copyright (C) 2013  lbertelo
+    Copyright (C) 2013-2014  lbertelo
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -281,7 +281,7 @@ public class SiteDetailPanel {
 					I18nUtil.getMessage("overview.siteDetail.blacklist"), JOptionPane.YES_NO_OPTION);
 
 			if (option == JOptionPane.YES_OPTION) {
-				overviewPanel.getModel().notify(IPropertyName.ADD_BLACKLIST_DOMAIN, domain);
+				overviewPanel.getModel().notify(IPropertyName.ADD_BLACKLIST_DOMAIN, site.getDomain());
 			}
 		}
 	}
