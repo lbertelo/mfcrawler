@@ -1,6 +1,6 @@
 /*
     Mini Focused Crawler : focused web crawler with a simple GUI
-    Copyright (C) 2013  lbertelo
+    Copyright (C) 2013-2014  lbertelo
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,18 +18,12 @@
 package org.mfcrawler.model.pojo;
 
 /**
- * Describes the params for displaying sites and pages (for OverviewPanel and DAOs)
+ * Describes the params for displaying sites and pages (for OverviewPanel and
+ * DAOs)
  * 
  * @author lbertelo
  */
 public class OverviewParams {
-
-	/**
-	 * Enum for ordering display
-	 */
-	public enum ESiteOrder {
-		NAME, SCORE, DEEP, CRAWLTIME
-	}
 
 	/**
 	 * Default value of the boolean selectCrawled
@@ -54,7 +48,7 @@ public class OverviewParams {
 	/**
 	 * Default value of the order
 	 */
-	private static final ESiteOrder ORDER_DEFAULT = ESiteOrder.NAME;
+	private static final EPageOrder ORDER_DEFAULT = EPageOrder.NAME;
 
 	/**
 	 * Indicates if the crawled pages (and ok) should be displayed
@@ -79,7 +73,7 @@ public class OverviewParams {
 	/**
 	 * Indicates the order of the display
 	 */
-	private ESiteOrder order;
+	private EPageOrder order;
 
 	/**
 	 * Default constructor which initialize attributes with their default values
@@ -158,17 +152,17 @@ public class OverviewParams {
 
 	/**
 	 * Getter of order
-	 * @return the siteOrder
+	 * @return the pageOrder
 	 */
-	public ESiteOrder getOrder() {
+	public EPageOrder getOrder() {
 		return order;
 	}
 
 	/**
 	 * Setter of order
-	 * @param order the siteOrder
+	 * @param order the pageOrder
 	 */
-	public void setOrder(ESiteOrder order) {
+	public void setOrder(EPageOrder order) {
 		this.order = order;
 	}
 

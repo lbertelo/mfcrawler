@@ -1,6 +1,6 @@
 /*
     Mini Focused Crawler : focused web crawler with a simple GUI
-    Copyright (C) 2013  lbertelo
+    Copyright (C) 2013-2014  lbertelo
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -265,8 +265,12 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 
 		StringBuilder select = new StringBuilder(), orderby = new StringBuilder();
 		switch (params.getOrder()) {
-		case SCORE:
-			select.append(SELECT_TO_DISPLAY_SCORE);
+		case AVG_SCORE:
+			select.append(SELECT_TO_DISPLAY_AVG_SCORE);
+			orderby.append(ORDER_TO_DISPLAY_SCORE);
+			break;
+		case TOTAL_SCORE:
+			select.append(SELECT_TO_DISPLAY_TOTAL_SCORE);
 			orderby.append(ORDER_TO_DISPLAY_SCORE);
 			break;
 		case DEEP:
@@ -277,7 +281,10 @@ public class SiteDAO extends BaseDAO implements ISiteQueryList {
 			orderby.append(ORDER_TO_DISPLAY_CRAWLTIME);
 			break;
 		case NAME:
+			orderby.append(ORDER_TO_DISPLAY_NAME);
+			break;
 		default:
+			Logger.getLogger(SiteDAO.class.getName()).log(Level.SEVERE, "Unexpected default in switch for EPageOrder");
 			orderby.append(ORDER_TO_DISPLAY_NAME);
 			break;
 		}

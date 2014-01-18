@@ -1,6 +1,6 @@
 /*
     Mini Focused Crawler : focused web crawler with a simple GUI
-    Copyright (C) 2013  lbertelo
+    Copyright (C) 2013-2014  lbertelo
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,10 +74,12 @@ public interface ISiteQueryList extends ITablesVocabulary {
 	String FILTER_TO_DISPLAY_REDIRECT_PAGE = " ( " + TABLE_PAGE_P + CRAWL_TIME + " IS NOT NULL  AND " + TABLE_PAGE_P
 			+ REDIRECT_PAGE + " = true AND " + TABLE_PAGE_P + CRAWL_ERROR + " IS NULL ) ";
 
-	String SELECT_TO_DISPLAY_SCORE = " , SUM( " + TABLE_PAGE_P + SCORE + " ) / COUNT( " + TABLE_PAGE_P + PATH
-			+ " ) as averageScore ";
+	String SELECT_TO_DISPLAY_AVG_SCORE = " , SUM( " + TABLE_PAGE_P + SCORE + " ) / COUNT( " + TABLE_PAGE_P + PATH
+			+ " ) as score ";
 
-	String ORDER_TO_DISPLAY_SCORE = " ORDER BY averageScore DESC ";
+	String SELECT_TO_DISPLAY_TOTAL_SCORE = ", SUM( " + TABLE_PAGE_P + SCORE + " ) as score ";
+
+	String ORDER_TO_DISPLAY_SCORE = " ORDER BY score DESC ";
 
 	String SELECT_TO_DISPLAY_DEEP = " , MIN( " + TABLE_PAGE_P + OUTER_DEEP + " ) as outerDeepSite ";
 

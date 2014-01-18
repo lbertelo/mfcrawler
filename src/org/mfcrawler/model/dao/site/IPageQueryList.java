@@ -130,7 +130,7 @@ public interface IPageQueryList extends ITablesVocabulary {
 
 	String ORDER_TO_DISPLAY_CRAWL_TIME = " ORDER BY " + CRAWL_TIME + " ASC ";
 
-	String ORDER_TO_DISPLAY_DEFAULT = " ORDER BY " + PATH + " ASC ";
+	String ORDER_TO_DISPLAY_NAME = " ORDER BY " + PATH + " ASC ";
 
 	String SELECT_PATH_NUMBER_TO_DISPLAY_START = " SELECT COUNT(" + PATH + ") as countPath FROM " + TABLE_PAGE
 			+ " WHERE " + DOMAIN + " NOT IN ( SELECT " + DOMAIN + " FROM " + TABLE_SITE + " WHERE " + BLACKLISTED

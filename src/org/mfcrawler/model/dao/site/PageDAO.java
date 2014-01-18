@@ -1,6 +1,6 @@
 /*
     Mini Focused Crawler : focused web crawler with a simple GUI
-    Copyright (C) 2013  lbertelo
+    Copyright (C) 2013-2014  lbertelo
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -369,7 +369,8 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 		StringBuilder orderby = new StringBuilder();
 
 		switch (params.getOrder()) {
-		case SCORE:
+		case AVG_SCORE:
+		case TOTAL_SCORE:
 			orderby.append(ORDER_TO_DISPLAY_SCORE);
 			break;
 		case DEEP:
@@ -379,8 +380,11 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 			orderby.append(ORDER_TO_DISPLAY_CRAWL_TIME);
 			break;
 		case NAME:
+			orderby.append(ORDER_TO_DISPLAY_NAME);
+			break;
 		default:
-			orderby.append(ORDER_TO_DISPLAY_DEFAULT);
+			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Unexpected default in switch for EPageOrder");
+			orderby.append(ORDER_TO_DISPLAY_NAME);
 			break;
 		}
 

@@ -1,6 +1,6 @@
 /*
     Mini Focused Crawler : focused web crawler with a simple GUI
-    Copyright (C) 2013  lbertelo
+    Copyright (C) 2013-2014  lbertelo
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
+import org.mfcrawler.model.pojo.EPageOrder;
 import org.mfcrawler.model.pojo.OverviewParams;
-import org.mfcrawler.model.pojo.OverviewParams.ESiteOrder;
 import org.mfcrawler.model.util.ConversionUtils;
 import org.mfcrawler.model.util.I18nUtil;
 import org.mfcrawler.view.panel.OverviewPanel;
@@ -50,11 +50,7 @@ public class RefreshDetailPanel {
 	private static final boolean ERROR_DEFAULT = false;
 	private static final boolean REDIRECT_PAGE_DEFAULT = false;
 
-	private static final String NAME_ORDER = I18nUtil.getMessage("overview.refreshDetail.name");
-	private static final String SCORE_ORDER = I18nUtil.getMessage("overview.refreshDetail.score");
-	private static final String DEEP_ORDER = I18nUtil.getMessage("overview.refreshDetail.deep");
-	private static final String CRAWLTIME_ORDER = I18nUtil.getMessage("overview.refreshDetail.crawlTime");
-	private static final String[] ORDER_LIST_VALUE = { NAME_ORDER, SCORE_ORDER, DEEP_ORDER, CRAWLTIME_ORDER };
+	private static final EPageOrder[] ORDER_LIST_VALUE = EPageOrder.values();
 
 	private DetailSubPanel detailSubPanel;
 	private JPanel panel;
@@ -62,7 +58,7 @@ public class RefreshDetailPanel {
 	private JCheckBox errorCheckbox;
 	private JCheckBox redirectPageCheckbox;
 	private JCheckBox justFoundCheckbox;
-	private JComboBox<String> orderList;
+	private JComboBox<EPageOrder> orderList;
 	private JLabel resultPagesNumber;
 	private JLabel resultSitesNumber;
 
@@ -113,7 +109,7 @@ public class RefreshDetailPanel {
 		subTempPanel.add(orderLabel);
 		tempPanel.add(subTempPanel);
 
-		orderList = new JComboBox<String>(ORDER_LIST_VALUE);
+		orderList = new JComboBox<EPageOrder>(ORDER_LIST_VALUE);
 		subTempPanel = new JPanel(new BorderLayout());
 		subTempPanel.add(orderList, BorderLayout.LINE_START);
 		tempPanel.add(subTempPanel);
@@ -165,17 +161,7 @@ public class RefreshDetailPanel {
 		params.setSelectJustFound(justFoundCheckbox.isSelected());
 		params.setSelectError(errorCheckbox.isSelected());
 		params.setSelectRedirectPage(redirectPageCheckbox.isSelected());
-
-		String orderSelect = (String) orderList.getSelectedItem();
-		if (orderSelect.equals(NAME_ORDER)) {
-			params.setOrder(ESiteOrder.NAME);
-		} else if (orderSelect.equals(SCORE_ORDER)) {
-			params.setOrder(ESiteOrder.SCORE);
-		} else if (orderSelect.equals(DEEP_ORDER)) {
-			params.setOrder(ESiteOrder.DEEP);
-		} else if (orderSelect.equals(CRAWLTIME_ORDER)) {
-			params.setOrder(ESiteOrder.CRAWLTIME);
-		}
+		params.setOrder((EPageOrder) orderList.getSelectedItem());
 
 		return params;
 	}
