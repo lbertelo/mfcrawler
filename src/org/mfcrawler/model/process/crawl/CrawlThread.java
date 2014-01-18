@@ -260,7 +260,8 @@ public class CrawlThread extends Thread {
 			}
 
 		} catch (Exception e) {
-			Logger.getLogger(CrawlThread.class.getName()).log(Level.WARNING, "Crawl error : Get page", e);
+			Logger.getLogger(CrawlThread.class.getName()).log(Level.WARNING,
+					"Crawl error : Get page => " + order.getLink(), e);
 			page.setCrawlError(e.toString());
 		}
 
@@ -342,7 +343,8 @@ public class CrawlThread extends Thread {
 			}
 
 		} catch (Exception e) {
-			Logger.getLogger(CrawlThread.class.getName()).log(Level.WARNING, "Crawl error : Get site", e);
+			Logger.getLogger(CrawlThread.class.getName()).log(Level.WARNING,
+					"Crawl error : Get site => " + order.getLink(), e);
 			site.setRobotFileExist(false);
 		}
 

@@ -78,7 +78,7 @@ public final class ApplicationModel extends SwingPropertyChangeModel {
 			FileHandler fileTxt = new FileHandler("crawler-%u-%g.log", 500000, 2);
 			SimpleFormatter formatterTxt = new SimpleFormatter();
 			fileTxt.setFormatter(formatterTxt);
-			fileTxt.setLevel(Level.INFO);
+			fileTxt.setLevel(Level.WARNING);
 			logger.addHandler(fileTxt);
 		} catch (Exception e) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Logger initialisation error", e);

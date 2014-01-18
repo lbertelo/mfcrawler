@@ -32,22 +32,27 @@ public class Link implements Comparable<Link> {
 	 * Protocol for robots.txt
 	 */
 	private static final String ROBOTSTXT_PROTOCOL = "http";
-	
+
 	/**
 	 * Path for robots.txt
 	 */
 	private static final String ROBOTSTXT_PATH = "/robots.txt";
-	
+
 	/**
 	 * Protocol suffix
 	 */
 	private static final String PROTOCOL_SUFFIX = "://";
 
 	/**
+	 * Regex for checking the validity of a link
+	 */
+	private static final String CHECK_LINK_REGEX = "(?U)(.*)(\\w{1,}\\.){1,}\\w{2,}(.*)";
+
+	/**
 	 * The domain
 	 */
 	private Domain domain;
-	
+
 	/**
 	 * The linkPath (path + protocol)
 	 */
@@ -158,7 +163,7 @@ public class Link implements Comparable<Link> {
 	public String toString() {
 		return getUrl();
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
 		if (object instanceof Link) {
@@ -190,8 +195,6 @@ public class Link implements Comparable<Link> {
 	 * @return the link
 	 */
 	public static Link parseUrl(String url) {
-		Link link = null;
-
 		String stringUrl;
 		if (!url.startsWith("http://") && !url.startsWith("https://")) {
 			stringUrl = "http://" + url;
@@ -199,13 +202,13 @@ public class Link implements Comparable<Link> {
 			stringUrl = url;
 		}
 
+		Link link = null;
 		try {
 			URL myUrl = new URL(stringUrl);
 
 			String protocol = myUrl.getProtocol();
 			String domain = myUrl.getHost().trim();
 			String path = myUrl.getPath().trim();
-
 			if (myUrl.getQuery() != null) {
 				path += "?" + myUrl.getQuery();
 			}
@@ -213,11 +216,16 @@ public class Link implements Comparable<Link> {
 			if (!domain.isEmpty() && !protocol.isEmpty()) {
 				if (path.isEmpty()) {
 					path = "/";
+				} else {
+					path = path.replaceAll("\\s", "");
 				}
-
 				link = new Link(protocol, domain, path);
+				
+				if (!link.toString().matches(CHECK_LINK_REGEX)) {
+					Logger.getLogger(Link.class.getName()).log(Level.WARNING, "Invalid URL : " + link.toString());
+					link = null;
+				}
 			}
-
 		} catch (Exception e) {
 			Logger.getLogger(Link.class.getName()).log(Level.WARNING, "Error to parse : " + stringUrl, e);
 		}
