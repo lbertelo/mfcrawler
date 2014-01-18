@@ -1,6 +1,6 @@
 /*
     Mini Focused Crawler : focused web crawler with a simple GUI
-    Copyright (C) 2013  lbertelo
+    Copyright (C) 2013-2014  lbertelo
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 package org.mfcrawler.model.process.extraction;
 
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -54,6 +55,11 @@ public class PageExtractionUtil {
 	private static final String LINK_REGEX = "href\\s?=\\s?[\"|']([http://|https://|/]\\S+)[\"|']";
 
 	/**
+	 * The "Location" Http Header
+	 */
+	private static final String HTTP_HEADER_LOCATION = "Location";
+
+	/**
 	 * Extracts links from a page
 	 * @param page the page
 	 * @param parsedContent the content of the page
@@ -74,17 +80,23 @@ public class PageExtractionUtil {
 	/**
 	 * Extracts links from a redirect pages
 	 * @param page the page
+	 * @param httpConnection the http connection (allow to read http header
+	 *            fields)
 	 * @param parsedContent the content of the page
 	 * @param forbiddenFileExtensions the forbidden file extensions
 	 */
-	public static void redirectLinksExtraction(Page page, Source parsedContent, String forbiddenFileExtensions[]) {
+	public static void redirectLinksExtraction(Page page, HttpURLConnection httpConnection, Source parsedContent,
+			String forbiddenFileExtensions[]) {
+		String location = httpConnection.getHeaderField(HTTP_HEADER_LOCATION);
+		if (location != null) {
+			addLinkToPage(page, location, forbiddenFileExtensions);
+		}
+
 		String content = parsedContent.toString();
 		Pattern pattern = Pattern.compile(LINK_REGEX, Pattern.CASE_INSENSITIVE);
 		Matcher matcher = pattern.matcher(content);
-		String tmpUrl;
-
 		while (matcher.find()) {
-			tmpUrl = matcher.group(1).trim();
+			String tmpUrl = matcher.group(1).trim();
 			addLinkToPage(page, tmpUrl, forbiddenFileExtensions);
 		}
 	}

@@ -288,7 +288,8 @@ public class CrawlThread extends Thread {
 				// Redirect request
 				if (httpConnection.getResponseCode() >= 300 || page.getContent().isEmpty()) {
 					page.setRedirectPage(true);
-					PageExtractionUtil.redirectLinksExtraction(page, parsedContent, forbiddenFileExtensions);
+					PageExtractionUtil.redirectLinksExtraction(page, httpConnection, parsedContent,
+							forbiddenFileExtensions);
 				} else {
 					page.setRedirectPage(false);
 					PageExtractionUtil.pageLinksExtraction(page, parsedContent, forbiddenFileExtensions);
