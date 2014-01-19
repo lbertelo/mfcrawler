@@ -46,7 +46,6 @@ import org.mfcrawler.model.pojo.site.link.Link;
 import org.mfcrawler.model.process.ICrawlManager;
 import org.mfcrawler.model.process.content.KeywordManager;
 import org.mfcrawler.model.process.extraction.PageExtractionUtil;
-import org.mfcrawler.model.util.I18nUtil;
 
 /**
  * CrawlThread executes the crawling action
@@ -54,11 +53,6 @@ import org.mfcrawler.model.util.I18nUtil;
  * @author lbertelo
  */
 public class CrawlThread extends Thread {
-
-	/**
-	 * CrawlThreadInfo for searching a page to crawl
-	 */
-	private static final String CI_SEARCH = I18nUtil.getMessage("crawlThread.search");
 
 	/**
 	 * Object used to wait the thread
@@ -227,7 +221,7 @@ public class CrawlThread extends Thread {
 						performCrawlPage(order);
 					}
 
-					crawlInfo.notice(CI_SEARCH);
+					crawlInfo.notice(CrawlThreadInfo.CI_SEARCH);
 				}
 			}
 		}
@@ -299,7 +293,7 @@ public class CrawlThread extends Thread {
 				page.setCrawlError(e.toString());
 			}
 		}
-		
+
 		// Sets the score
 		if (page.getCrawlError() != null) {
 			page.setScore(0.0);

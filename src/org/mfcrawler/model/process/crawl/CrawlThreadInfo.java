@@ -57,6 +57,11 @@ public class CrawlThreadInfo {
 	public static final String CI_SAVE = I18nUtil.getMessage("crawlThread.save");
 
 	/**
+	 * CrawlThreadInfo for searching a page to crawl
+	 */
+	public static final String CI_SEARCH = I18nUtil.getMessage("crawlThread.search");
+
+	/**
 	 * The crawl thread identier
 	 */
 	private Integer crawlThreadId;
