@@ -217,19 +217,19 @@ public final class KeywordManager {
 				} else {
 					currentScore = 0.0;
 				}
-
-				pageDao.updateScorePage(page.getLink(), currentScore);
-				crawledLinks.add(page.getLink());
-				estimatedScoreLinks.remove(page.getLink());
 			} else {
 				Double estimatedScore = estimatedScoreLinks.get(page.getLink());
-
 				if (estimatedScore != null) {
 					currentScore = estimatedScore;
 				} else {
 					currentScore = 0.0;
 				}
 			}
+			
+			// Update score page
+			pageDao.updateScorePage(page.getLink(), currentScore);
+			crawledLinks.add(page.getLink());
+			estimatedScoreLinks.remove(page.getLink());
 
 			// Browses outgoing links
 			pageDao.loadLinks(page, false);
