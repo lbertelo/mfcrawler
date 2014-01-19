@@ -5,6 +5,7 @@ You can easily configure the crawler by set up crawl parameters and keywords and
 to a blacklist. Finally, the results can be analyzed and exported in different formats.
 
 The purpose of this crawler is not to crawl the entire web but is to crawl a portion of the web.
+The crawler allow to analyze the relationships between sites or the content of pages.
 
 Install and use
 ---------------
@@ -12,7 +13,9 @@ First, you need the Java Virtual Machine version 7 that you can download on
 [java.com](http://java.com). Then, download the last version of MfCrawler and launch
 the "Jar", no installation is required.
 
-[Download : Mini Focused Crawler v1.0 - october 2013](http://lbertelo.free.fr/mfcrawler/mfcrawler_v1.0.jar)
+[Download : Mini Focused Crawler v1.1 - january 2014](http://lbertelo.free.fr/mfcrawler/mfcrawler_v1.1.jar)
+
+**Be careful : Do not use too aggressive settings crawl, some websites may ban you**
 
 Screenshots
 -----------
@@ -51,7 +54,7 @@ many links refer to the same content.
     * Manage Project : Allow to load or delete projects.
     
 * Configuration
-    * Proxy : Allow to configure proxy settings
+    * Proxy : Allow to configure proxy settings.
     * General : Allow to configure global settings that not depend on the crawl project.
 
 ### Tabbed Panes
