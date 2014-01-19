@@ -67,6 +67,7 @@ public class ExportSiteDAO extends BaseDAO implements ISiteQueryList {
 	 * @return the list of sites
 	 */
 	public List<Site> getSiteListToExport(Double minTotalScore) {
+		//TODO Exporter les sites et les pages non-crawlés ?
 		PreparedStatement preStatement = null;
 		ResultSet result = null;
 		List<Site> siteListToExport = new ArrayList<Site>();

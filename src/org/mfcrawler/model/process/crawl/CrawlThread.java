@@ -241,7 +241,7 @@ public class CrawlThread extends Thread {
 		Page page = new Page(order.getLink());
 		page.setInnerDeep(order.getInnerDeep());
 		page.setOuterDeep(order.getOuterDeep());
-		page.setScore(order.getExpectedScore());
+		page.setRedirectPage(false);
 		page.setCrawlTime(new Date());
 
 		HttpURLConnection httpConnection = null;
@@ -291,7 +291,6 @@ public class CrawlThread extends Thread {
 					PageExtractionUtil.redirectLinksExtraction(page, httpConnection, parsedContent,
 							forbiddenFileExtensions);
 				} else {
-					page.setRedirectPage(false);
 					PageExtractionUtil.pageLinksExtraction(page, parsedContent, forbiddenFileExtensions);
 				}
 
@@ -299,18 +298,17 @@ public class CrawlThread extends Thread {
 				Logger.getLogger(CrawlThread.class.getName()).log(Level.WARNING, "Crawl error : Read content", e);
 				page.setCrawlError(e.toString());
 			}
-
-			if (page.getCrawlError() == null && !page.getRedirectPage()) {
-				// Calculates score
-				crawlInfo.notice(CrawlThreadInfo.CI_CALC + order.getLink());
-				double score = KeywordManager.calculateContent(page.getContent());
-				page.setScore(score);
-			}
-
 		}
-
-		if (page.getScore() == null) {
+		
+		// Sets the score
+		if (page.getCrawlError() != null) {
 			page.setScore(0.0);
+		} else if (page.getRedirectPage()) {
+			page.setScore(order.getExpectedScore());
+		} else {
+			crawlInfo.notice(CrawlThreadInfo.CI_CALC + order.getLink());
+			double score = KeywordManager.calculateContent(page.getContent());
+			page.setScore(score);
 		}
 
 		// Sends information to Database

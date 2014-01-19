@@ -203,25 +203,40 @@ public final class KeywordManager {
 		pageDao.beginTransaction();
 
 		pageDao.initAllScores();
-		PageDbIterator pageDbIterator = pageDao.getCrawledPages();
+		PageDbIterator pageDbIterator = pageDao.getCrawledPagesToRecalculate();
 
 		propertyChangeModel.notify(IPropertyName.LOADING, I18nUtil.getMessage("loading.recalculateScores.step2"));
 		while (pageDbIterator.hasNext()) {
 			Page page = pageDbIterator.next();
-			double currentScore = 0;
 
-			if (page.getContent() != null) {
-				currentScore = calculateContent(page.getContent());
+			// Sets the score
+			double currentScore;
+			if (!page.getRedirectPage()) {
+				if (page.getCrawlError() == null && page.getContent() != null) {
+					currentScore = calculateContent(page.getContent());
+				} else {
+					currentScore = 0.0;
+				}
+
+				pageDao.updateScorePage(page.getLink(), currentScore);
+				crawledLinks.add(page.getLink());
+				estimatedScoreLinks.remove(page.getLink());
+			} else {
+				Double estimatedScore = estimatedScoreLinks.get(page.getLink());
+
+				if (estimatedScore != null) {
+					currentScore = estimatedScore;
+				} else {
+					currentScore = 0.0;
+				}
 			}
 
-			pageDao.updateScorePage(page.getLink(), currentScore);
-			crawledLinks.add(page.getLink());
-			estimatedScoreLinks.remove(page.getLink());
-
+			// Browses outgoing links
 			pageDao.loadLinks(page, false);
 			List<Link> outgoingLinkList = new ArrayList<Link>();
 			outgoingLinkList.addAll(page.getOutgoingInternLinks());
 			outgoingLinkList.addAll(page.getOutgoingExternLinks());
+			
 			for (Link outgoingLink : outgoingLinkList) {
 				Double estimatedScore = estimatedScoreLinks.get(outgoingLink);
 				if (!crawledLinks.contains(outgoingLink)

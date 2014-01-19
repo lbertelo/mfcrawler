@@ -1,6 +1,6 @@
 /*
     Mini Focused Crawler : focused web crawler with a simple GUI
-    Copyright (C) 2013  lbertelo
+    Copyright (C) 2013-2014  lbertelo
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -117,12 +117,11 @@ public interface IPageQueryList extends ITablesVocabulary {
 	String FILTER_TO_DISPLAY_CRAWLED = " ( " + CRAWL_TIME + " IS NOT NULL  AND " + REDIRECT_PAGE + " = false AND "
 			+ CRAWL_ERROR + " IS NULL ) ";
 
-	String FILTER_TO_DISPLAY_JUST_FOUND = " " + CRAWL_TIME + " IS NULL ";
+	String FILTER_TO_DISPLAY_JUST_FOUND = CRAWL_TIME + " IS NULL ";
 
-	String FILTER_TO_DISPLAY_ERROR = " ( " + CRAWL_TIME + " IS NOT NULL AND " + CRAWL_ERROR + " IS NOT NULL ) ";
+	String FILTER_TO_DISPLAY_ERROR = CRAWL_ERROR + " IS NOT NULL ";
 
-	String FILTER_TO_DISPLAY_REDIRECT_PAGE = " ( " + CRAWL_TIME + " IS NOT NULL  AND " + REDIRECT_PAGE + " = true AND "
-			+ CRAWL_ERROR + " IS NULL ) ";
+	String FILTER_TO_DISPLAY_REDIRECT_PAGE = " ( " + REDIRECT_PAGE + " = true AND " + CRAWL_ERROR + " IS NULL ) ";
 
 	String ORDER_TO_DISPLAY_SCORE = " ORDER BY " + SCORE + " DESC ";
 
@@ -137,6 +136,8 @@ public interface IPageQueryList extends ITablesVocabulary {
 			+ " = true ) ";
 
 	String SELECT_CRAWLED_PAGES = " SELECT * FROM " + TABLE_PAGE + " WHERE " + CRAWL_TIME + " IS NOT NULL ";
+
+	String SELECT_CRAWLED_PAGES_TO_RECALCULATE = SELECT_CRAWLED_PAGES + " ORDER BY " + CRAWL_TIME + " ASC ";
 
 	String SELECT_PAGES_WITH_CONTENT = SELECT_CRAWLED_PAGES + " AND " + CONTENT + " IS NOT NULL ";
 

@@ -461,18 +461,18 @@ public class PageDAO extends BaseDAO implements IPageQueryList {
 	}
 
 	/**
-	 * Selects crawled pages and return an iterator
+	 * Selects crawled pages to recalculate score and return an iterator
 	 * @return the page iterator
 	 */
-	public PageDbIterator getCrawledPages() {
+	public PageDbIterator getCrawledPagesToRecalculate() {
 		PageDbIterator pageIterator = new PageDbIterator();
 
 		try {
-			PreparedStatement preStatement = connection.prepareStatement(SELECT_CRAWLED_PAGES);
+			PreparedStatement preStatement = connection.prepareStatement(SELECT_CRAWLED_PAGES_TO_RECALCULATE);
 			ResultSet result = preStatement.executeQuery();
 			pageIterator = new PageDbIterator(result, true);
 		} catch (SQLException e) {
-			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to get crawled pages", e);
+			Logger.getLogger(PageDAO.class.getName()).log(Level.SEVERE, "Error to get crawled pages to recalculate score", e);
 		}
 
 		return pageIterator;
