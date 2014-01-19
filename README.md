@@ -15,7 +15,7 @@ the "Jar", no installation is required.
 
 [Download : Mini Focused Crawler v1.1 - january 2014](http://lbertelo.free.fr/mfcrawler/mfcrawler_v1.1.jar)
 
-**Be careful : Do not use too aggressive settings crawl, some websites may ban you**
+**Be careful : Do not use too aggressive crawl settings, some websites may ban you.**
 
 Screenshots
 -----------
